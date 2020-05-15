@@ -1,24 +1,26 @@
+
 <?php
+
 	session_start();
 	if(isset($_POST["stato"])&&$_POST["stato"]=="logout"&&isset($_SESSION))
 		session_unset();
-		session_destroy();
+	session_destroy();
 ?>
 
 
 <!doctype html>
-<html lang="en">
+<html lang="it">
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
     <meta name="generator" content="Jekyll v4.0.1">
-    <title>Album example · Bootstrap</title>
+    <title>Catalogo Film, Documentari e Serie TV</title>
 
 
-    <!-- Bootstrap core CSS -->
-<link href="assets/dist/css/bootstrap.css" rel="stylesheet">
+	<!-- Bootstrap core CSS -->
+	<link href="assets/dist/css/bootstrap.css" rel="stylesheet">
 
     <style>
       .bd-placeholder-img {
@@ -56,80 +58,80 @@
 				<strong>Album</strong>
 			  </a>
 			  
-			  <?php
-				$login=0;
-				if(isset($_POST["user"]) && isset($_POST["pass"])){
-					$login=1;
-					$utente=trim($_POST["user"]);
-					$password=trim($_POST["pass"]);
-					$host = ""; /* server MySQL */
-					$use = "root"; /* utente */
-					$pwd = ""; /* password */
-					$dbname = "film"; /* nome database */
-					/* connessione al database */
-					$conn = new mysqli ( $host , $use , $pwd , $dbname );
-					$query="SELECT * FROM utenti WHERE email='".$utente."' AND password='".md5($password)."';";
-					$result=$conn->query($query);
-					if (!$result->num_rows==0){
-						$row=$result->fetch_assoc();
-						$admin=$row["admin"];
-						$result->free();
-						session_start();
-						$_SESSION["user"]=$row["username"];
-						$_SESSION["admin"]=$row["admin"];
+			  	<?php
+					$login=0;
+					if(isset($_POST["user"]) && isset($_POST["pass"])){
+						$login=1;
+						$utente=trim($_POST["user"]);
+						$password=trim($_POST["pass"]);
+						$host = ""; /* Host Server MySQL */
+						$user = "root"; /* User Server MySQL */
+						$pwd = ""; /* Password Server MySQL */
+						$dbname = "catalogo"; /* Nome DB MySQL */
+						$conn = new mysqli ( $host , $user , $pwd , $dbname ); /* Inizializzazione Connesione DB */
+						if ($conn->connect_errno) { /* Controllo della corretta connesione */
+							printf("Errore nella connessione al DB:</br>", $mysqli->connect_error);
+							exit();
+						}
+						$query="SELECT * FROM utenti WHERE email='".$utente."' AND password='".md5($password)."';"; /* Preparazione Query */
+						$result=$conn->query($query); /* Risultati della query */
+						if (!$result->num_rows!=1){
+							$riga=$result->fetch_assoc();
+							$admin=$riga["admin"];
+							$result->free();
+							session_start();
+							$_SESSION["user"]=$riga["username"];
+							$_SESSION["admin"]=$riga["admin"];
+						}
+						else
+							$login=0;
+						//$result->free();
+						$conn->close();
 					}
+					
+					if($login==0||!isset($_SESSION)) /* Utente non loggato */
+						echo '
+							<div class="dropdown">
+						<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							Login
+						</button>
+							<div class="dropdown-menu dropdown-menu-right">
+							<form class="px-4 py-3" method="post">
+								<div class="form-group">
+								<label for="exampleDropdownFormEmail1">Email address</label>
+								<input type="email" class="form-control" id="user" name="user" placeholder="email@example.com">
+								</div>
+								<div class="form-group">
+								<label for="exampleDropdownFormPassword1">Password</label>
+								<input type="password" class="form-control" id="pass" name="pass" placeholder="Password">
+								</div>
+								<div class="form-check">
+								<input type="checkbox" class="form-check-input" id="dropdownCheck">
+								<label class="form-check-label" for="dropdownCheck">
+									Remember me
+								</label>
+								</div>
+								<button type="submit" class="btn btn-primary">Sign in</button>
+							</form>
+							<div class="dropdown-divider"></div>
+							<a class="dropdown-item" href="#">New around here? Sign up</a>
+							<a class="dropdown-item" href="#">Forgot password?</a>
+							</div>
+						</div>';
 					else
-						$login=0;
-					//$result->free();
-					$conn->close();
-				}
-				
-				if($login==0||!isset($_SESSION))
-					echo '
-						<div class="dropdown">
-					  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Login
-					  </button>
-						<div class="dropdown-menu dropdown-menu-right">
-						  <form class="px-4 py-3" method="post">
-							<div class="form-group">
-							  <label for="exampleDropdownFormEmail1">Email address</label>
-							  <input type="email" class="form-control" id="user" name="user" placeholder="email@example.com">
+						echo '
+							<div class="dropdown">
+						<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+							'.$_SESSION["user"].'
+						</button>
+							<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+								<button class="dropdown-item" type="button">Visualizza Profilo</button>
+								<button class="dropdown-item" type="button">Visualizza Recensioni</button>
+								<button class="dropdown-item" type="button">Visualizza Curiosità</button>
+								<button class="dropdown-item" type="button" onclick="logout()">Logout</button>
 							</div>
-							<div class="form-group">
-							  <label for="exampleDropdownFormPassword1">Password</label>
-							  <input type="password" class="form-control" id="pass" name="pass" placeholder="Password">
-							</div>
-							<div class="form-check">
-							  <input type="checkbox" class="form-check-input" id="dropdownCheck">
-							  <label class="form-check-label" for="dropdownCheck">
-								Remember me
-							  </label>
-							</div>
-							<button type="submit" class="btn btn-primary">Sign in</button>
-						  </form>
-						  <div class="dropdown-divider"></div>
-						  <a class="dropdown-item" href="#">New around here? Sign up</a>
-						  <a class="dropdown-item" href="#">Forgot password?</a>
-						</div>
-					</div>';
-				else
-					echo '
-						<div class="dropdown">
-					  <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						'.$_SESSION["user"].'
-					  </button>
-						<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-							<button class="dropdown-item" type="button">Visualizza Profilo</button>
-							<button class="dropdown-item" type="button">Visualizza Recensioni</button>
-							<button class="dropdown-item" type="button">Visualizza Curiosità</button>
-							<button class="dropdown-item" type="button" onclick="logout()">Logout</button>
-						</div>
-					</div>';
-				
-				
+						</div>';
 				?>
-				
 			</div>
 		  </div>
 	</header>
