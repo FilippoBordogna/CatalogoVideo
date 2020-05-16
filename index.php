@@ -206,12 +206,12 @@
 					//$result=$conn->query($query); /* Risultati della query */
 					if ($risultati=$conn->query($query)) { /* Risultati della query */
 						if ($risultati->num_rows>0) {
-							while ($riga = $risultati->fetch_assoc()) { /* */
+							while ($riga = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
 								echo ('
 									<div class="col-md-4 py2" onclick="passa_a('.$riga["id"].',1)" >
 										<div class="card h-100 mb-4 shadow-sm">
-											<img src="images/video/'.$riga["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
 											<div class="card-body">
+												<img src="images/video/'.$riga["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
 												<p class="card-text">'.$riga["nome"].'</p>
 												<p class="card-text-description">'.$riga["Sinossi"].'</p>
 												<div class="d-flex justify-content-between align-items-center">
