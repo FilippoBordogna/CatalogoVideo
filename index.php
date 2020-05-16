@@ -2,9 +2,27 @@
 <?php
 
 	session_start();
-	if(isset($_POST["stato"])&&$_POST["stato"]=="logout"&&isset($_SESSION))
+	if(!isset($_SESSION["login"]) || $_SESSION["login"]!=1)
 		session_unset();
-	session_destroy();
+	if(isset($_POST["stato"])&&$_POST["stato"]=="logout")
+	{
+		session_unset();
+		session_destroy();
+		session_start();
+	}
+	
+	function dbConn(){
+		$host = ""; /* Host Server MySQL */
+		$user = "root"; /* User Server MySQL */
+		$pwd = ""; /* Password Server MySQL */
+		$dbname = "catalogo"; /* Nome DB MySQL */
+		$conn = new mysqli ( $host , $user , $pwd , $dbname ); /* Inizializzazione Connesione DB */
+		if ($conn->connect_errno) { /* Controllo della corretta connesione */
+			printf("Errore nella connessione al DB:</br>", $mysqli->connect_error);
+			exit();
+		}
+		return $conn;
+	}
 ?>
 
 
@@ -42,7 +60,7 @@
     <link href="album.css" rel="stylesheet">
 	<script>
 		function logout(){
-			f.stato="logout";
+			f.stato.value="logout";
 			f.submit();
 		}
 	</script>
@@ -59,29 +77,22 @@
 			  </a>
 			  
 			  	<?php
-					$login=0;
+					if(!isset($_SESSION["login"]))
+						$_SESSION["login"]=0;
 					if(isset($_POST["user"]) && isset($_POST["pass"])){
 						$login=1;
 						$utente=trim($_POST["user"]);
 						$password=trim($_POST["pass"]);
-						$host = ""; /* Host Server MySQL */
-						$user = "root"; /* User Server MySQL */
-						$pwd = ""; /* Password Server MySQL */
-						$dbname = "catalogo"; /* Nome DB MySQL */
-						$conn = new mysqli ( $host , $user , $pwd , $dbname ); /* Inizializzazione Connesione DB */
-						if ($conn->connect_errno) { /* Controllo della corretta connesione */
-							printf("Errore nella connessione al DB:</br>", $mysqli->connect_error);
-							exit();
-						}
+						$conn=dbConn();
 						$query="SELECT * FROM utenti WHERE email='".$utente."' AND password='".md5($password)."';"; /* Preparazione Query */
 						$result=$conn->query($query); /* Risultati della query */
 						if (!$result->num_rows!=1){
 							$riga=$result->fetch_assoc();
 							$admin=$riga["admin"];
 							$result->free();
-							session_start();
 							$_SESSION["user"]=$riga["username"];
 							$_SESSION["admin"]=$riga["admin"];
+							$_SESSION["login"]=1;
 						}
 						else
 							$login=0;
@@ -89,7 +100,7 @@
 						$conn->close();
 					}
 					
-					if($login==0||!isset($_SESSION)) /* Utente non loggato */
+					if($_SESSION["login"]==0) /* Utente non loggato */
 						echo '
 							<div class="dropdown">
 						<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -98,20 +109,20 @@
 							<div class="dropdown-menu dropdown-menu-right">
 							<form class="px-4 py-3" method="post">
 								<div class="form-group">
-								<label for="exampleDropdownFormEmail1">Email address</label>
+								<label class="ml-2" for="exampleDropdownFormEmail1">Email address</label>
 								<input type="email" class="form-control" id="user" name="user" placeholder="email@example.com">
 								</div>
 								<div class="form-group">
-								<label for="exampleDropdownFormPassword1">Password</label>
+								<label class="ml-2" for="exampleDropdownFormPassword1">Password</label>
 								<input type="password" class="form-control" id="pass" name="pass" placeholder="Password">
 								</div>
-								<div class="form-check">
+								<div class="form-check ml-2">
 								<input type="checkbox" class="form-check-input" id="dropdownCheck">
 								<label class="form-check-label" for="dropdownCheck">
 									Remember me
 								</label>
 								</div>
-								<button type="submit" class="btn btn-primary">Sign in</button>
+								<button type="submit" class="btn btn-primary ml-2">Sign in</button>
 							</form>
 							<div class="dropdown-divider"></div>
 							<a class="dropdown-item" href="#">New around here? Sign up</a>
@@ -154,13 +165,17 @@
 
 		  <div class="row">
 			<?php
+			$conn=dbConn();
+			$query="SELECT * FROM video WHERE selettore=1;"; /* Preparazione Query */
+			$result=$conn->query($query); /* Risultati della query */
 			for($i=0;$i<9;$i++){
+				$riga=$result->fetch_assoc();
 				echo ('
 					<div class="col-md-4">
 					  <div class="card mb-4 shadow-sm">
-						<svg class="bd-placeholder-img card-img-top" width="100%" height="225" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice" focusable="false" role="img" aria-label="Placeholder: Thumbnail"><title>Placeholder</title><rect width="100%" height="100%" fill="#55595c"/><text x="50%" y="50%" fill="#eceeef" dy=".3em">Thumbnail</text></svg>
+						<img src="images/'.$riga["id"].'.jpg" class="bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
 						<div class="card-body">
-						  <p class="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.</p>
+						  <p class="card-text">'.$riga["nome"].'</p>
 						  <div class="d-flex justify-content-between align-items-center">
 							<div class="btn-group">
 							  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
@@ -170,7 +185,8 @@
 						  </div>
 						</div>
 					  </div>
-			</div>');}
+			</div>');
+			}
 			?>
 			
 		  </div>
