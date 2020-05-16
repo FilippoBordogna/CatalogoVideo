@@ -105,6 +105,9 @@
 						$conn->close();
 					}
 					
+					/*$_SESSION["login"]=1;
+					$_SESSION["user"]="Pippo";*/
+
 					if($_SESSION["login"]==0) /* Utente non loggato */
 						echo '
 							<div class="dropdown">
@@ -156,12 +159,10 @@
 	<form name='f' id='f' method='post'>
 		<input type='hidden' name='stato' id='stato'>
 		<?php
-			if(isset($_POST["stato"])&&!empty($_POST["stato"]))
-			{
+			if(isset($_POST["stato"])&&!empty($_POST["stato"])) {
 				$stato=$_POST["stato"];
 			}
-			else
-			{
+			else {
 				$stato=0;
 
 			}
@@ -169,7 +170,7 @@
 					case 0:
 			
 		?>
-			<section class="jumbotron text-center">
+			<!--<section class="jumbotron text-center">
 			<div class="container">
 			  <h1>Album example</h1>
 			  <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
@@ -178,18 +179,54 @@
 				<a href="#" class="btn btn-secondary my-2">Secondary action</a>
 			  </p>
 			</div>
-		  </section>
+		  </section>-->
 
 		  <div class="album py-5 bg-light">
 			<div class="container">
-
 			  <div class="row">
 			  <input type='hidden' name='id' id='id'>
 				<?php
 				$conn=dbConn();
 				$query="SELECT * FROM video WHERE selettore=1;"; /* Preparazione Query */
-				$result=$conn->query($query); /* Risultati della query */
-				for($i=0;$i<10;$i++){
+				//$result=$conn->query($query); /* Risultati della query */
+				if ($risultati=$conn->query($query)) { /* Risultati della query */
+					if ($risultati->num_rows>0) {
+						while ($riga = $risultati->fetch_assoc()) { /* */
+							echo ('
+								<div class="col-md-4 " onclick="passa_a('.$riga["id"].',1)" >
+								<div class="card mb-4 shadow-sm">
+									<img src="images/video/'.$riga["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
+									<div class="card-body">
+									<p class="card-text">'.$riga["nome"].'</p>
+									<div class="d-flex justify-content-between align-items-center">
+										<div class="btn-group">
+										<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+										<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+										</div>
+										<small class="text-muted">Durata: '.$riga["durata"].' minuti</small>
+									</div>
+									</div>
+								</div>
+								</div>
+							');
+						}
+					}
+					else {
+						echo ('
+								<div class="col-md-4 ">
+									<div class="card mb-4 shadow-sm">
+										<div class="card-body">
+											<p class="card-text">Non sono ancora stati inseriti film</p>
+										</div>
+									</div>
+								</div>
+							');
+					}
+					$risultati->free();
+					$conn->close();
+				}
+
+				/*for($i=0;$i<10;$i++) {
 					$riga=$result->fetch_assoc();
 					echo ('
 						<div class="col-md-4 " onclick="passa_a('.$riga["id"].',1)" >
@@ -206,14 +243,15 @@
 							  </div>
 							</div>
 						  </div>
-				</div>');
+						</div>');
 				}
-				$conn->close();
+				$conn->close();*/
 				?>
 				
 			  </div>
 			</div>
 		  </div>
+		
 		<?php
 			break;
 		case 1:
@@ -240,8 +278,8 @@
       <a href="#">Back to top</a>
     </p>
 	
-    <p>Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
-    <p>New to Bootstrap? <a href="https://getbootstrap.com/">Visit the homepage</a> or read our <a href="../getting-started/introduction/">getting started guide</a>.</p>
+    <!--<p>Album example is &copy; Bootstrap, but please download and customize it for yourself!</p>
+    <p>New to Bootstrap? <a href="https://getbootstrap.com/">Visit the homepage</a> or read our <a href="../getting-started/introduction/">getting started guide</a>.</p>-->
   </div>
 </footer>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
