@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 16, 2020 alle 09:08
+-- Creato il: Mag 16, 2020 alle 14:58
 -- Versione del server: 10.4.11-MariaDB
 -- Versione PHP: 7.4.5
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `film`
+-- Database: `catalogo`
 --
 
 -- --------------------------------------------------------
@@ -324,24 +324,25 @@ CREATE TABLE `video` (
   `idSerie` int(11) DEFAULT NULL,
   `numero` int(11) DEFAULT NULL,
   `stagione` int(11) DEFAULT NULL,
-  `selettore` int(11) NOT NULL
+  `selettore` int(11) NOT NULL,
+  `Sinossi` varchar(500) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dump dei dati per la tabella `video`
 --
 
-INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `stagione`, `selettore`) VALUES
-(1, 'iron Man', 126, 1, NULL, 1, NULL, 1),
-(2, 'L\'incredibile Hulk', 135, 1, NULL, 2, NULL, 1),
-(3, 'Iron Man 2', 124, 1, NULL, 3, NULL, 1),
-(4, 'Thor', 115, 1, NULL, 4, NULL, 1),
-(5, 'Captain America - Il primo Vendicatore', 124, 1, NULL, 5, NULL, 1),
-(6, 'The Avengers', 143, 1, NULL, 6, NULL, 1),
-(7, 'Iron Man 3', 131, 1, NULL, 7, NULL, 1),
-(8, 'Thor: The Dark World', 112, 1, NULL, 8, NULL, 1),
-(9, 'Captain America: The Winter Soldier', 136, 1, NULL, 9, NULL, 1),
-(10, 'Guardiani della Galassia', 125, 1, NULL, 10, NULL, 1);
+INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `stagione`, `selettore`, `Sinossi`) VALUES
+(1, 'Iron Man', 126, 1, NULL, 1, NULL, 1, 'Dopo essere sopravvissuto ad un attacco inaspettato in territorio nemico, l\'industriale Tony Stark costruisce un\'armatura ad alta tecnologia e giura di proteggere il mondo nei panni di Iron Man.'),
+(2, 'L\'incredibile Hulk', 135, 1, NULL, 2, NULL, 1, 'Bruce Banner era uno scienziato, ma un\'esposizione accidentale ai raggi gamma ha provocato una mutazione genetica e sconvolto la sua esistenza. Ogni qualvolta le emozioni lo assalgono, Bruce si trasforma in Hulk, mostro verde dalla forza smisurata.'),
+(3, 'Iron Man 2', 124, 1, NULL, 3, NULL, 1, 'Ora che tutto il mondo conosce la vera identità di Iron Man, l\'inventore milionario Tony Stark deve affrontare le pressioni alla collaborazione da parte dei militari e stringere nuove alleanze per affrontare un potente nemico.'),
+(4, 'Thor', 115, 1, NULL, 4, NULL, 1, 'Dopo che le sue azioni sconsiderate hanno riacceso un\'antica guerra, il dio nordico Thor viene spogliato dei propri poteri, scacciato dal regno di Asgard, e costretto a vivere tra gli umani.'),
+(5, 'Captain America - Il primo Vendicatore', 124, 1, NULL, 5, NULL, 1, 'Steve è un giovanotto smilzo che vuole ad ogni costo arruolarsi nell\'esercito per combattere i nazisti. Putroppo viene regolarmente scartato, ma un giorno gli si presenta la possibilità di fare da cavia: gli iniettano così il siero del supersoldato'),
+(6, 'The Avengers', 143, 1, NULL, 6, NULL, 1, 'I leggendari supereroi Iron Man, Hulk, Thor, Capitan America, Occhio di Falco e la Vedova Nera vengono reclutati da un\'agenzia governativa segreta per combattere un nemico inatteso che minaccia la sicurezza della Terra.'),
+(7, 'Iron Man 3', 131, 1, NULL, 7, NULL, 1, 'Dopo aver salvato New York dalla distruzione ed essere rimasto da allora insonne e preoccupato, Tony Stark rimasto senza armatura deve lottare contro le sue paure interiori per sconfiggere il suo nuovo nemico, il Mandarino.'),
+(8, 'Thor: The Dark World', 112, 1, NULL, 8, NULL, 1, 'Dal personaggio della Marvel, Thor si allea con il perfido Loki per salvare la Terra dei Nove Regni da un antico nemico nato prima ancora dell\'universo.'),
+(9, 'Captain America: The Winter Soldier', 136, 1, NULL, 9, NULL, 1, 'Capitan America, Vedova Nera e un nuovo alleato, Falcon, affrontano un nemico inaspettato mentre lottano per far emergere alla luce del sole un complotto che mette a rischio il mondo intero.'),
+(10, 'Guardiani della Galassia', 125, 1, NULL, 10, NULL, 1, 'Un avventuriero spaziale, Brash Peter Quill, diventa preda di alcuni cacciatori di taglie dopo aver rubato una sfera ambita dal potente Ronan. Per sfuggire alla morte, l\'uomo si allea con quattro improbabili compagni di avventura.');
 
 --
 -- Indici per le tabelle scaricate

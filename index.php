@@ -63,11 +63,16 @@
 			f.stato.value="logout";
 			f.submit();
 		}
+		
+		function passa_a(id,valore){
+			f.id.value=id;
+			f.stato.value=valore;
+			f.submit();
+		}
 	</script>
   </head>
   <body>
-	<form name='f' id='f' method='post'>
-		<input type='hidden' name='stato' id='stato'>
+	
 		<header>
 		  <div class="navbar navbar-dark bg-dark shadow-sm">
 			<div class="container d-flex justify-content-between">
@@ -148,53 +153,87 @@
 	</header>
 
 	<main role="main">
-
-	  <section class="jumbotron text-center">
-		<div class="container">
-		  <h1>Album example</h1>
-		  <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
-		  <p>
-			<a href="#" class="btn btn-primary my-2">Main call to action</a>
-			<a href="#" class="btn btn-secondary my-2">Secondary action</a>
-		  </p>
-		</div>
-	  </section>
-
-	  <div class="album py-5 bg-light">
-		<div class="container">
-
-		  <div class="row">
-			<?php
-			$conn=dbConn();
-			$query="SELECT * FROM video WHERE selettore=1;"; /* Preparazione Query */
-			$result=$conn->query($query); /* Risultati della query */
-			for($i=0;$i<9;$i++){
-				$riga=$result->fetch_assoc();
-				echo ('
-					<div class="col-md-4">
-					  <div class="card mb-4 shadow-sm">
-						<img src="images/video/'.$riga["id"].'.jpg" class="bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
-						<div class="card-body">
-						  <p class="card-text">'.$riga["nome"].'</p>
-						  <div class="d-flex justify-content-between align-items-center">
-							<div class="btn-group">
-							  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-							  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-							</div>
-							<small class="text-muted">9 mins</small>
-						  </div>
-						</div>
-					  </div>
-			</div>');
+	<form name='f' id='f' method='post'>
+		<input type='hidden' name='stato' id='stato'>
+		<?php
+			if(isset($_POST["stato"])&&!empty($_POST["stato"]))
+			{
+				$stato=$_POST["stato"];
 			}
-			?>
-			
-		  </div>
-		</div>
-	  </div>
+			else
+			{
+				$stato=0;
 
+			}
+			switch($stato){
+					case 0:
+			
+		?>
+			<section class="jumbotron text-center">
+			<div class="container">
+			  <h1>Album example</h1>
+			  <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
+			  <p>
+				<a href="#" class="btn btn-primary my-2">Main call to action</a>
+				<a href="#" class="btn btn-secondary my-2">Secondary action</a>
+			  </p>
+			</div>
+		  </section>
+
+		  <div class="album py-5 bg-light">
+			<div class="container">
+
+			  <div class="row">
+			  <input type='hidden' name='id' id='id'>
+				<?php
+				$conn=dbConn();
+				$query="SELECT * FROM video WHERE selettore=1;"; /* Preparazione Query */
+				$result=$conn->query($query); /* Risultati della query */
+				for($i=0;$i<10;$i++){
+					$riga=$result->fetch_assoc();
+					echo ('
+						<div class="col-md-4 " onclick="passa_a('.$riga["id"].',1)" >
+						  <div class="card mb-4 shadow-sm">
+							<img src="images/video/'.$riga["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
+							<div class="card-body">
+							  <p class="card-text">'.$riga["nome"].'</p>
+							  <div class="d-flex justify-content-between align-items-center">
+								<div class="btn-group">
+								  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+								  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+								</div>
+								<small class="text-muted">Durata: '.$riga["durata"].' minuti</small>
+							  </div>
+							</div>
+						  </div>
+				</div>');
+				}
+				$conn->close();
+				?>
+				
+			  </div>
+			</div>
+		  </div>
+		<?php
+			break;
+		case 1:
+		
+			$id=$_POST["id"];
+			$conn=dbConn();
+			$query="SELECT * FROM video WHERE id=$id;"; /* Preparazione Query */
+			$result=$conn->query($query); /* Risultati della query */
+			$riga=$result->fetch_assoc();
+			$conn->close();
+			echo '<div class="container text-center">';
+			echo "<h1 class='mt-4 mb-4'>$riga[nome]</h1>";
+			echo '<img src="images/video/'.$id.'.jpg" class="img-fluid mt-4 mb-4" alt="Responsive image">';
+			echo '</div>';
+			break;
+		}
+		?>
+	</form>
 	</main>
-    </form>
+    
 <footer class="text-muted">
   <div class="container">
     <p class="float-right">
