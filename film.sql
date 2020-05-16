@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 15, 2020 alle 19:16
+-- Creato il: Mag 16, 2020 alle 09:08
 -- Versione del server: 10.4.11-MariaDB
 -- Versione PHP: 7.4.5
 
@@ -137,35 +137,41 @@ INSERT INTO `interpretazioni` (`idAttore`, `idPersonaggio`) VALUES
 
 CREATE TABLE `partecipazioni` (
   `idPersona` int(11) NOT NULL,
-  `idVideo` int(11) NOT NULL
+  `idVideo` int(11) NOT NULL,
+  `selettore` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dump dei dati per la tabella `partecipazioni`
 --
 
-INSERT INTO `partecipazioni` (`idPersona`, `idVideo`) VALUES
-(1, 1),
-(1, 3),
-(1, 6),
-(1, 7),
-(2, 5),
-(2, 6),
-(3, 6),
-(4, 4),
-(4, 6),
-(4, 8),
-(4, 9),
-(5, 3),
-(5, 6),
-(5, 9),
-(6, 4),
-(6, 6),
-(7, 10),
-(10, 1),
-(10, 3),
-(10, 7),
-(11, 2);
+INSERT INTO `partecipazioni` (`idPersona`, `idVideo`, `selettore`) VALUES
+(1, 1, 2),
+(1, 3, 2),
+(1, 6, 2),
+(1, 7, 2),
+(2, 5, 2),
+(2, 6, 2),
+(2, 9, 2),
+(3, 6, 2),
+(4, 4, 2),
+(4, 6, 2),
+(4, 8, 2),
+(5, 3, 2),
+(5, 6, 2),
+(5, 9, 2),
+(6, 4, 2),
+(6, 6, 2),
+(7, 10, 2),
+(10, 1, 1),
+(10, 1, 2),
+(10, 1, 3),
+(10, 3, 1),
+(10, 3, 2),
+(10, 3, 3),
+(10, 6, 3),
+(10, 7, 2),
+(10, 7, 3);
 
 -- --------------------------------------------------------
 
@@ -384,7 +390,7 @@ ALTER TABLE `interpretazioni`
 -- Indici per le tabelle `partecipazioni`
 --
 ALTER TABLE `partecipazioni`
-  ADD PRIMARY KEY (`idPersona`,`idVideo`),
+  ADD PRIMARY KEY (`idPersona`,`idVideo`,`selettore`),
   ADD KEY `idVideo` (`idVideo`);
 
 --
