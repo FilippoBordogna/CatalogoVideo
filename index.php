@@ -55,6 +55,21 @@
           font-size: 3.5rem;
         }
       }
+
+	  .col-md-4 :hover {
+		cursor: pointer;
+		background-color: black;
+		color: white;	   
+	   }
+
+	   p.card-text-description{
+		   display: none;
+	   }
+
+	   p.card-text-description :hover{
+		   display: block;
+	   }
+
     </style>
     <!-- Custom styles for this template -->
     <link href="album.css" rel="stylesheet">
@@ -186,68 +201,47 @@
 			  <div class="row">
 			  <input type='hidden' name='id' id='id'>
 				<?php
-				$conn=dbConn();
-				$query="SELECT * FROM video WHERE selettore=1;"; /* Preparazione Query */
-				//$result=$conn->query($query); /* Risultati della query */
-				if ($risultati=$conn->query($query)) { /* Risultati della query */
-					if ($risultati->num_rows>0) {
-						while ($riga = $risultati->fetch_assoc()) { /* */
-							echo ('
-								<div class="col-md-4 " onclick="passa_a('.$riga["id"].',1)" >
-								<div class="card mb-4 shadow-sm">
-									<img src="images/video/'.$riga["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
-									<div class="card-body">
-									<p class="card-text">'.$riga["nome"].'</p>
-									<div class="d-flex justify-content-between align-items-center">
-										<div class="btn-group">
-										<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-										<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+					$conn=dbConn();
+					$query="SELECT * FROM video WHERE selettore=1;"; /* Preparazione Query */
+					//$result=$conn->query($query); /* Risultati della query */
+					if ($risultati=$conn->query($query)) { /* Risultati della query */
+						if ($risultati->num_rows>0) {
+							while ($riga = $risultati->fetch_assoc()) { /* */
+								echo ('
+									<div class="col-md-4 " onclick="passa_a('.$riga["id"].',1)" >
+										<div class="card mb-4 shadow-sm">
+											<img src="images/video/'.$riga["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
+											<div class="card-body">
+												<p class="card-text">'.$riga["nome"].'</p>
+												<p class="card-text-description">'.$riga["Sinossi"].'</p>
+												<div class="d-flex justify-content-between align-items-center">
+													<div class="btn-group">
+														<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+														<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+													</div>
+													<small class="text-muted">Durata: '.$riga["durata"].' minuti</small>
+												</div>
+											</div>
 										</div>
-										<small class="text-muted">Durata: '.$riga["durata"].' minuti</small>
 									</div>
-									</div>
-								</div>
-								</div>
-							');
+								');
+							}
 						}
-					}
-					else {
-						echo ('
-								<div class="col-md-4 ">
-									<div class="card mb-4 shadow-sm">
-										<div class="card-body">
-											<p class="card-text">Non sono ancora stati inseriti film</p>
+						else {
+							echo ('
+									<div class="col-md-4 ">
+										<div class="card mb-4 shadow-sm">
+											<div class="card-body">
+												<p class="card-text">Nessun risultato di ricerca trovato</p>
+											</div>
 										</div>
 									</div>
-								</div>
-							');
+								');
+						}
+						$risultati->free();
+						$conn->close();
 					}
-					$risultati->free();
-					$conn->close();
-				}
-
-				/*for($i=0;$i<10;$i++) {
-					$riga=$result->fetch_assoc();
-					echo ('
-						<div class="col-md-4 " onclick="passa_a('.$riga["id"].',1)" >
-						  <div class="card mb-4 shadow-sm">
-							<img src="images/video/'.$riga["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
-							<div class="card-body">
-							  <p class="card-text">'.$riga["nome"].'</p>
-							  <div class="d-flex justify-content-between align-items-center">
-								<div class="btn-group">
-								  <button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-								  <button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-								</div>
-								<small class="text-muted">Durata: '.$riga["durata"].' minuti</small>
-							  </div>
-							</div>
-						  </div>
-						</div>');
-				}
-				$conn->close();*/
 				?>
-				
 			  </div>
 			</div>
 		  </div>
