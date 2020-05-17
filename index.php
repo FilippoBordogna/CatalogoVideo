@@ -1,4 +1,3 @@
-
 <?php
 
 	session_start();
@@ -18,7 +17,7 @@
 		$dbname = "catalogo"; /* Nome DB MySQL */
 		$conn = new mysqli ( $host , $user , $pwd , $dbname ); /* Inizializzazione Connesione DB */
 		if ($conn->connect_errno) { /* Controllo della corretta connesione */
-			printf("Errore nella connessione al DB:</br>", $mysqli->connect_error);
+			printf("Errore nella connessione al DB:</br>", $conn->connect_error);
 			exit();
 		}
 		return $conn;
@@ -87,7 +86,6 @@
 	</script>
   </head>
   <body>
-	
 		<header>
 		  <div class="navbar navbar-dark bg-dark shadow-sm">
 			<div class="container d-flex justify-content-between">
@@ -173,96 +171,121 @@
 	<main role="main">
 	<form name='f' id='f' method='post'>
 		<input type='hidden' name='stato' id='stato'>
-		<?php
-			if(isset($_POST["stato"])&&!empty($_POST["stato"])) {
-				$stato=$_POST["stato"];
-			}
-			else {
-				$stato=0;
-
-			}
-			switch($stato){
-					case 0:
-			
-		?>
-			<!--<section class="jumbotron text-center">
+		<input type='hidden' name='id' id='id'>
+		<div class="album py-5 bg-light">
 			<div class="container">
-			  <h1>Album example</h1>
-			  <p class="lead text-muted">Something short and leading about the collection below—its contents, the creator, etc. Make it short and sweet, but not too short so folks don’t simply skip over it entirely.</p>
-			  <p>
-				<a href="#" class="btn btn-primary my-2">Main call to action</a>
-				<a href="#" class="btn btn-secondary my-2">Secondary action</a>
-			  </p>
-			</div>
-		  </section>-->
+				<div class="row">
+					<?php
+						if(isset($_POST["stato"])&&!empty($_POST["stato"])) {
+							$stato=$_POST["stato"];
+						}
+						else 
+							$stato=0;
 
-		  <div class="album py-5 bg-light">
-			<div class="container">
-			  <div class="row">
-			  <input type='hidden' name='id' id='id'>
-				<?php
-					$conn=dbConn();
-					$query="SELECT * FROM video WHERE selettore=1;"; /* Preparazione Query */
-					//$result=$conn->query($query); /* Risultati della query */
-					if ($risultati=$conn->query($query)) { /* Risultati della query */
-						if ($risultati->num_rows>0) {
-							while ($riga = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
-								echo ('
-									<div class="col-md-4 py2" onclick="passa_a('.$riga["id"].',1)" >
-										<div class="card h-100 mb-4 shadow-sm">
-											<div class="card-body">
-												<img src="images/video/'.$riga["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
-												<p class="card-text">'.$riga["nome"].'</p>
-												<p class="card-text-description">'.$riga["Sinossi"].'</p>
-												<div class="d-flex justify-content-between align-items-center">
-													<div class="btn-group">
-														<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-														<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+						switch($stato) {
+							case 0:
+								$conn=dbConn();
+								$query="SELECT id,nome,Sinossi,durata FROM video WHERE selettore=1;"; /* Preparazione Query: Tutti i video */
+								if ($risultati=$conn->query($query)) { /* Risultati della query */
+									if ($risultati->num_rows>0) {
+										while ($riga = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+											echo ('
+												<div class="col-md-4 py2" onclick="passa_a('.$riga["id"].',1)" >
+													<div class="card h-100 mb-4 shadow-sm">
+														<div class="card-body">
+															<img src="images/video/'.$riga["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
+															<p class="card-text">'.$riga["nome"].'</p>
+															<p class="card-text-description">'.$riga["Sinossi"].'</p>
+															<div class="d-flex justify-content-between align-items-center">
+																<div class="btn-group">
+																	<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+																	<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+																</div>
+																<small class="text-muted">Durata: '.$riga["durata"].' minuti</small>
+															</div>
+														</div>
 													</div>
-													<small class="text-muted">Durata: '.$riga["durata"].' minuti</small>
 												</div>
-											</div>
+											');
+										}
+									}
+									else {
+										echo ('
+												<div class="col-md-4 ">
+													<div class="card mb-4 shadow-sm">
+														<div class="card-body">
+															<p class="card-text">Nessun risultato di ricerca trovato</p>
+														</div>
+													</div>
+												</div>
+											');
+									}
+									$risultati->free();
+									$conn->close();
+								}
+
+								break;
+
+							case 1:
+								$id=$_POST["id"];
+								$conn=dbConn();
+								$query="SELECT nome FROM video WHERE id=$id;"; /* Preparazione Query */
+								$risultati=$conn->query($query);
+								$riga = $risultati->fetch_assoc();
+								$risultati->free();
+
+								echo ('
+										<div class="container text-center">
+											<h1 class="mt-4 mb-4">'.$riga["nome"].'</h1>
+											<img src="images/video/'.$id.'.jpg" class="img-fluid mt-4 mb-4" alt="Responsive image">
 										</div>
-									</div>
-								');
+									');
+								
+								$query=("SELECT partecipazioni.idPersona, persone.nome, persone.cognome FROM partecipazioni JOIN video ON partecipazioni.idVideo=video.id JOIN persone ON persone.id=partecipazioni.idPersona WHERE video.id=1 AND partecipazioni.selettore=2"); /* Preparazione Query: Cast Film */
+								if ($risultati=$conn->query($query)) { /* Risultati della query */
+									echo ('<div class="container text-center"> CAST');
+									if ($risultati->num_rows>0) {
+										while ($riga = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+											echo ('
+													<div class="col-md-4 py2" onclick="passa_a('.$riga["idPersona"].',2)" >
+														<div class="card h-100 mb-4 shadow-sm">
+															<div class="card-body">
+																<img src="images/persone/'.$riga["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
+																<p class="card-text">'.$riga["nome"].' '.$riga["cognome"].'</p>
+																<div class="d-flex justify-content-between align-items-center">
+																	<div class="btn-group">
+																		<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
+																		<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
+																	</div>
+																</div>
+															</div>
+														</div>
+													</div>
+											');
+										}
+									}
+									else {
+										echo ('
+												<div class="col-md-4 ">
+													<div class="card mb-4 shadow-sm">
+														<div class="card-body">
+															<p class="card-text">Nessun risultato di ricerca trovato</p>
+														</div>
+													</div>
+												</div>
+											');
+									}
+									echo('</div>');
+									$risultati->free();
+									$conn->close();
+								}
+								
+								break;
 							}
-						}
-						else {
-							echo ('
-									<div class="col-md-4 ">
-										<div class="card mb-4 shadow-sm">
-											<div class="card-body">
-												<p class="card-text">Nessun risultato di ricerca trovato</p>
-											</div>
-										</div>
-									</div>
-								');
-						}
-						$risultati->free();
-						$conn->close();
-					}
-				?>
-			  </div>
+					?>
+				</div>
 			</div>
-		  </div>
-		
-		<?php
-			break;
-		case 1:
-		
-			$id=$_POST["id"];
-			$conn=dbConn();
-			$query="SELECT * FROM video WHERE id=$id;"; /* Preparazione Query */
-			$result=$conn->query($query); /* Risultati della query */
-			$riga=$result->fetch_assoc();
-			$conn->close();
-			echo '<div class="container text-center">';
-			echo "<h1 class='mt-4 mb-4'>$riga[nome]</h1>";
-			echo '<img src="images/video/'.$id.'.jpg" class="img-fluid mt-4 mb-4" alt="Responsive image">';
-			echo '</div>';
-			break;
-		}
-		?>
+		</div>
 	</form>
 	</main>
     
