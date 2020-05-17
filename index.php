@@ -171,15 +171,15 @@
 		</header>
 
 		<main role="main">
-			<form name='f' id='f' method='post'>
+			<form name='f' id='f' method='get'>
 				<input type='hidden' name='stato' id='stato'>
 				<input type='hidden' name='id' id='id'>
 				<div class="album py-5 bg-light">
 					<div class="container">
 						<div class="row">
 							<?php
-								if(isset($_POST["stato"])&&!empty($_POST["stato"])) {
-									$stato=$_POST["stato"];
+								if(isset($_GET["stato"])&&!empty($_GET["stato"])) {
+									$stato=$_GET["stato"];
 								}
 								else 
 									$stato=0;
@@ -198,11 +198,7 @@
 																	<img src="images/video/'.$riga["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
 																	<p class="card-text">'.$riga["nome"].'</p>
 																	<p class="card-text-description">'.$riga["Sinossi"].'</p>
-																	<div class="d-flex justify-content-between align-items-center">
-																		<div class="btn-group">
-																			<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-																			<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-																		</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Durata: '.$riga["durata"].' minuti</small>
 																	</div>
 																</div>
@@ -229,7 +225,7 @@
 										break;
 
 									case 1:
-										$id=$_POST["id"];
+										$id=$_GET["id"];
 										$conn=dbConn();
 										$query="SELECT nome FROM video WHERE id=$id;"; /* Preparazione Query */
 										$risultati=$conn->query($query);
@@ -243,26 +239,31 @@
 												</div>
 											');
 										
-										$query=("SELECT partecipazioni.idPersona, persone.nome, persone.cognome FROM partecipazioni JOIN video ON partecipazioni.idVideo=video.id JOIN persone ON persone.id=partecipazioni.idPersona WHERE video.id=1 AND partecipazioni.selettore=2"); /* Preparazione Query: Cast Film */
+										$query="SELECT partecipazioni.idPersona, persone.nome, persone.cognome FROM partecipazioni JOIN video ON partecipazioni.idVideo=video.id JOIN persone ON persone.id=partecipazioni.idPersona WHERE video.id=$id AND partecipazioni.selettore=2"; /* Preparazione Query: Cast Film */
 										if ($risultati=$conn->query($query)) { /* Risultati della query */
-											echo ('<div class="container text-center"> CAST');
+											echo '	<div class="container text-center"> 
+														<h2 class="mt-4 mb-4" >Cast</h2>
+													</div>';
 											if ($risultati->num_rows>0) {
-												while ($riga = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+												while ($riga = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
+													$query="SELECT P.nome from personaggi P JOIN interpretazioni I ON P.id=I.idPersonaggio JOIN persone PE ON PE.id=I.idAttore WHERE PE.id=$riga[idPersona]"; /* Preparazione Query: Cast Film */
+													$ris=$conn->query($query);
 													echo ('
 															<div class="col-md-4 py2" onclick="passa_a('.$riga["idPersona"].',2)" >
 																<div class="card h-100 mb-4 shadow-sm">
 																	<div class="card-body">
 																		<img src="images/persone/'.$riga["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
-																		<p class="card-text">'.$riga["nome"].' '.$riga["cognome"].'</p>
-																		<div class="d-flex justify-content-between align-items-center">
-																			<div class="btn-group">
-																				<button type="button" class="btn btn-sm btn-outline-secondary">View</button>
-																				<button type="button" class="btn btn-sm btn-outline-secondary">Edit</button>
-																			</div>
+																		<p class="card-text">'.$riga["nome"].' '.$riga["cognome"].'</p>');
+													if ($ris->num_rows>0){
+														$pers = $ris->fetch_assoc();
+														echo           '<p class="card-text-description">'.$pers["nome"].'</p>';
+													}					
+													echo					('<div class="d-flex justify-content-between align-items-center">
 																		</div>
 																	</div>
 																</div>
 															</div>
+															
 													');
 												}
 											}
@@ -277,7 +278,49 @@
 														</div>
 													');
 											}
-											echo('</div>');
+											
+											$risultati->free();
+										}
+										$query="SELECT partecipazioni.idPersona, persone.nome, persone.cognome FROM partecipazioni JOIN video ON partecipazioni.idVideo=video.id JOIN persone ON persone.id=partecipazioni.idPersona WHERE video.id=$id AND partecipazioni.selettore=1"; /* Preparazione Query: Cast Film */
+										if ($risultati=$conn->query($query)) { /* Risultati della query */
+											echo '	<div class="container text-center"> 
+														<h2 class="mt-4 mb-4" >Cast</h2>
+													</div>';
+											if ($risultati->num_rows>0) {
+												while ($riga = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
+													$query="SELECT P.nome from personaggi P JOIN interpretazioni I ON P.id=I.idPersonaggio JOIN persone PE ON PE.id=I.idAttore WHERE PE.id=$riga[idPersona]"; /* Preparazione Query: Cast Film */
+													$ris=$conn->query($query);
+													echo ('
+															<div class="col-md-4 py2" onclick="passa_a('.$riga["idPersona"].',2)" >
+																<div class="card h-100 mb-4 shadow-sm">
+																	<div class="card-body">
+																		<img src="images/persone/'.$riga["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
+																		<p class="card-text">'.$riga["nome"].' '.$riga["cognome"].'</p>');
+													if ($ris->num_rows>0){
+														$pers = $ris->fetch_assoc();
+														echo           '<p class="card-text-description">'.$pers["nome"].'</p>';
+													}					
+													echo					('<div class="d-flex justify-content-between align-items-center">
+																		</div>
+																	</div>
+																</div>
+															</div>
+															
+													');
+												}
+											}
+											else {
+												echo ('
+														<div class="col-md-4 ">
+															<div class="card mb-4 shadow-sm">
+																<div class="card-body">
+																	<p class="card-text">Nessun risultato di ricerca trovato</p>
+																</div>
+															</div>
+														</div>
+													');
+											}
+											
 											$risultati->free();
 											$conn->close();
 										}
