@@ -1,23 +1,23 @@
 <?php
-
+	/* COntrollo Sessioni */
 	session_start();
-	if(!isset($_SESSION["login"]) || $_SESSION["login"]!=1)
+	if(!isset($_SESSION["login"]) || $_SESSION["login"]!=1) /* Mancata presenza di dati integri per login */
 		session_unset();
-	if(isset($_GET["stato"])&&$_GET["stato"]=="logout")
+	if(isset($_GET["stato"])&&$_GET["stato"]=="logout") /* Operazione di logout */
 	{
 		session_unset();
 		session_destroy();
 		session_start();
 	}
 	
-	function dbConn(){
+	function dbConn(){ /* Connessione al DB */
 		$host = ""; /* Host Server MySQL */
 		$user = "root"; /* User Server MySQL */
 		$pwd = ""; /* Password Server MySQL */
 		$dbname = "catalogo"; /* Nome DB MySQL */
 		$conn = new mysqli ( $host , $user , $pwd , $dbname ); /* Inizializzazione Connesione DB */
 		if ($conn->connect_errno) { /* Controllo della corretta connesione */
-			printf("Errore nella connessione al DB:</br>", $conn->connect_error);
+			printf("Errore nella connessione al DB:</br>", $conn->connect_error); /* Stampa eventuali errori */
 			exit();
 		}
 		return $conn;
@@ -70,9 +70,10 @@
 		}
 
 		</style>
-		<!-- Custom styles for this template -->
-		<link href="album.css" rel="stylesheet">
-		<script>
+		
+		<!--<link href="album.css" rel="stylesheet">-->
+
+		<script> /* Funzioni JavaScript */
 			function logout(){
 				f.stato.value="logout";
 				f.submit();
@@ -87,42 +88,40 @@
   	</head>
   	<body>
 		<header>
-		  	<div class="navbar navbar-dark bg-dark shadow-sm">
-		 		<div class="container d-flex justify-content-between">
-			  		<a href="#" class="navbar-brand d-flex align-items-center">
-						<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24" focusable="false"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-						<strong>Album</strong>
+		  	<div class="navbar navbar-dark bg-dark shadow-sm"> <!-- Base della Navbar-->
+		 		<div class="container d-flex justify-content-between"> <!-- Contenitore delle scorciatoie -->
+			  		<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,0)"> <!-- Scorciatoia Homepage -->
+						<!--<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24" focusable="false"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>-->
+						<strong>Homepage</strong>
 			  		</a>
 
 					<?php
-						if(!isset($_SESSION["login"]))
+						if(!isset($_SESSION["login"])) /* Sessione Login non inizializzata */
 							$_SESSION["login"]=0;
-						if(isset($_POST["user"]) && isset($_POST["pass"])){
+						if(isset($_POST["user"]) && isset($_POST["pass"])){ /* Username e Password specificati */
 							$login=1;
 							$utente=trim($_POST["user"]);
 							$password=trim($_POST["pass"]);
 							$conn=dbConn();
-							$query="SELECT * FROM utenti WHERE email='".$utente."' AND password='".md5($password)."';"; /* Preparazione Query */
-							$result=$conn->query($query); /* Risultati della query */
-							if (!$result->num_rows!=1){
-								$riga=$result->fetch_assoc();
+							$query="SELECT * FROM utenti WHERE email='".$utente."' AND password='".md5($password)."';"; /* Preparazione Query: Controllo Accesso */
+							$risultati=$conn->query($query); /* Risultati della query */
+							if (!$risultati->num_rows!=1){
+								$riga=$risultati->fetch_assoc();
 								$admin=$riga["admin"];
-								$result->free();
+								$risultati->free();
 								$_SESSION["user"]=$riga["username"];
 								$_SESSION["admin"]=$riga["admin"];
 								$_SESSION["login"]=1;
 							}
 							else
 								$login=0;
-							//$result->free();
+						
+							$result->free();
 							$conn->close();
 						}
-						
-						/*$_SESSION["login"]=1;
-						$_SESSION["user"]="Pippo";*/
 
 						if($_SESSION["login"]==0) /* Utente non loggato */
-							echo ('
+							echo (' 
 								<div class="dropdown">
 							<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 								Login
@@ -150,8 +149,8 @@
 								<a class="dropdown-item" href="#">Forgot password?</a>
 								</div>
 							</div>
-							');
-						else
+							'); /* Tendina Login */
+						else /* Utente loggato */
 							echo ('
 								<div class="dropdown">
 							<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -164,42 +163,42 @@
 									<button class="dropdown-item" type="button" onclick="logout()">Logout</button>
 								</div>
 							</div>
-							');
+							'); /* Tendina gestione contenuti */
 					?>
 				</div>
 		  	</div>
 		</header>
 
 		<main role="main">
-			<form name='f' id='f' method='get'>
-				<input type='hidden' name='stato' id='stato'>
-				<input type='hidden' name='id' id='id'>
+			<form name='f' id='f' method='get'> <!-- Form Principale -->
+				<input type='hidden' name='stato' id='stato'> <!-- Identificativo della pagina da caricare -->
+				<input type='hidden' name='id' id='id'> <!-- Identificativo dell'oggetto a cui si fa riferimento -->
 				<div class="album py-5 bg-light">
 					<div class="container">
 						<div class="row">
 							<?php
-								if(isset($_GET["stato"])&&!empty($_GET["stato"])) {
+								if(isset($_GET["stato"])&&!empty($_GET["stato"])) { /* Stato conosciuto */
 									$stato=$_GET["stato"];
 								}
-								else 
+								else  /* Stato sconosciuto */
 									$stato=0;
 
 								switch($stato) {
-									case 0:
+									case 0: /* Homepage */
 										$conn=dbConn();
-										$query="SELECT id,nome,Sinossi,durata FROM video WHERE selettore=1;"; /* Preparazione Query: Tutti i video */
-										if ($risultati=$conn->query($query)) { /* Risultati della query */
-											if ($risultati->num_rows>0) {
-												while ($riga = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+										$query="SELECT id,nome,Sinossi,durata FROM video WHERE selettore=1 LIMIT 15;"; /* Preparazione Query: Tutti i video */
+										if ($video=$conn->query($query)) { /* Query effettuata con successo */
+											if ($video->num_rows>0) { /* Almeno un risultato */
+												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
 													echo ('
-														<div class="col-md-4 py2" onclick="passa_a('.$riga["id"].',1)" >
+														<div class="col-md-4 py2" onclick="passa_a('.$elemento["id"].',1)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
-																	<img src="images/video/'.$riga["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
-																	<p class="card-text">'.$riga["nome"].'</p>
-																	<p class="card-text-description">'.$riga["Sinossi"].'</p>
+																	<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
+																	<p class="card-text">'.$elemento["nome"].'</p>
+																	<p class="card-text-description">'.$elemento["Sinossi"].'</p>
 																	<div class="d-flex flex-row-reverse align-items-center">
-																		<small class="text-muted">Durata: '.$riga["durata"].' minuti</small>
+																		<small class="text-muted">Durata: '.$elemento["durata"].' minuti</small>
 																	</div>
 																</div>
 															</div>
@@ -207,7 +206,7 @@
 													');
 												}
 											}
-											else {
+											else { /* Comunicazione mancanza di elementi */
 												echo ('
 														<div class="col-md-4 ">
 															<div class="card mb-4 shadow-sm">
@@ -224,39 +223,46 @@
 
 										break;
 
-									case 1:
+									case 1: /* Dettagli video */
 										$id=$_GET["id"];
 										$conn=dbConn();
-										$query="SELECT nome FROM video WHERE id=$id;"; /* Preparazione Query */
+										$query="SELECT nome,durata FROM video WHERE id=$id;"; /* Preparazione Query */
 										$risultati=$conn->query($query);
 										$riga = $risultati->fetch_assoc();
 										$risultati->free();
 
 										echo ('
+												<input type="button" value="Indietro" onclick="history.back(-1)" />
 												<div class="container text-center">
 													<h1 class="mt-4 mb-4">'.$riga["nome"].'</h1>
 													<img src="images/video/'.$id.'.jpg" class="img-fluid mt-4 mb-4" alt="Responsive image">
 												</div>
+												<div class="d-flex flex-row-reverse align-items-center">
+													<small class="text-muted">Durata: '.$riga["durata"].' minuti</small>
+												</div>
 											');
 										
-										$query="SELECT partecipazioni.idPersona, persone.nome, persone.cognome FROM partecipazioni JOIN video ON partecipazioni.idVideo=video.id JOIN persone ON persone.id=partecipazioni.idPersona WHERE video.id=$id AND partecipazioni.selettore=2"; /* Preparazione Query: Cast Film */
-										if ($risultati=$conn->query($query)) { /* Risultati della query */
+										$query="SELECT Par.idPersona, Per.nome, Per.cognome, Pggi.nome nomeP 
+										FROM partecipazioni Par JOIN video V ON Par.idVideo=V.id JOIN persone Per ON Per.id=Par.idPersona JOIN interpretazioni I ON I.idAttore=Per.id JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										WHERE V.id=$id AND Par.selettore=2"; /* Preparazione Query: Attori Film */
+
+										if ($attori=$conn->query($query)) { /* Risultati della query */
 											echo '	<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Cast</h2>
 													</div>';
-											if ($risultati->num_rows>0) {
-												while ($riga = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
-													$query="SELECT P.nome from personaggi P JOIN interpretazioni I ON P.id=I.idPersonaggio JOIN persone PE ON PE.id=I.idAttore WHERE PE.id=$riga[idPersona]"; /* Preparazione Query: Cast Film */
-													$ris=$conn->query($query);
+											if ($attori->num_rows>0) {
+												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
+													//$query="SELECT P.nome from personaggi P JOIN interpretazioni I ON P.id=I.idPersonaggio JOIN persone PE ON PE.id=I.idAttore WHERE PE.id=$riga[idPersona]"; /* Preparazione Query: Cast Film */
+													//$ris=$conn->query($query);
 													echo ('
-															<div class="col-md-4 py2" onclick="passa_a('.$riga["idPersona"].',2)" >
+															<div class="col-md-4 py2" onclick="passa_a('.$attore["idPersona"].',2);" >
 																<div class="card h-100 mb-4 shadow-sm">
 																	<div class="card-body">
-																		<img src="images/persone/'.$riga["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
-																		<p class="card-text">'.$riga["nome"].' '.$riga["cognome"].'</p>');
-													if ($ris->num_rows>0){
-														$pers = $ris->fetch_assoc();
-														echo           '<p class="card-text-description">'.$pers["nome"].'</p>';
+																		<img src="images/persone/'.$attore["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" alt="images/persone/default.png">
+																		<p class="card-text">'.$attore["nome"].' '.$attore["cognome"].'</p>');
+													if ($attore["nomeP"]!=null){
+														echo           '<p class="card-text">'.$attore["nomeP"].'</p>';
+														//echo           '<p class="card-text-description">'.$attore["nomeP"].'</p>'; 
 													}					
 													echo					('<div class="d-flex justify-content-between align-items-center">
 																		</div>
@@ -267,7 +273,7 @@
 													');
 												}
 											}
-											else {
+											else { /* Comunicazione mancanza di elementi */
 												echo ('
 														<div class="col-md-4 ">
 															<div class="card mb-4 shadow-sm">
@@ -279,37 +285,32 @@
 													');
 											}
 											
-											$risultati->free();
+											$attori->free();
 										}
-										$query="SELECT partecipazioni.idPersona, persone.nome, persone.cognome FROM partecipazioni JOIN video ON partecipazioni.idVideo=video.id JOIN persone ON persone.id=partecipazioni.idPersona WHERE video.id=$id AND partecipazioni.selettore=1"; /* Preparazione Query: Cast Film */
-										if ($risultati=$conn->query($query)) { /* Risultati della query */
+
+										$query="SELECT Par.idPersona, Per.nome, Per.cognome, Pggi.nome nomeP 
+										FROM partecipazioni Par JOIN video V ON Par.idVideo=V.id JOIN persone Per ON Per.id=Par.idPersona JOIN interpretazioni I ON I.idAttore=Per.id JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										WHERE V.id=$id AND Par.selettore=1"; /* Preparazione Query: Registi Film */
+
+										if ($registi=$conn->query($query)) { /* Risultati della query */
 											echo '	<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Regista</h2>
 													</div>';
-											if ($risultati->num_rows>0) {
-												while ($riga = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
-													$query="SELECT P.nome from personaggi P JOIN interpretazioni I ON P.id=I.idPersonaggio JOIN persone PE ON PE.id=I.idAttore WHERE PE.id=$riga[idPersona]"; /* Preparazione Query: Cast Film */
-													$ris=$conn->query($query);
+											if ($registi->num_rows>0) {
+												while ($regista = $registi->fetch_assoc()) { /* Costruisco un riquadro per ogni regista */
 													echo ('
-															<div class="col-md-4 py2" onclick="passa_a('.$riga["idPersona"].',2)" >
+															<div class="col-md-4 py2" onclick="passa_a('.$regista["idPersona"].',2)" >
 																<div class="card h-100 mb-4 shadow-sm">
 																	<div class="card-body">
-																		<img src="images/persone/'.$riga["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail">
-																		<p class="card-text">'.$riga["nome"].' '.$riga["cognome"].'</p>');
-													if ($ris->num_rows>0){
-														$pers = $ris->fetch_assoc();
-														echo           '<p class="card-text-description">'.$pers["nome"].'</p>';
-													}					
-													echo					('<div class="d-flex justify-content-between align-items-center">
-																		</div>
+																		<img src="images/persone/'.$regista["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';">
+																		<p class="card-text">'.$regista["nome"].' '.$regista["cognome"].'</p>				
 																	</div>
 																</div>
-															</div>
-															
+															</div>		
 													');
 												}
 											}
-											else {
+											else { /* Comunicazione mancanza di elementi */
 												echo ('
 														<div class="col-md-4 ">
 															<div class="card mb-4 shadow-sm">
@@ -321,15 +322,96 @@
 													');
 											}
 											
-											$risultati->free();
+											$registi->free();
+										}
+										
+										$query="SELECT P.* 
+										FROM video V JOIN comparizioni C ON V.id=c.idVideo JOIN personaggi P ON P.id=C.idPersonaggio 
+										WHERE V.id=$id"; /* Preparazione Query: Personaggi Film */
+
+										if ($personaggi=$conn->query($query)) { /* Risultati della query */
+											echo '	<div class="container text-center"> 
+														<h2 class="mt-4 mb-4" >Personaggi</h2>
+													</div>';
+											if ($personaggi->num_rows>0) {
+												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
+													echo ('
+															<div class="col-md-4 py2" onclick="passa_a('.$personaggio["id"].',3)" >
+																<div class="card h-100 mb-4 shadow-sm">
+																	<div class="card-body">
+																		<img src="images/personaggi/'.$personaggio["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';">
+																		<p class="card-text">'.$personaggio["nome"].'</p>				
+																	</div>
+																</div>
+															</div>		
+													');
+												}
+											}
+											else { /* Comunicazione mancanza di elementi */
+												echo ('
+														<div class="col-md-4 ">
+															<div class="card mb-4 shadow-sm">
+																<div class="card-body">
+																	<p class="card-text">Nessun risultato di ricerca trovato</p>
+																</div>
+															</div>
+														</div>
+													');
+											}
+											
+											$personaggi->free();
+										}
+										
+										$query="SELECT Par.idPersona, Per.nome, Per.cognome, Pggi.nome nomeP 
+										FROM partecipazioni Par JOIN video V ON Par.idVideo=V.id JOIN persone Per ON Per.id=Par.idPersona JOIN interpretazioni I ON I.idAttore=Per.id JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										WHERE V.id=$id AND Par.selettore=3"; /* Preparazione Query: Produttori Film */
+
+										if ($produttori=$conn->query($query)) { /* Risultati della query */
+											echo '	<div class="container text-center"> 
+														<h2 class="mt-4 mb-4" >Produttori</h2>
+													</div>';
+											if ($produttori->num_rows>0) {
+												while ($produttore = $produttori->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
+													echo ('
+															<div class="col-md-4 py2" onclick="passa_a('.$produttore["idPersona"].',2)" >
+																<div class="card h-100 mb-4 shadow-sm">
+																	<div class="card-body">
+																		<img src="images/persone/'.$produttore["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';">
+																		<p class="card-text">'.$produttore["nome"].' '.$produttore["cognome"].'</p>				
+																	</div>
+																</div>
+															</div>		
+													');
+												}
+											}
+											else { /* Comunicazione mancanza di elementi */
+												echo ('
+														<div class="col-md-4 ">
+															<div class="card mb-4 shadow-sm">
+																<div class="card-body">
+																	<p class="card-text">Nessun risultato di ricerca trovato</p>
+																</div>
+															</div>
+														</div>
+													');
+											}
+											
+											$produttori->free();
 											$conn->close();
 										}
+
+										echo ('
+												</div></div></div>
+												<div class="container"> 
+													<input type="button" value="Indietro" onclick="history.back(-1)" />
+												</div>
+											');
 										break;
-									}
+								}
 							?>
-						</div>
-					</div>
-				</div>
+						<!--</div>-->
+					<!--</div>
+				</div>-->
 			</form>
 		</main>
 		
