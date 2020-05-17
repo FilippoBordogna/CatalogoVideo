@@ -3,7 +3,7 @@
 	session_start();
 	if(!isset($_SESSION["login"]) || $_SESSION["login"]!=1)
 		session_unset();
-	if(isset($_POST["stato"])&&$_POST["stato"]=="logout")
+	if(isset($_GET["stato"])&&$_GET["stato"]=="logout")
 	{
 		session_unset();
 		session_destroy();
@@ -284,7 +284,7 @@
 										$query="SELECT partecipazioni.idPersona, persone.nome, persone.cognome FROM partecipazioni JOIN video ON partecipazioni.idVideo=video.id JOIN persone ON persone.id=partecipazioni.idPersona WHERE video.id=$id AND partecipazioni.selettore=1"; /* Preparazione Query: Cast Film */
 										if ($risultati=$conn->query($query)) { /* Risultati della query */
 											echo '	<div class="container text-center"> 
-														<h2 class="mt-4 mb-4" >Cast</h2>
+														<h2 class="mt-4 mb-4" >Regista</h2>
 													</div>';
 											if ($risultati->num_rows>0) {
 												while ($riga = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
