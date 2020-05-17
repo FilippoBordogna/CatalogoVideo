@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 16, 2020 alle 14:58
+-- Creato il: Mag 17, 2020 alle 18:11
 -- Versione del server: 10.4.11-MariaDB
 -- Versione PHP: 7.4.5
 
@@ -171,7 +171,19 @@ INSERT INTO `partecipazioni` (`idPersona`, `idVideo`, `selettore`) VALUES
 (10, 3, 3),
 (10, 6, 3),
 (10, 7, 2),
-(10, 7, 3);
+(10, 7, 3),
+(11, 2, 2),
+(13, 2, 1),
+(14, 4, 1),
+(15, 5, 1),
+(16, 6, 1),
+(16, 6, 3),
+(17, 7, 1),
+(18, 8, 1),
+(19, 9, 1),
+(20, 9, 1),
+(21, 10, 1),
+(21, 10, 3);
 
 -- --------------------------------------------------------
 
@@ -231,7 +243,16 @@ INSERT INTO `persone` (`id`, `nome`, `cognome`, `regista`, `attore`, `produttore
 (9, 'Tom', 'Holland', 0, 1, 0),
 (10, 'Jon', 'Favreau', 1, 1, 1),
 (11, 'Edward', 'Norton', 0, 1, 0),
-(12, 'Paul', 'Rudd', 0, 1, 0);
+(12, 'Paul', 'Rudd', 0, 1, 0),
+(13, 'Louis', 'Leterrier', 1, 0, 0),
+(14, 'Kenneth', 'Branagh', 1, 0, 0),
+(15, 'Joe', 'Johnston', 1, 0, 0),
+(16, 'Joss', 'Whedon', 1, 0, 1),
+(17, 'Shane', 'Black', 1, 0, 0),
+(18, 'Alan', 'Taylor', 1, 0, 0),
+(19, 'Anthony', 'Russo', 1, 0, 0),
+(20, 'Joe', 'Russo', 1, 0, 0),
+(21, 'James', 'Gunn', 1, 0, 1);
 
 -- --------------------------------------------------------
 
@@ -480,7 +501,7 @@ ALTER TABLE `personaggi`
 -- AUTO_INCREMENT per la tabella `persone`
 --
 ALTER TABLE `persone`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
 
 --
 -- AUTO_INCREMENT per la tabella `saghe`
