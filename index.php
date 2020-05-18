@@ -98,12 +98,16 @@
 			color: white;	   
 		}
 
-		.card-text-description{
+		.card-text-description {
 			display: none;
 		}
 
-		.col-md-4 :hover .card-text-description{
+		.col-md-4 :hover .card-text-description {
 			display: block;
+		}
+
+		.text-left :hover {
+			cursor: pointer;
 		}
 
 		</style>
@@ -234,7 +238,7 @@
 								switch($stato) {
 									case 0: /* Homepage */
 										$conn=dbConn();
-										$query="SELECT id,nome,Sinossi,durata FROM video WHERE selettore=1 LIMIT 15;"; /* Preparazione Query: Tutti i video */
+										$query="SELECT id,nome,Sinossi,durata FROM video LIMIT 15;"; /* Preparazione Query: Tutti i video */
 										if ($video=$conn->query($query)) { /* Query effettuata con successo */
 											if ($video->num_rows>0) { /* Almeno un risultato */
 												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
@@ -286,7 +290,10 @@
 											echo "<script type='text/javascript'>alert('La tua recensione è stata inserita!');</script>";
 											
 										}
-										$query="SELECT nome,durata FROM video WHERE id=$id;"; /* Preparazione Query */
+
+										$query="SELECT V.id,V.nome,V.durata,V.idSaga,v.idSerie,V.numero,V.stagione,V.Sinossi,Se.nome nomeSe,Sa.nome nomeSa 
+										FROM video V LEFT JOIN serie Se ON V.idSerie=Se.id LEFT JOIN saghe Sa ON Sa.id=V.idSaga 
+										WHERE V.id=$id;"; /* Preparazione Query: Dettagli video */
 										$risultati=$conn->query($query);
 										$video = $risultati->fetch_assoc();
 										$risultati->free();
@@ -296,11 +303,25 @@
 												<div class="container text-center">
 													<h1 class="mt-4 mb-4">'.$video["nome"].'</h1>
 													<img src="images/video/'.$id.'.jpg" class="img-fluid mt-4 mb-4" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$video["nome"].'">
+													<p class="card-text" style="text-align:left !important">'.$video["Sinossi"].'</p>
 												</div>
 												<div class="d-flex flex-row-reverse align-items-center">
 													<small class="text-muted">Durata: '.$video["durata"].' minuti</small>
 												</div>
 											');
+
+										if($video["idSerie"]!=null)
+											echo ('
+												<div class="container text-left">
+												<p class="card-text" onclick="passa_a('.$video["idSerie"].',4);><strong>Serie: </strong><a href="#"> '.$video["nomeSe"].'('.$video["stagione"].'x'.$video["numero"].')</a></p>
+												</div>
+											');
+										else if($video["idSaga"]!=null)
+											echo ('
+													<div class="container text-left">
+														<p class="card-text" onclick="passa_a('.$video["idSaga"].',5);"><strong>Saga: </strong><a href="#"> '.$video["nomeSa"].'('.$video["numero"].')</a></p>
+													</div>
+												');
 										
 										$query="SELECT Par.idPersona, Per.nome, Per.cognome, Pggi.nome nomeP 
 										FROM partecipazioni Par JOIN video V ON Par.idVideo=V.id JOIN persone Per ON Per.id=Par.idPersona JOIN interpretazioni I ON I.idAttore=Per.id JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
@@ -312,8 +333,6 @@
 													</div>';
 											if ($attori->num_rows>0) {
 												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
-													//$query="SELECT P.nome from personaggi P JOIN interpretazioni I ON P.id=I.idPersonaggio JOIN persone PE ON PE.id=I.idAttore WHERE PE.id=$riga[idPersona]"; /* Preparazione Query: Cast Film */
-													//$ris=$conn->query($query);
 													echo ('
 														<div class="col-md-4 py2" onclick="passa_a('.$attore["idPersona"].',2);" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -328,8 +347,7 @@
 																
 																</div>
 															</div>
-														</div>
-															
+														</div>		
 													');
 												}
 											}
@@ -535,7 +553,7 @@
 					</div>
 				</div>
 				<div class="container"> 
-					<input type="button" value="Indietro" onclick="history.back(-1)" />
+					<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 				</div>
 				');
 									break;
@@ -549,7 +567,7 @@
 										$risultati->free();
 
 										echo ('
-												<input type="button" value="Indietro" onclick="history.back(-1)" />
+												<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 												<div class="container text-center">
 													<h1 class="mt-4 mb-4">'.$persona["nome"].' '.$persona["cognome"].'</h1>
 													<img src="images/persone/'.$id.'.jpg" style="max-width: 50%; height: auto;" class="mt-4 mb-4" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$persona["nome"].' '.$persona["cognome"].'">
