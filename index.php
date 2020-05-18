@@ -278,13 +278,10 @@
 											$voto=$_POST["rate"];
 											if(isset($_POST["rec"]))
 												$rec=$_POST["rec"];
-											$recens="";
 											$recens="INSERT INTO recensionevideo VALUES ($id,$_SESSION[idUser],'$voto'";
 											if(isset($rec))
 												$recens.=",'$rec'";
-											$recens.=");";
-											echo $recens;
-											
+											$recens.=",null);";
 											$conn->query($recens);
 											echo "<script type='text/javascript'>alert('La tua recensione è stata inserita!');</script>";
 											

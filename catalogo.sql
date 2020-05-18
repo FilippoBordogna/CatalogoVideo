@@ -263,8 +263,9 @@ INSERT INTO `persone` (`id`, `nome`, `cognome`, `regista`, `attore`, `produttore
 CREATE TABLE `recensioneserie` (
   `idSerie` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
-  `idAdmin` int(11),
-  `testo` varchar(255) NOT NULL
+  `voto` int(11) NOT NULL,
+  `testo` varchar(255),
+  `idAdmin` int(11)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -276,8 +277,9 @@ CREATE TABLE `recensioneserie` (
 CREATE TABLE `recensionevideo` (
   `idVideo` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
-  `idAdmin` int(11),
-  `testo` varchar(255) NOT NULL
+  `voto` int(11) NOT NULL,
+  `testo` varchar(255) NOT NULL,
+  `idAdmin` int(11)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
