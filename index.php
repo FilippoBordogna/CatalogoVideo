@@ -122,13 +122,18 @@
 				f.submit();
 			}
 			
-			function recensione(){
+			function recensione(id){
 				if(f.rate.value==0)
 					alert("Errore! Devi inserire un voto per lasciare una recensione");
 				else{
-					rec.submit();
+					if(f.textarea.value!="")
+						recensioni.rec.value=f.textarea.value;
+					recensioni.rate.value=f.rate.value;
+					recensioni.submit();
 				}
 			}
+			
+			
 		</script>
   	</head>
   	<body>
@@ -155,6 +160,7 @@
 								$admin=$riga["admin"];
 								$risultati->free();
 								$_SESSION["user"]=$riga["username"];
+								$_SESSION["idUser"]=$riga["id"];
 								$_SESSION["admin"]=$riga["admin"];
 								$_SESSION["login"]=1;
 							}
@@ -268,6 +274,21 @@
 									case 1: /* Dettagli video */
 										$id=$_GET["id"]; /* idVideo */
 										$conn=dbConn();
+										if(isset($_POST["rate"])){
+											$voto=$_POST["rate"];
+											if(isset($_POST["rec"]))
+												$rec=$_POST["rec"];
+											$recens="";
+											$recens="INSERT INTO recensionevideo VALUES ($id,$_SESSION[idUser],'$voto'";
+											if(isset($rec))
+												$recens.=",'$rec'";
+											$recens.=");";
+											echo $recens;
+											
+											$conn->query($recens);
+											echo "<script type='text/javascript'>alert('La tua recensione è stata inserita!');</script>";
+											
+										}
 										$query="SELECT nome,durata FROM video WHERE id=$id;"; /* Preparazione Query */
 										$risultati=$conn->query($query);
 										$video = $risultati->fetch_assoc();
@@ -447,7 +468,7 @@
 											$personaggi->free();
 											
 											if($_SESSION["login"]==1){
-												echo '<form name="rec" id="rec" method="post">';
+												
 												echo(
 													'<div class="container text-center"> 
 														<!-- Button trigger modal -->
@@ -492,21 +513,21 @@
 																	<label for="star1" title="1/10">1 star</label>
 																  </div>
 																	<div class="form-group">
-																	  <textarea id="textarea" class="form-control" rows="5" maxlength="255" placeholder="Scrivi la tua recensione"></textarea>
+																	  <textarea id="textarea" name="rec" class="form-control" rows="5" maxlength="255" placeholder="Scrivi la tua recensione"></textarea>
 																	</div>
 																</form>
 															  </div>
 															  
 															  <div class="modal-footer">
 																<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-																<button type="button" onclick="recensione()" class="btn btn-primary">Salva recensione</button>
+																<button type="button" onclick="recensione('.$id.',1)" class="btn btn-primary">Salva recensione</button>
 															  </div>
 															</div>
 														  </div>
 														</div>
 														
 													</div>');
-													echo '</form>';
+													
 											}
 												
 											
@@ -676,7 +697,15 @@
 							?>
 			</form>
 		</main>
-		
+		<form name="recensioni" id="recensioni" method="post" action="
+		<?php
+			echo "index.php?stato=1&id=$_GET[id]";
+		?>
+		">
+			<input type='hidden' name='rate' id='rate'> <!-- Identificativo della pagina da caricare -->
+			<input type='hidden' name='rec' id='rec'> <!-- Identificativo dell'oggetto a cui si fa riferimento -->
+				
+		</form>
 		<footer class="text-muted">
 			<div class="container">
 				<p class="float-right">
