@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 17, 2020 alle 18:11
+-- Creato il: Mag 18, 2020 alle 20:08
 -- Versione del server: 10.4.11-MariaDB
 -- Versione PHP: 7.4.5
 
@@ -83,7 +83,7 @@ CREATE TABLE `curiositaserie` (
   `id` int(11) NOT NULL,
   `idSerie` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
-  `idAdmin` int(11) NOT NULL,
+  `idAdmin` int(11),
   `testo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -97,7 +97,7 @@ CREATE TABLE `curiositavideo` (
   `id` int(11) NOT NULL,
   `idVideo` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
-  `idAdmin` int(11) NOT NULL,
+  `idAdmin` int(11),
   `testo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -263,7 +263,7 @@ INSERT INTO `persone` (`id`, `nome`, `cognome`, `regista`, `attore`, `produttore
 CREATE TABLE `recensioneserie` (
   `idSerie` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
-  `idAdmin` int(11) NOT NULL,
+  `idAdmin` int(11),
   `testo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -276,7 +276,7 @@ CREATE TABLE `recensioneserie` (
 CREATE TABLE `recensionevideo` (
   `idVideo` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
-  `idAdmin` int(11) NOT NULL,
+  `idAdmin` int(11),
   `testo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
