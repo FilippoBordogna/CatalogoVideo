@@ -38,8 +38,45 @@
 
 		<!-- Bootstrap core CSS -->
 		<link href="assets/dist/css/bootstrap.css" rel="stylesheet">
+		
 
 		<style>
+		.rate {
+			float: left;
+			height: 46px;
+			padding: 0 10px;
+		}
+		.rate:not(:checked) > input {
+			position:absolute;
+			top:-9999px;
+		}
+		.rate:not(:checked) > label {
+			float:right;
+			width:1em;
+			overflow:hidden;
+			white-space:nowrap;
+			cursor:pointer;
+			font-size:30px;
+			color:#ccc;
+		}
+		.rate:not(:checked) > label:before {
+			content: '★ ';
+		}
+		.rate > input:checked ~ label {
+			color: #ffc700;    
+		}
+		.rate:not(:checked) > label:hover,
+		.rate:not(:checked) > label:hover ~ label {
+			color: #deb217;  
+		}
+		.rate > input:checked + label:hover,
+		.rate > input:checked + label:hover ~ label,
+		.rate > input:checked ~ label:hover,
+		.rate > input:checked ~ label:hover ~ label,
+		.rate > label:hover ~ input:checked ~ label {
+			color: #c59b08;
+		}
+		
 		.bd-placeholder-img {
 			font-size: 1.125rem;
 			text-anchor: middle;
@@ -84,6 +121,14 @@
 				f.stato.value=valore;
 				f.submit();
 			}
+			
+			function recensione(){
+				if(f.rate.value==0)
+					alert("Errore! Devi inserire un voto per lasciare una recensione");
+				else{
+					rec.submit();
+				}
+			}
 		</script>
   	</head>
   	<body>
@@ -116,7 +161,6 @@
 							else
 								$login=0;
 						
-							$result->free();
 							$conn->close();
 						}
 
@@ -192,7 +236,7 @@
 														<div class="col-md-4 py2" onclick="passa_a('.$elemento["id"].',1)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
-																	<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
+																	<img src="images/video/'.$elemento["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
 																	<p class="card-text">'.$elemento["nome"].'</p>
 																	<p class="card-text-description">'.$elemento["Sinossi"].'</p>
 																	<div class="d-flex flex-row-reverse align-items-center">
@@ -230,7 +274,7 @@
 										$risultati->free();
 
 										echo ('
-												<input type="button" value="Indietro" onclick="history.back(-1)" />
+												<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 												<div class="container text-center">
 													<h1 class="mt-4 mb-4">'.$video["nome"].'</h1>
 													<img src="images/video/'.$id.'.jpg" class="img-fluid mt-4 mb-4" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$video["nome"].'">
@@ -286,8 +330,8 @@
 											$attori->free();
 										}
 
-										$query="SELECT Par.idPersona, Per.nome, Per.cognome, Pggi.nome nomeP 
-										FROM partecipazioni Par JOIN video V ON Par.idVideo=V.id JOIN persone Per ON Per.id=Par.idPersona JOIN interpretazioni I ON I.idAttore=Per.id JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										$query="SELECT Par.idPersona, Per.nome, Per.cognome
+										FROM partecipazioni Par JOIN video V ON Par.idVideo=V.id JOIN persone Per ON Per.id=Par.idPersona
 										WHERE V.id=$id AND Par.selettore=1"; /* Preparazione Query: Registi Film */
 
 										if ($registi=$conn->query($query)) { /* Risultati della query */
@@ -325,8 +369,8 @@
 											$registi->free();
 										}
 																				
-										$query="SELECT Par.idPersona, Per.nome, Per.cognome, Pggi.nome nomeP 
-										FROM partecipazioni Par JOIN video V ON Par.idVideo=V.id JOIN persone Per ON Per.id=Par.idPersona JOIN interpretazioni I ON I.idAttore=Per.id JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										$query="SELECT Par.idPersona, Per.nome, Per.cognome
+										FROM partecipazioni Par JOIN video V ON Par.idVideo=V.id JOIN persone Per ON Per.id=Par.idPersona 
 										WHERE V.id=$id AND Par.selettore=3"; /* Preparazione Query: Produttori Film */
 
 										if ($produttori=$conn->query($query)) { /* Risultati della query */
@@ -377,7 +421,7 @@
 											if ($personaggi->num_rows>0) {
 												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
 													echo ('
-														<div class="col-md-4 py2" onclick="passa_a('.$personaggio["id"].',3)" >
+														<div class="col-md-4 mb-4 py2" onclick="passa_a('.$personaggio["id"].',3)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/personaggi/'.$personaggio["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$personaggio["nome"].'">
@@ -390,7 +434,7 @@
 											}
 											else { /* Comunicazione mancanza di elementi */
 												echo ('
-														<div class="col-md-4 ">
+														<div class="col-md-4 mb-4">
 															<div class="card mb-4 shadow-sm">
 																<div class="card-body">
 																	<p class="card-text">Nessun risultato di ricerca trovato</p>
@@ -401,6 +445,71 @@
 											}
 											
 											$personaggi->free();
+											
+											if($_SESSION["login"]==1){
+												echo '<form name="rec" id="rec" method="post">';
+												echo(
+													'<div class="container text-center"> 
+														<!-- Button trigger modal -->
+														<button type="button" class="btn btn-primary mt-1" data-toggle="modal" data-target="#exampleModalCenter">
+														  Lascia una recensione
+														</button>
+						
+														<!-- Modal -->
+														
+														<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+														  <div class="modal-dialog modal-dialog-centered" role="document">
+															<div class="modal-content">
+															  <div class="modal-header">
+																<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																  <span aria-hidden="true">&times;</span>
+																</button>
+															  </div>
+															  
+															  <div class="modal-body" style="margin:0 auto;">
+																<form name="rec" id="rec" method="post">
+																 <div class="rate">
+																	<input  type="radio" id="star10" name="rate" value="10" />
+																	<label for="star10" title="10/10">10 stars</label>
+																	<input type="radio" id="star9" name="rate" value="9" />
+																	<label for="star9" title="9/10">9 stars</label>
+																	<input type="radio" id="star8" name="rate" value="8" />
+																	<label for="star8" title="8/10">8 stars</label>
+																	<input type="radio" id="star7" name="rate" value="7" />
+																	<label for="star7" title="7/10">7 stars</label>
+																	<input type="radio" id="star6" name="rate" value="6" />
+																	<label for="star6" title="6/10">6 star</label>
+																	<input type="radio" id="star5" name="rate" value="5" />
+																	<label for="star5" title="5/10">5 stars</label>
+																	<input type="radio" id="star4" name="rate" value="4" />
+																	<label for="star4" title="4/10">4 stars</label>
+																	<input type="radio" id="star3" name="rate" value="3" />
+																	<label for="star3" title="3/10">3 stars</label>
+																	<input type="radio" id="star2" name="rate" value="2" />
+																	<label for="star2" title="2/10">2 stars</label>
+																	<input type="radio" id="star1" name="rate" value="1" />
+																	<label for="star1" title="1/10">1 star</label>
+																  </div>
+																	<div class="form-group">
+																	  <textarea id="textarea" class="form-control" rows="5" maxlength="255" placeholder="Scrivi la tua recensione"></textarea>
+																	</div>
+																</form>
+															  </div>
+															  
+															  <div class="modal-footer">
+																<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+																<button type="button" onclick="recensione()" class="btn btn-primary">Salva recensione</button>
+															  </div>
+															</div>
+														  </div>
+														</div>
+														
+													</div>');
+													echo '</form>';
+											}
+												
+											
 											$conn->close();
 										}
 				echo ('
@@ -425,7 +534,7 @@
 												<input type="button" value="Indietro" onclick="history.back(-1)" />
 												<div class="container text-center">
 													<h1 class="mt-4 mb-4">'.$persona["nome"].' '.$persona["cognome"].'</h1>
-													<img src="images/persone/'.$id.'.jpg" class="img-fluid mt-4 mb-4" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$persona["nome"].' '.$persona["cognome"].'">
+													<img src="images/persone/'.$id.'.jpg" style="max-width: 50%; height: auto;" class="mt-4 mb-4" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$persona["nome"].' '.$persona["cognome"].'">
 												</div>
 											');
 
@@ -554,7 +663,7 @@
 					</div>
 				</div>
 				<div class="container"> 
-					<input type="button" value="Indietro" onclick="history.back(-1)" />
+					<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 				</div>
 				');
 										break;
