@@ -192,7 +192,7 @@
 														<div class="col-md-4 py2" onclick="passa_a('.$elemento["id"].',1)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
-																	<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
+																	<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
 																	<p class="card-text">'.$elemento["nome"].'</p>
 																	<p class="card-text-description">'.$elemento["Sinossi"].'</p>
 																	<div class="d-flex flex-row-reverse align-items-center">
