@@ -767,7 +767,7 @@
 																			<small class="text-muted">Verificato da '.$riga["admin"].'</small>
 																		</div>';
 																echo '</div>';
-																		if($_SESSION["admin"]==1&&$riga["admin"]==null)
+																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null)
 																			echo'
 																				<div class="modal-footer">
 																					<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>
@@ -814,7 +814,7 @@
 																					</div>';
 																			echo '</div>';
 																		
-																		if($_SESSION["admin"]==1&&$riga["admin"]==null)
+																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null)
 																			echo'
 																				<div class="modal-footer">
 																					<button type="button"  class="btn btn-secondary" onclick="elimina('.$id.','.$riga["id"].')" data-dismiss="modal">Elimina</button>
