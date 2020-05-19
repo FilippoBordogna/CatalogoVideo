@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 4.8.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 19, 2020 alle 18:01
--- Versione del server: 10.4.11-MariaDB
--- Versione PHP: 7.4.5
+-- Creato il: Mag 19, 2020 alle 19:41
+-- Versione del server: 10.1.31-MariaDB
+-- Versione PHP: 7.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -30,7 +31,7 @@ SET time_zone = "+00:00";
 CREATE TABLE `accessi` (
   `id` int(11) NOT NULL,
   `indirizzoIP` varchar(18) NOT NULL,
-  `dataOra` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `dataOra` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `durata` int(11) DEFAULT NULL,
   `idUtente` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -221,38 +222,35 @@ INSERT INTO `personaggi` (`id`, `nome`) VALUES
 CREATE TABLE `persone` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL,
-  `cognome` varchar(50) NOT NULL,
-  `regista` tinyint(1) NOT NULL,
-  `attore` tinyint(1) NOT NULL,
-  `produttore` tinyint(1) NOT NULL
+  `cognome` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dump dei dati per la tabella `persone`
 --
 
-INSERT INTO `persone` (`id`, `nome`, `cognome`, `regista`, `attore`, `produttore`) VALUES
-(1, 'Robert', 'Downey Jr.', 0, 1, 0),
-(2, 'Chris', 'Evans', 0, 1, 0),
-(3, 'Mark', 'Ruffalo', 0, 1, 0),
-(4, 'Chris', 'Hemsworth', 0, 1, 0),
-(5, 'Scarlett', 'Johansson', 0, 1, 1),
-(6, 'Jeremy', 'Renner', 0, 1, 0),
-(7, 'Chris', 'Pratt', 0, 1, 0),
-(8, 'Benedict', 'Cumberbatch', 0, 1, 0),
-(9, 'Tom', 'Holland', 0, 1, 0),
-(10, 'Jon', 'Favreau', 1, 1, 1),
-(11, 'Edward', 'Norton', 0, 1, 0),
-(12, 'Paul', 'Rudd', 0, 1, 0),
-(13, 'Louis', 'Leterrier', 1, 0, 0),
-(14, 'Kenneth', 'Branagh', 1, 0, 0),
-(15, 'Joe', 'Johnston', 1, 0, 0),
-(16, 'Joss', 'Whedon', 1, 0, 1),
-(17, 'Shane', 'Black', 1, 0, 0),
-(18, 'Alan', 'Taylor', 1, 0, 0),
-(19, 'Anthony', 'Russo', 1, 0, 0),
-(20, 'Joe', 'Russo', 1, 0, 0),
-(21, 'James', 'Gunn', 1, 0, 1);
+INSERT INTO `persone` (`id`, `nome`, `cognome`) VALUES
+(1, 'Robert', 'Downey Jr.'),
+(2, 'Chris', 'Evans'),
+(3, 'Mark', 'Ruffalo'),
+(4, 'Chris', 'Hemsworth'),
+(5, 'Scarlett', 'Johansson'),
+(6, 'Jeremy', 'Renner'),
+(7, 'Chris', 'Pratt'),
+(8, 'Benedict', 'Cumberbatch'),
+(9, 'Tom', 'Holland'),
+(10, 'Jon', 'Favreau'),
+(11, 'Edward', 'Norton'),
+(12, 'Paul', 'Rudd'),
+(13, 'Louis', 'Leterrier'),
+(14, 'Kenneth', 'Branagh'),
+(15, 'Joe', 'Johnston'),
+(16, 'Joss', 'Whedon'),
+(17, 'Shane', 'Black'),
+(18, 'Alan', 'Taylor'),
+(19, 'Anthony', 'Russo'),
+(20, 'Joe', 'Russo'),
+(21, 'James', 'Gunn');
 
 -- --------------------------------------------------------
 
@@ -289,10 +287,11 @@ CREATE TABLE `recensionevideo` (
 INSERT INTO `recensionevideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`) VALUES
 (1, 1, 10, 'IRON MAN SEI IL MIO EROE! ', 5),
 (1, 3, 10, 'Davvero un gran bel film! Scaricatelo dal corsaronero: https://ilcorsaronero.xyz/tor/95175/Iron_Man_2008_iTA_ENG_AC3_Bluray_1080p_Subs_x264_DSS', 3),
-(1, 4, 8, 'Bel film, quasi quanto i pirati dei caraaaaaaibi', NULL),
-(1, 5, 9, 'Mi è piaciuto molto, ottimo da vedere mentre si mangia un bel piatto di polenta', NULL),
+(1, 5, 9, 'Mi è piaciuto molto, ottimo da vedere mentre si mangia un bel piatto di polenta', 3),
 (1, 6, 6, 'Non ho capito perchè non c&#39;era spider-man', 5),
 (1, 7, 10, 'Tony ❤ Pepper', 5),
+(2, 3, 10, 'Bello', 3),
+(2, 4, 5, 'Non molto bello', NULL),
 (6, 1, 8, 'Gran bel film', NULL);
 
 -- --------------------------------------------------------
@@ -334,7 +333,7 @@ CREATE TABLE `serie` (
 CREATE TABLE `utenti` (
   `id` int(11) NOT NULL,
   `username` varchar(50) NOT NULL,
-  `email` varchar(255) NOT NULL,
+  `email` varchar(90) NOT NULL,
   `password` varchar(32) NOT NULL,
   `admin` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -345,7 +344,6 @@ CREATE TABLE `utenti` (
 
 INSERT INTO `utenti` (`id`, `username`, `email`, `password`, `admin`) VALUES
 (1, 'username', 'email@email.com', '5f4dcc3b5aa765d61d8327deb882cf99', 0),
-(2, '', '', '', 0),
 (3, 'grande capo', 'admin@admin.it', '21232f297a57a5a743894a0e4a801fc3', 1),
 (4, 'utente banana', 'user@user.it', 'ee11cbb19052e40b07aac0ca060c23ee', 0),
 (5, 'barcigabri', 'barcigabri@gmail.com', '20e8fe46be8f49c48ed4eb7e4f8ecdc7', 1),
@@ -480,7 +478,9 @@ ALTER TABLE `serie`
 -- Indici per le tabelle `utenti`
 --
 ALTER TABLE `utenti`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `username` (`username`),
+  ADD UNIQUE KEY `email` (`email`);
 
 --
 -- Indici per le tabelle `video`
