@@ -1,5 +1,16 @@
 <?php
-	/* COntrollo Sessioni */
+	/* 
+		DA FARE:
+		- Pagina tutte le serie
+		- Pagina tutte le saghe
+		- Mostrare le recensioni e poterle modificare
+		- Copiare e incollare quanto sopra per le curiosità (non c'è voto, possono esserci più commenti(?))
+		- Copiare e incollare quanto sopra per le recensioni e le curiosità delle serie
+		- Permettere ad Admin di validare recensioni e commenti
+		- Ultimi accesi (ultimo) per controllo
+		- Rifare lo schema ER/logico in base alle modifiche (PIPPO)
+	*/
+	/* Controllo Sessioni */
 	session_start();
 	if(!isset($_SESSION["login"]) || $_SESSION["login"]!=1) /* Mancata presenza di dati integri per login */
 		session_unset();
