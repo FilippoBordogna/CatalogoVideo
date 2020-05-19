@@ -239,6 +239,11 @@
 									case 0: /* Homepage */
 										$conn=dbConn();
 										$query="SELECT id,nome,Sinossi,durata FROM video LIMIT 15;"; /* Preparazione Query: Tutti i video */
+										echo ('	
+											<div class="container text-center"> 
+												<h2 class="mt-4 mb-4" >Video piu\' recenti</h2>
+											</div>
+											');
 										if ($video=$conn->query($query)) { /* Query effettuata con successo */
 											if ($video->num_rows>0) { /* Almeno un risultato */
 												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
@@ -278,17 +283,18 @@
 									case 1: /* Dettagli video */
 										$id=$_GET["id"]; /* idVideo */
 										$conn=dbConn();
-										if(isset($_POST["rate"])){
+										if(isset($_POST["rate"])) { /* E' stato dato un voto */
 											$voto=$_POST["rate"];
-											if(isset($_POST["rec"]))
-												$rec=$_POST["rec"];
-											$recens="INSERT INTO recensionevideo VALUES ($id,$_SESSION[idUser],'$voto'";
-											if(isset($rec))
-												$recens.=",'$rec'";
-											$recens.=",null);";
-											$conn->query($recens);
-											echo "<script type='text/javascript'>alert('La tua recensione è stata inserita!');</script>";
-											
+											if(isset($_POST["rec"])) /* E' stata data una recensione */
+												$rec="'".$_POST["rec"]."'";
+											else
+												$rec=null;
+											$recens="INSERT INTO recensionevideo VALUES ($id,$_SESSION[idUser],'$voto',$rec,null)";
+											//echo $recens;
+											if($conn->query($recens))
+												echo "<script type='text/javascript'>alert('La tua recensione è stata inserita!');</script>";
+											else
+												echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";											
 										}
 
 										$query="SELECT V.id,V.nome,V.durata,V.idSaga,v.idSerie,V.numero,V.stagione,V.Sinossi,Se.nome nomeSe,Sa.nome nomeSa 
@@ -319,7 +325,7 @@
 										else if($video["idSaga"]!=null)
 											echo ('
 													<div class="container text-left">
-														<p class="card-text" onclick="passa_a('.$video["idSaga"].',5);"><strong>Saga: </strong><a href="#"> '.$video["nomeSa"].'('.$video["numero"].')</a></p>
+														<p class="card-text" onclick="passa_a('.$video["idSaga"].',5);"><strong>Saga: </strong><a href="#"> '.$video["nomeSa"].' ('.$video["numero"].'° film)</a></p>
 													</div>
 												');
 										
@@ -328,9 +334,11 @@
 										WHERE V.id=$id AND Par.selettore=2"; /* Preparazione Query: Attori Film */
 
 										if ($attori=$conn->query($query)) { /* Risultati della query */
-											echo '	<div class="container text-center"> 
-														<h2 class="mt-4 mb-4" >Attori</h2>
-													</div>';
+											echo ('
+												<div class="container text-center"> 
+													<h2 class="mt-4 mb-4" >Attori</h2>
+												</div>
+												');
 											if ($attori->num_rows>0) {
 												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
 													echo ('
@@ -344,7 +352,6 @@
 														echo ('		<p class="card-text">'.$attore["nomeP"].'</p>');
 																		
 													echo ('
-																
 																</div>
 															</div>
 														</div>		
@@ -484,8 +491,8 @@
 											
 											if($_SESSION["login"]==1){
 												
-												echo(
-													'<div class="container text-center"> 
+												echo('
+													<div class="container text-center"> 
 														<!-- Button trigger modal -->
 														<button type="button" class="btn btn-primary mt-1" data-toggle="modal" data-target="#exampleModalCenter">
 														  Lascia una recensione
@@ -548,7 +555,7 @@
 											
 											$conn->close();
 										}
-				echo ('
+			echo ('
 						</div>
 					</div>
 				</div>
@@ -580,7 +587,8 @@
 
 										if ($video=$conn->query($query)) { /* Risultati della query */
 											if ($video->num_rows>0) {
-												echo ('	<div class="container text-center"> 
+												echo ('	
+													<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Attore in</h2>
 													</div>
 													');
@@ -689,7 +697,7 @@
 																</div>
 															</div>
 														</div>		
-													');
+														');
 												}
 											}																				
 											$personaggi->free();
@@ -704,8 +712,107 @@
 				');
 										break;
 									
+									case 3: /* Dettagli personaggio */
+										$id=$_GET["id"]; /* idPersonaggio */
+										$conn=dbConn();
+										$query="SELECT nome FROM personaggi WHERE id=$id"; /* Preparazione Query: Dettagli personaggio */
+										$risultati=$conn->query($query);
+										$personaggio = $risultati->fetch_assoc();
+										$risultati->free();
+
+										echo ('
+												<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
+												<div class="container text-center">
+													<h1 class="mt-4 mb-4">'.$personaggio["nome"].'</h1>
+													<img src="images/personaggi/'.$id.'.jpg" class="img-fluid mt-4 mb-4" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto del personaggio '.$personaggio["nome"].'">
+												</div>
+											');
+										
+										$query="SELECT Pers.* 
+										FROM interpretazioni I JOIN persone Pers ON Pers.id=I.idAttore JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio
+										WHERE Pggi.id=3"; /* Preparazione Query: Attori che hanno interpretato il personaggio */
+
+										if ($attori=$conn->query($query)) { /* Risultati della query */
+											echo ('
+												<div class="container text-center"> 
+													<h2 class="mt-4 mb-4" >Attori che lo hanno interpretato</h2>
+												</div>
+												');
+											if ($attori->num_rows>0) {
+												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
+													echo ('
+														<div class="col-md-4 py2" onclick="passa_a('.$attore["id"].',2);" >
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<img src="images/persone/'.$attore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$attore["nome"].' '.$attore["cognome"].'">
+																	<p class="card-text">'.$attore["nome"].' '.$attore["cognome"].'</p>
+																</div>
+															</div>
+														</div>		
+													');
+												}
+											}
+											else { /* Comunicazione mancanza di elementi */
+												echo ('
+														<div class="col-md-4 ">
+															<div class="card mb-4 shadow-sm">
+																<div class="card-body">
+																	<p class="card-text">Nessun risultato di ricerca trovato</p>
+																</div>
+															</div>
+														</div>
+													');
+											}
+											
+											$attori->free();
+										}
+
+										$query="SELECT V.id, V.nome, V.durata, V.Sinossi
+										FROM comparizioni C JOIN video V ON V.id=c.idVideo
+										WHERE C.idPersonaggio=3"; /* Preparazione Query: Video in cui compare il personaggio */
+										if ($video=$conn->query($query)) { /* Query effettuata con successo */
+											echo ('	
+												<div class="container text-center"> 
+													<h2 class="mt-4 mb-4" >Film in cui e\' apparso</h2>
+												</div>
+												');
+											if ($video->num_rows>0) { /* Almeno un risultato */
+												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+													echo ('
+														<div class="col-md-4 py2" onclick="passa_a('.$elemento["id"].',1)" >
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<img src="images/video/'.$elemento["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
+																	<p class="card-text">'.$elemento["nome"].'</p>
+																	<p class="card-text-description">'.$elemento["Sinossi"].'</p>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Durata: '.$elemento["durata"].' minuti</small>
+																	</div>
+																</div>
+															</div>
+														</div>
+													');
+												}
+											}
+											else { /* Comunicazione mancanza di elementi */
+												echo ('
+														<div class="col-md-4 ">
+															<div class="card mb-4 shadow-sm">
+																<div class="card-body">
+																	<p class="card-text">Nessun risultato di ricerca trovato</p>
+																</div>
+															</div>
+														</div>
+													');
+											}
+											$video->free();
+											$conn->close();
+										}
+
+										break;
+
 									default:
-										echo ('<h1><strong>404. PAGE NOT FOUND</strong></h1>');
+										echo "<h1><strong>404. PAGE NOT FOUND</strong></h1>";
 										break;
 								}
 		 
