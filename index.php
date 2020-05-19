@@ -147,10 +147,15 @@
 					recensioni.submit();
 				}
 			}
-			function elimina(id){
+			function elimina(id,idUtente){
 				recensioni.rate.value="ELIMINA";
+				recensioni.idUtente.value=idUtente;
 				recensioni.submit();
-				
+			}
+			function verifica(id,idUtente){
+				recensioni.rate.value="VERIFICA";
+				recensioni.idUtente.value=idUtente;
+				recensioni.submit();
 			}
 			
 			
@@ -170,8 +175,8 @@
 							$_SESSION["login"]=0;
 						if(isset($_POST["user"]) && isset($_POST["pass"])){ /* Username e Password specificati */
 							$login=1;
-							$utente=trim($_POST["user"]);
-							$password=trim($_POST["pass"]);
+							$utente=filter_var(trim($_POST["user"]), FILTER_SANITIZE_STRING);
+							$password=filter_var(trim($_POST["pass"]), FILTER_SANITIZE_STRING);
 							$conn=dbConn();
 							$query="SELECT * FROM utenti WHERE email='".$utente."' AND password='".md5($password)."';"; /* Preparazione Query: Controllo Accesso */
 							$risultati=$conn->query($query); /* Risultati della query */
@@ -210,7 +215,7 @@
 											<input type="checkbox" class="form-check-input" id="dropdownCheck">
 											<label class="form-check-label" for="dropdownCheck">Remember me</label>
 										</div>
-										<button type="submit" class="btn btn-primary ml-2">Sign in</button>
+										<button type="submit" class="btn btn-primary ml-2 mt-2">Sign in</button>
 									</form>
 									<div class="dropdown-divider"></div>
 										<a class="dropdown-item" href="#">New around here? Sign up</a>
@@ -303,13 +308,13 @@
 										
 										if(isset($_POST["rate"])&&isset($_SESSION["idUser"])) { /* E' stato dato un voto */
 											$voto=$_POST["rate"];
-											if(isset($_POST["rec"])) /* E' stata data una recensione */
-												$rec="'".$_POST["rec"]."'";
+											if(isset($_POST["rec"])&&$_POST["rec"]!="") /* E' stata data una recensione */
+												$rec="'".filter_var($_POST["rec"], FILTER_SANITIZE_STRING)."'";
 											else
-												$rec=null;
+												$rec="null";
 											$query="SELECT * FROM recensionevideo WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
 											$controllo=$conn->query($query);
-											if($voto!="ELIMINA"){
+											if($voto!="ELIMINA"&&$voto!="VERIFICA"){
 												if($controllo->num_rows==0){
 													$recens="INSERT INTO recensionevideo VALUES ($id,$_SESSION[idUser],'$voto',$rec,null)";
 													//echo $recens;
@@ -328,13 +333,24 @@
 												}
 											}
 											else{
-												$recens="DELETE FROM recensionevideo WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
+												if($voto=="ELIMINA"){
+													$recens="DELETE FROM recensionevideo WHERE idVideo=$id AND idUtente=$_POST[idUtente]";
 													//echo $recens;
 													if($conn->query($recens))
-														echo "<script type='text/javascript'>alert('La tua recensione è stata eliminata!');</script>";
+														echo "<script type='text/javascript'>alert('La recensione è stata eliminata!');</script>";
 													else
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
-												
+													
+												}
+												else
+												{
+													$recens="UPDATE recensionevideo SET idAdmin=$_SESSION[idUser] WHERE idVideo=$id AND idUtente=$_POST[idUtente]";
+													//echo $recens;
+													if($conn->query($recens))
+														echo "<script type='text/javascript'>alert('La recensione è stata verificata!');</script>";
+													else
+														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+												}
 											}
 										}
 
@@ -531,171 +547,293 @@
 														</div>
 													');
 											}
-											
-											$personaggi->free();
-											
-											if($_SESSION["login"]==1){
-												$query="SELECT voto, testo, username FROM recensionevideo LEFT JOIN Utenti ON idAdmin=id WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
-												$recensione=$conn->query($query);
-												if($recensione->num_rows==0){
-													echo('
-														<div class="container text-center"> 
-															<!-- Button trigger modal -->
-															<button type="button" class="btn btn-primary mt-1" data-toggle="modal" data-target="#exampleModalCenter">
-															  Lascia una recensione
-															</button>
-							
-															<!-- Modal -->
-															
-															<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-															  <div class="modal-dialog modal-dialog-centered" role="document">
-																<div class="modal-content">
-																  <div class="modal-header">
-																	<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-																	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-																	  <span aria-hidden="true">&times;</span>
-																	</button>
-																  </div>
-																  
-																  <div class="modal-body" style="margin:0 auto;">
-																	<form name="rec" id="rec" method="post">
-																	 <div class="rate">
-																		<input  type="radio" id="star10" name="rate" value="10" />
-																		<label for="star10" title="10/10">10 stars</label>
-																		<input type="radio" id="star9" name="rate" value="9" />
-																		<label for="star9" title="9/10">9 stars</label>
-																		<input type="radio" id="star8" name="rate" value="8" />
-																		<label for="star8" title="8/10">8 stars</label>
-																		<input type="radio" id="star7" name="rate" value="7" />
-																		<label for="star7" title="7/10">7 stars</label>
-																		<input type="radio" id="star6" name="rate" value="6" />
-																		<label for="star6" title="6/10">6 star</label>
-																		<input type="radio" id="star5" name="rate" value="5" />
-																		<label for="star5" title="5/10">5 stars</label>
-																		<input type="radio" id="star4" name="rate" value="4" />
-																		<label for="star4" title="4/10">4 stars</label>
-																		<input type="radio" id="star3" name="rate" value="3" />
-																		<label for="star3" title="3/10">3 stars</label>
-																		<input type="radio" id="star2" name="rate" value="2" />
-																		<label for="star2" title="2/10">2 stars</label>
-																		<input type="radio" id="star1" name="rate" value="1" />
-																		<label for="star1" title="1/10">1 star</label>
-																	  </div>
-																		<div class="form-group">
-																		  <textarea id="textarea" name="rec" class="form-control" rows="5" maxlength="255" placeholder="Scrivi la tua recensione"></textarea>
-																		</div>
-																	</form>
-																  </div>
-																  
-																  <div class="modal-footer">
-																	<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-																	<button type="button" onclick="recensione('.$id.',1)" class="btn btn-primary">Salva recensione</button>
-																  </div>
-																</div>
-															  </div>
-															</div>
-														</div>');
-												}
-												else{
-													$rec=$recensione->fetch_assoc();
-													echo('
-														<div class="container text-center"> 
-															<h4>Il tuo voto è: '.$rec['voto'].'/10<label style="color:#ffc700">★</label></h4>
-															<div class="container-sm col-md-6 mt-2 mb-2 py2">
-																<p class="card-text" style="text-align:center !important">'.$rec["testo"].'</p>
-															</div>
-															<!-- Button trigger modal -->
-															<button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#exampleModalCenter">
-															  Modifica la tua recensione
-															</button>
-							
-															<!-- Modal -->
-															
-															<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-															  <div class="modal-dialog modal-dialog-centered" role="document">
-																<div class="modal-content">
-																  <div class="modal-header">
-																	<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
-																	<button type="button" class="close" data-dismiss="modal" aria-label="Close">
-																	  <span aria-hidden="true">&times;</span>
-																	</button>
-																  </div>
-																  
-																  <div class="modal-body" style="margin:0 auto;">
-																	<form name="rec" id="rec" method="post">
-																	 <div class="rate">
-																		<input  type="radio" id="star10" name="rate" value="10"');
-																		if($rec["voto"]==10)
-																			echo 'checked';
-																		echo '/>
-																		<label for="star10" title="10/10">10 stars</label>
-																		<input type="radio" id="star9" name="rate" value="9"';
-																		if($rec["voto"]==9)
-																			echo 'checked';
-																		echo '/>
-																		<label for="star9" title="9/10">9 stars</label>
-																		<input type="radio" id="star8" name="rate" value="8"';
-																		if($rec["voto"]==8)
-																			echo 'checked';
-																		echo '/>
-																		<label for="star8" title="8/10">8 stars</label>
-																		<input type="radio" id="star7" name="rate" value="7"';
-																		if($rec["voto"]==7)
-																			echo 'checked';
-																		echo '/>
-																		<label for="star7" title="7/10">7 stars</label>
-																		<input type="radio" id="star6" name="rate" value="6"';
-																		if($rec["voto"]==6)
-																			echo 'checked';
-																		echo '/>
-																		<label for="star6" title="6/10">6 star</label>
-																		<input type="radio" id="star5" name="rate" value="5"';
-																		if($rec["voto"]==5)
-																			echo 'checked';
-																		echo '/>
-																		<label for="star5" title="5/10">5 stars</label>
-																		<input type="radio" id="star4" name="rate" value="4"';
-																		if($rec["voto"]==4)
-																			echo 'checked';
-																		echo '/>
-																		<label for="star4" title="4/10">4 stars</label>
-																		<input type="radio" id="star3" name="rate" value="3"';
-																		if($rec["voto"]==3)
-																			echo 'checked';
-																		echo '/>
-																		<label for="star3" title="3/10">3 stars</label>
-																		<input type="radio" id="star2" name="rate" value="2"';
-																		if($rec["voto"]==2)
-																			echo 'checked';
-																		echo '/>
-																		<label for="star2" title="2/10">2 stars</label>
-																		<input type="radio" id="star1" name="rate" value="1"';
-																		if($rec["voto"]==1)
-																			echo 'checked';
-																		echo ('/>
-																		<label for="star1" title="1/10">1 star</label>
-																	  </div>
-																		<div class="form-group">
-																		  <textarea id="textarea" name="rec" class="form-control" rows="5" maxlength="255"  placeholder="Scrivi la tua recensione">'.$rec["testo"].'</textarea>
-																		</div>
-																	</form>
-																  </div>
-																  
-																  <div class="modal-footer">
-																	<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-																	<button type="button" onclick="elimina('.$id.',1)" class="btn btn-primary">Elimina recensione</button>
-																	<button type="button" onclick="recensione('.$id.',1)" class="btn btn-primary">Modifica recensione</button>
-																  </div>
-																</div>
-															  </div>
-															</div>
-														</div>');
-												}
-											}
-												
-											
-											$conn->close();
 										}
+										$personaggi->free();
+										
+										if($_SESSION["login"]==1){
+											$query="SELECT voto, testo, username FROM recensionevideo LEFT JOIN Utenti ON idAdmin=id WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
+											$recensione=$conn->query($query);
+											if($recensione->num_rows==0){
+												echo('
+													<div class="container text-center"> 
+														<!-- Button trigger modal -->
+														<button type="button" class="btn btn-primary mt-1" data-toggle="modal" data-target="#exampleModalCenter">
+														  Lascia una recensione
+														</button>
+						
+														<!-- Modal -->
+														
+														<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+														  <div class="modal-dialog modal-dialog-centered" role="document">
+															<div class="modal-content">
+															  <div class="modal-header">
+																<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																  <span aria-hidden="true">&times;</span>
+																</button>
+															  </div>
+															  
+															  <div class="modal-body" style="margin:0 auto;">
+																<form name="rec" id="rec" method="post">
+																 <div class="rate">
+																	<input  type="radio" id="star10" name="rate" value="10" />
+																	<label for="star10" title="10/10">10 stars</label>
+																	<input type="radio" id="star9" name="rate" value="9" />
+																	<label for="star9" title="9/10">9 stars</label>
+																	<input type="radio" id="star8" name="rate" value="8" />
+																	<label for="star8" title="8/10">8 stars</label>
+																	<input type="radio" id="star7" name="rate" value="7" />
+																	<label for="star7" title="7/10">7 stars</label>
+																	<input type="radio" id="star6" name="rate" value="6" />
+																	<label for="star6" title="6/10">6 star</label>
+																	<input type="radio" id="star5" name="rate" value="5" />
+																	<label for="star5" title="5/10">5 stars</label>
+																	<input type="radio" id="star4" name="rate" value="4" />
+																	<label for="star4" title="4/10">4 stars</label>
+																	<input type="radio" id="star3" name="rate" value="3" />
+																	<label for="star3" title="3/10">3 stars</label>
+																	<input type="radio" id="star2" name="rate" value="2" />
+																	<label for="star2" title="2/10">2 stars</label>
+																	<input type="radio" id="star1" name="rate" value="1" />
+																	<label for="star1" title="1/10">1 star</label>
+																  </div>
+																	<div class="form-group">
+																	  <textarea id="textarea" name="rec" class="form-control" rows="5" maxlength="255" placeholder="Scrivi la tua recensione"></textarea>
+																	</div>
+																</form>
+															  </div>
+															  
+															  <div class="modal-footer">
+																<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+																<button type="button" onclick="recensione('.$id.',1)" class="btn btn-primary">Salva recensione</button>
+															  </div>
+															</div>
+														  </div>
+														</div>
+													</div>');
+											}
+											else{
+												$rec=$recensione->fetch_assoc();
+												echo('
+													<div class="container text-center"> 
+														<h4>Il tuo voto è: '.$rec['voto'].'/10<label style="color:#ffc700">★</label></h4>
+														<div class="container-sm col-md-6 mt-2 mb-2 py2">
+															<p class="card-text" style="text-align:center !important">'.$rec["testo"].'</p>
+														</div>
+														<!-- Button trigger modal -->
+														<button type="button" class="btn btn-primary mt-2" data-toggle="modal" data-target="#exampleModalCenter">
+														  Modifica la tua recensione
+														</button>
+						
+														<!-- Modal -->
+														
+														<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+														  <div class="modal-dialog modal-dialog-centered" role="document">
+															<div class="modal-content">
+															  <div class="modal-header">
+																<h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																  <span aria-hidden="true">&times;</span>
+																</button>
+															  </div>
+															  
+															  <div class="modal-body" style="margin:0 auto;">
+																<form name="rec" id="rec" method="post">
+																 <div class="rate">
+																	<input  type="radio" id="star10" name="rate" value="10"');
+																	if($rec["voto"]==10)
+																		echo 'checked';
+																	echo '/>
+																	<label for="star10" title="10/10">10 stars</label>
+																	<input type="radio" id="star9" name="rate" value="9"';
+																	if($rec["voto"]==9)
+																		echo 'checked';
+																	echo '/>
+																	<label for="star9" title="9/10">9 stars</label>
+																	<input type="radio" id="star8" name="rate" value="8"';
+																	if($rec["voto"]==8)
+																		echo 'checked';
+																	echo '/>
+																	<label for="star8" title="8/10">8 stars</label>
+																	<input type="radio" id="star7" name="rate" value="7"';
+																	if($rec["voto"]==7)
+																		echo 'checked';
+																	echo '/>
+																	<label for="star7" title="7/10">7 stars</label>
+																	<input type="radio" id="star6" name="rate" value="6"';
+																	if($rec["voto"]==6)
+																		echo 'checked';
+																	echo '/>
+																	<label for="star6" title="6/10">6 star</label>
+																	<input type="radio" id="star5" name="rate" value="5"';
+																	if($rec["voto"]==5)
+																		echo 'checked';
+																	echo '/>
+																	<label for="star5" title="5/10">5 stars</label>
+																	<input type="radio" id="star4" name="rate" value="4"';
+																	if($rec["voto"]==4)
+																		echo 'checked';
+																	echo '/>
+																	<label for="star4" title="4/10">4 stars</label>
+																	<input type="radio" id="star3" name="rate" value="3"';
+																	if($rec["voto"]==3)
+																		echo 'checked';
+																	echo '/>
+																	<label for="star3" title="3/10">3 stars</label>
+																	<input type="radio" id="star2" name="rate" value="2"';
+																	if($rec["voto"]==2)
+																		echo 'checked';
+																	echo '/>
+																	<label for="star2" title="2/10">2 stars</label>
+																	<input type="radio" id="star1" name="rate" value="1"';
+																	if($rec["voto"]==1)
+																		echo 'checked';
+																	echo ('/>
+																	<label for="star1" title="1/10">1 star</label>
+																  </div>
+																	<div class="form-group">
+																	  <textarea id="textarea" name="rec" class="form-control" rows="5" maxlength="255"  placeholder="Scrivi la tua recensione">'.$rec["testo"].'</textarea>
+																	</div>
+																</form>
+															  </div>
+															  
+															  <div class="modal-footer">
+																<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+																<button type="button"  class="btn btn-primary" data-toggle="modal" data-target="#conferma">Elimina recensione</button>
+																
+																<button type="button" onclick="recensione('.$id.',1)" class="btn btn-primary">Modifica recensione</button>
+															  </div>
+															</div>
+														  </div>
+														</div>
+														
+													</div>
+													<!-- Modal -->
+													<div class="modal fade" id="conferma" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+													  <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+														<div class="modal-content">
+														  <div class="modal-header">
+															<h5 class="modal-title" id="exampleModalCenterTitle">Conferma</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															  <span aria-hidden="true">&times;</span>
+															</button>
+														  </div>
+														  <div class="modal-body">
+															Sei sicuro di voler eliminare la recensione? L\'operazione sarà irreversibile
+														  </div>
+														  <div class="modal-footer">
+															<button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+															<button type="button" onclick="elimina('.$id.','.$_SESSION["idUser"].')" class="btn btn-primary">Sì</button>
+														  </div>
+														</div>
+													  </div>
+													</div>');
+											}
+										}
+										echo ('
+													<div class="container text-center"> 
+														<h2 class="mt-4 mb-4" >Recensioni degli utenti</h2>
+													</div>
+												');
+										$query="SELECT R.voto, R.testo,U.username, U.id, A.username admin
+										FROM recensionevideo R 
+										INNER JOIN utenti U ON U.id=R.idUtente
+										LEFT JOIN utenti A ON A.id=R.idAdmin
+										WHERE R.testo IS NOT NULL AND idVideo=$id
+										ORDER BY R.idAdmin DESC,R.idUtente
+										LIMIT 4;";
+										$recensioni=$conn->query($query);
+										if($recensioni->num_rows==0){
+											echo 	
+												'<div class="col-md-3 py2">
+													<div class="card h-100 mb-4 shadow-sm">
+														<div class="card-body">
+															<p class="card-text" style="text-align:center !important">Non è presente ancora nessuna recensione</p>
+														</div>
+													</div>
+												</div>';
+										}		
+										else{
+												while($riga = $recensioni->fetch_assoc()){
+													echo 	
+														'<div class="col-md-3 py2">
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<h6 class="mt-1 ml-2">'.$riga["username"].' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>
+																	<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																	if($riga["admin"]!=null)
+																	echo '
+																		<div class="d-flex justify-content-end bd-highlight mb-3">
+																			<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																		</div>';
+																echo '</div>';
+																		if($_SESSION["admin"]==1&&$riga["admin"]==null)
+																			echo'
+																				<div class="modal-footer">
+																					<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>
+																					<button type="button" class="btn btn-primary" onclick="verifica('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																				</div>';
+																	echo '
+															</div>
+														</div>';
+												}
+												$query="SELECT R.voto, R.testo,U.username, U.id, A.username admin
+												FROM recensionevideo R 
+												INNER JOIN utenti U ON U.id=R.idUtente
+												LEFT JOIN utenti A ON A.id=R.idAdmin
+												WHERE R.testo IS NOT NULL AND idVideo=$id
+												ORDER BY R.idAdmin DESC,R.idUtente;";
+												$recensioni=$conn->query($query);
+												if($recensioni->num_rows>4){
+													echo '
+													<div class="container text-center">
+														<button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#exampleModalScrollable">
+														  Visualizza tutte le recensioni
+														</button>
+														<!-- Modal -->
+														<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+														  <div class="modal-dialog modal-dialog-scrollable" role="document">
+															<div class="modal-content">
+															  <div class="modal-header">
+																<h5 class="modal-title" id="exampleModalScrollableTitle">Recensioni degli utenti</h5>
+																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																  <span aria-hidden="true">&times;</span>
+																</button>
+															  </div>
+															  <div class="modal-body">';
+															  while($riga = $recensioni->fetch_assoc()){
+																  echo '
+																	<div class="card h-100 mb-4 shadow-sm">
+																		<div class="card-body">
+																		<h6 class="mt-1 ml-2">'.$riga["username"].' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>
+																			<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																			if($riga["admin"]!=null)
+																				echo '
+																					<div class="d-flex justify-content-end bd-highlight mb-3">
+																						<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																					</div>';
+																			echo '</div>';
+																		
+																		if($_SESSION["admin"]==1&&$riga["admin"]==null)
+																			echo'
+																				<div class="modal-footer">
+																					<button type="button"  class="btn btn-secondary" onclick="elimina('.$id.','.$riga["id"].')" data-dismiss="modal">Elimina</button>
+																					<button type="button" class="btn btn-primary" onclick="verifica('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																				</div>';
+																	echo '
+																		</div>';
+															  }
+															  echo '
+															</div>
+														  </div>
+														</div>
+													</div>
+												</div>';
+												
+												}
+										}
+										$conn->close();
+								
 			echo ('
 						</div>
 					</div>
@@ -967,6 +1105,7 @@
 		">
 			<input type='hidden' name='rate' id='rate'> <!-- Memorizzazione voto -->
 			<input type='hidden' name='rec' id='rec'> <!-- Memorizzazione recensione -->
+			<input type='hidden' name='idUtente' id='idUtente'> <!-- Memorizzazione recensione -->
 				
 		</form>
 		<footer class="text-muted">

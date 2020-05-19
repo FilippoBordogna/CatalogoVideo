@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 18, 2020 alle 20:08
+-- Creato il: Mag 19, 2020 alle 18:01
 -- Versione del server: 10.4.11-MariaDB
 -- Versione PHP: 7.4.5
 
@@ -83,7 +83,7 @@ CREATE TABLE `curiositaserie` (
   `id` int(11) NOT NULL,
   `idSerie` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
-  `idAdmin` int(11),
+  `idAdmin` int(11) DEFAULT NULL,
   `testo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -97,7 +97,7 @@ CREATE TABLE `curiositavideo` (
   `id` int(11) NOT NULL,
   `idVideo` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
-  `idAdmin` int(11),
+  `idAdmin` int(11) DEFAULT NULL,
   `testo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -264,8 +264,8 @@ CREATE TABLE `recensioneserie` (
   `idSerie` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
   `voto` int(11) NOT NULL,
-  `testo` varchar(255),
-  `idAdmin` int(11)
+  `testo` varchar(255) DEFAULT NULL,
+  `idAdmin` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -278,9 +278,22 @@ CREATE TABLE `recensionevideo` (
   `idVideo` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
   `voto` int(11) NOT NULL,
-  `testo` varchar(255) NOT NULL,
-  `idAdmin` int(11)
+  `testo` varchar(255) DEFAULT NULL,
+  `idAdmin` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dump dei dati per la tabella `recensionevideo`
+--
+
+INSERT INTO `recensionevideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`) VALUES
+(1, 1, 10, 'IRON MAN SEI IL MIO EROE! ', 5),
+(1, 3, 10, 'Davvero un gran bel film! Scaricatelo dal corsaronero: https://ilcorsaronero.xyz/tor/95175/Iron_Man_2008_iTA_ENG_AC3_Bluray_1080p_Subs_x264_DSS', 3),
+(1, 4, 8, 'Bel film, quasi quanto i pirati dei caraaaaaaibi', NULL),
+(1, 5, 9, 'Mi è piaciuto molto, ottimo da vedere mentre si mangia un bel piatto di polenta', NULL),
+(1, 6, 6, 'Non ho capito perchè non c&#39;era spider-man', 5),
+(1, 7, 10, 'Tony ❤ Pepper', 5),
+(6, 1, 8, 'Gran bel film', NULL);
 
 -- --------------------------------------------------------
 
@@ -331,7 +344,13 @@ CREATE TABLE `utenti` (
 --
 
 INSERT INTO `utenti` (`id`, `username`, `email`, `password`, `admin`) VALUES
-(1, 'username', 'email@email.com', '5f4dcc3b5aa765d61d8327deb882cf99', 0);
+(1, 'username', 'email@email.com', '5f4dcc3b5aa765d61d8327deb882cf99', 0),
+(2, '', '', '', 0),
+(3, 'grande capo', 'admin@admin.it', '21232f297a57a5a743894a0e4a801fc3', 1),
+(4, 'utente banana', 'user@user.it', 'ee11cbb19052e40b07aac0ca060c23ee', 0),
+(5, 'barcigabri', 'barcigabri@gmail.com', '20e8fe46be8f49c48ed4eb7e4f8ecdc7', 1),
+(6, 'pippobordo99', 'bordognapippo99@gmail.com', 'c1d48f0d3617b304beafee8490591d6b', 1),
+(7, 'paperino', 'donald@duck.com', 'bac2b77e0926723c6ddbcb81d7d5ff8d', 0);
 
 -- --------------------------------------------------------
 
@@ -521,7 +540,7 @@ ALTER TABLE `serie`
 -- AUTO_INCREMENT per la tabella `utenti`
 --
 ALTER TABLE `utenti`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT per la tabella `video`
