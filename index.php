@@ -113,6 +113,7 @@
 		.col-md-3 :hover {
 			cursor: pointer;
 			background-color: black;
+			transition: all 0.7s;
 			color: white;	   
 		}
 
