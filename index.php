@@ -1,12 +1,18 @@
 <?php
 	/* 
 		DA FARE:
-		- Pagina tutte le serie
-		- Pagina tutte le saghe
-		- Mostrare le recensioni e poterle modificare
-		- Copiare e incollare quanto sopra per le curiosità (non c'è voto, possono esserci più commenti(?))
+		- Aggiungere il numero di stagioni nell'elenco serie (case 4)
+		- Aggiungere la lista degli episodi,delle stagioni, le recensioni e le curiosità in dettagli serie (case 5)
+		- Pagina tutte le saghe (case 6)
+		- Pagina dettagli saghe (case 7)
+		- Aggiungere tabella Categorie e campo datauscita al video
+		- Transizione on hover
+		- Sistemare tasti indietro (in base alla pagina prima (senza togliere l'accesso))
+		- Copiare e incollare quanto fatto per le recensioni per le curiosità (non c'è voto, possono esserci più commenti(?))
 		- Copiare e incollare quanto sopra per le recensioni e le curiosità delle serie
-		- Permettere ad Admin di validare recensioni e commenti
+		- Permettere ad Admin di validare commenti  
+		- Ricerca
+		- Registrazione (nuova pagina)
 		- Ultimi accessi (ultimo) per controllo
 		- Rifare lo schema ER/logico in base alle modifiche (PIPPO)
 	*/
@@ -14,14 +20,13 @@
 	session_start();
 	if(!isset($_SESSION["login"]) || $_SESSION["login"]!=1) /* Mancata presenza di dati integri per login */
 		session_unset();
-	if(isset($_GET["stato"])&&$_GET["stato"]=="logout") /* Operazione di logout */
-	{
+	if(isset($_GET["stato"])&&$_GET["stato"]=="logout") { /* Operazione di logout */
 		session_unset();
 		session_destroy();
 		session_start();
 	}
 	
-	function dbConn(){ /* Connessione al DB */
+	function dbConn() { /* Connessione al DB */
 		$host = ""; /* Host Server MySQL */
 		$user = "root"; /* User Server MySQL */
 		$pwd = ""; /* Password Server MySQL */
@@ -126,18 +131,20 @@
 		<!--<link href="album.css" rel="stylesheet">-->
 
 		<script> /* Funzioni JavaScript */
-			function logout(){
+			function logout(id,stato) { /* Effettua il logout */
 				f.stato.value="logout";
+				f.id.value=id+","+stato;
 				f.submit();
+				//f.passa_a(id,valore)
 			}
 			
-			function passa_a(id,valore){
+			function passa_a(id,stato) { /* Cambia lo stato (e quindi la pagina) e l'identificativo */
 				f.id.value=id;
-				f.stato.value=valore;
+				f.stato.value=stato;
 				f.submit();
 			}
 			
-			function recensione(id){
+			function recensione(id){ /* Controlli sulla recensione ed effettivo inserimento */
 				if(f.rate.value==0)
 					alert("Errore! Devi inserire un voto per lasciare una recensione");
 				else{
@@ -147,17 +154,16 @@
 					recensioni.submit();
 				}
 			}
-			function elimina(id,idUtente){
+			function elimina(id,idUtente) { /* Elimina una recensione */
 				recensioni.rate.value="ELIMINA";
 				recensioni.idUtente.value=idUtente;
 				recensioni.submit();
 			}
-			function verifica(id,idUtente){
+			function verifica(id,idUtente){ /* Verifica della recensione da parte dell'admin */
 				recensioni.rate.value="VERIFICA";
 				recensioni.idUtente.value=idUtente;
 				recensioni.submit();
 			}
-			
 			
 		</script>
   	</head>
@@ -168,6 +174,14 @@
 			  		<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,0)"> <!-- Scorciatoia Homepage -->
 						<!--<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24" focusable="false"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>-->
 						<strong>Homepage</strong>
+					</a>
+					<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,6)"> <!-- Scorciatoia Homepage -->
+						<!--<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24" focusable="false"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>-->
+						<strong>Saghe</strong>
+					</a>
+					<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,4)"> <!-- Scorciatoia Homepage -->
+						<!--<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24" focusable="false"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>-->
+						<strong>Serie</strong>
 			  		</a>
 
 					<?php
@@ -233,7 +247,7 @@
 										<button class="dropdown-item" type="button">Visualizza Profilo</button>
 										<button class="dropdown-item" type="button">Visualizza Recensioni</button>
 										<button class="dropdown-item" type="button">Visualizza Curiosità</button>
-										<button class="dropdown-item" type="button" onclick="logout()">Logout</button>
+										<button class="dropdown-item" type="button" onclick="logout('.$_GET["id"].','.$_GET["stato"].')">Logout</button>
 									</div>
 								</div>
 							'); /* Tendina gestione contenuti */
@@ -246,6 +260,12 @@
 			<form name='f' id='f' method='get'> <!-- Form Principale -->
 				<input type='hidden' name='stato' id='stato'> <!-- Identificativo della pagina da caricare -->
 				<input type='hidden' name='id' id='id'> <!-- Identificativo dell'oggetto a cui si fa riferimento -->
+				<?php
+					if(isset($_GET["stato"])&&$_GET["stato"]=="logout") { /* Operazione di logout */
+						$id_stato = explode(",",$_GET["id"]);
+						echo "<script type='text/javascript'>passa_a($id_stato[0],$id_stato[1]);</script>";
+					}
+				?>
 				<div class="album py-5 bg-light">
 					<div class="container">
 						<div class="row">
@@ -259,7 +279,7 @@
 								switch($stato) {
 									case 0: /* Homepage */
 										$conn=dbConn();
-										$query="SELECT id,nome,Sinossi,durata FROM video LIMIT 15;"; /* Preparazione Query: Tutti i video */
+										$query="SELECT id,nome,sinossi,durata FROM video WHERE selettore!=2"; /* Preparazione Query: Tutti i video */
 										echo ('	
 											<div class="container text-center"> 
 												<h2 class="mt-4 mb-4" >Video piu\' recenti</h2>
@@ -274,7 +294,7 @@
 																<div class="card-body">
 																	<img src="images/video/'.$elemento["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
 																	<p class="card-text">'.$elemento["nome"].'</p>
-																	<p class="card-text-description">'.$elemento["Sinossi"].'</p>
+																	<p class="card-text-description">'.$elemento["sinossi"].'</p>
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Durata: '.$elemento["durata"].' minuti</small>
 																	</div>
@@ -312,28 +332,29 @@
 												$rec="'".filter_var($_POST["rec"], FILTER_SANITIZE_STRING)."'";
 											else
 												$rec="null";
-											$query="SELECT * FROM recensionevideo WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
+											$query="SELECT * FROM recensionevideo WHERE idVideo=$id AND idUtente=$_SESSION[idUser]"; /* Controllo che non abbia già fatto una recensione */
 											$controllo=$conn->query($query);
-											if($voto!="ELIMINA"&&$voto!="VERIFICA"){
-												if($controllo->num_rows==0){
+											if($voto!="ELIMINA"&&$voto!="VERIFICA") { /* Pubblico o modifico la recensione */
+												if($controllo->num_rows==0){ /* Non ha già recensito:  */
 													$recens="INSERT INTO recensionevideo VALUES ($id,$_SESSION[idUser],'$voto',$rec,null)";
-													//echo $recens;
-													if($conn->query($recens))
+													
+													if($conn->query($recens)) /* Inserimento nel DB riuscito */
 														echo "<script type='text/javascript'>alert('La tua recensione è stata inserita!');</script>";
-													else
+													else /* Inserimento nel DB NON riuscito */
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";	
 												}
 												else{
-													$recens="UPDATE recensionevideo SET voto='$voto', testo=$rec WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
-													//echo $recens;
-													if($conn->query($recens))
+													$recens="UPDATE recensionevideo SET voto='$voto', testo=$rec, idAdmin=null 
+													WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
+													
+													if($conn->query($recens)) /* Modifica del DB riuscita */
 														echo "<script type='text/javascript'>alert('La tua recensione è stata aggiornata!');</script>";
-													else
+													else /* Modifica del DB NON riuscita */
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
 												}
 											}
 											else{
-												if($voto=="ELIMINA"){
+												if($voto=="ELIMINA") { /* Eliminazione del DB riuscita */
 													$recens="DELETE FROM recensionevideo WHERE idVideo=$id AND idUtente=$_POST[idUtente]";
 													//echo $recens;
 													if($conn->query($recens))
@@ -354,7 +375,7 @@
 											}
 										}
 
-										$query="SELECT V.id,V.nome,V.durata,V.idSaga,v.idSerie,V.numero,V.stagione,V.Sinossi,Se.nome nomeSe,Sa.nome nomeSa 
+										$query="SELECT V.id,V.nome,V.durata,V.idSaga,v.idSerie,V.numero,V.stagione,V.sinossi,Se.nome nomeSe,Sa.nome nomeSa 
 										FROM video V LEFT JOIN serie Se ON V.idSerie=Se.id LEFT JOIN saghe Sa ON Sa.id=V.idSaga 
 										WHERE V.id=$id;"; /* Preparazione Query: Dettagli video */
 										$risultati=$conn->query($query);
@@ -367,7 +388,7 @@
 													<h1 class="mt-4 mb-4">'.$video["nome"].'</h1>
 													<img src="images/video/'.$id.'.jpg" class="img-fluid mt-4 mb-4" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$video["nome"].'">
 													<div class="container-sm col-md-6 py2">
-														<p class="card-text" style="text-align:center !important">'.$video["Sinossi"].'</p>
+														<p class="card-text" style="text-align:center !important">'.$video["sinossi"].'</p>
 													</div>
 												</div>
 												</div>
@@ -380,13 +401,13 @@
 										if($video["idSerie"]!=null)
 											echo ('
 												<div class="container text-left">
-												<p class="card-text" onclick="passa_a('.$video["idSerie"].',4);><strong>Serie: </strong><a href="#"> '.$video["nomeSe"].'('.$video["stagione"].'x'.$video["numero"].')</a></p>
+												<p class="card-text" onclick="passa_a('.$video["idSerie"].',5);><strong>Serie: </strong><a href="#"> '.$video["nomeSe"].'('.$video["stagione"].'x'.$video["numero"].')</a></p>
 												</div>
 											');
 										else if($video["idSaga"]!=null)
 											echo ('
 													<div class="container text-left">
-														<p class="card-text" onclick="passa_a('.$video["idSaga"].',5);"><strong>Saga: </strong><a href="#"> '.$video["nomeSa"].' ('.$video["numero"].'° film)</a></p>
+														<p class="card-text" onclick="passa_a('.$video["idSaga"].',7);"><strong>Saga: </strong><a href="#"> '.$video["nomeSa"].' ('.$video["numero"].'° film)</a></p>
 													</div>
 												');
 										
@@ -860,7 +881,7 @@
 												</div>
 											');
 
-										$query="SELECT V.nome,V.durata,V.Sinossi,V.id
+										$query="SELECT V.nome,V.durata,V.sinossi,V.id
 										FROM video V JOIN partecipazioni Par ON Par.idVideo=V.id JOIN persone Per ON Par.idPersona=Per.id 
 										WHERE Par.selettore=2 AND Per.id=$id"; /* Preparazione Query: Video da Attore */
 
@@ -892,7 +913,7 @@
 											$video->free();
 										}
 
-										$query="SELECT V.nome,V.durata,V.Sinossi,V.id
+										$query="SELECT V.nome,V.durata,V.sinossi,V.id
 										FROM video V JOIN partecipazioni Par ON Par.idVideo=V.id JOIN persone Per ON Par.idPersona=Per.id 
 										WHERE Par.selettore=1 AND Per.id=$id"; /* Preparazione Query: Video da Regista */
 
@@ -911,7 +932,7 @@
 																	<div class="card-body">
 																		<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
 																		<p class="card-text">'.$elemento["nome"].'</p>
-																		<p class="card-text-description">'.$elemento["Sinossi"].'</p>			
+																		<p class="card-text-description">'.$elemento["sinossi"].'</p>			
 																		<div class="d-flex justify-content-between align-items-center">
 																	</div>
 																</div>
@@ -923,7 +944,7 @@
 											$video->free();
 										}
 
-										$query="SELECT V.nome,V.durata,V.Sinossi,V.id
+										$query="SELECT V.nome,V.durata,V.sinossi,V.id
 										FROM video V JOIN partecipazioni Par ON Par.idVideo=V.id JOIN persone Per ON Par.idPersona=Per.id 
 										WHERE Par.selettore=3 AND Per.id=$id"; /* Preparazione Query: Video da Produttore */
 
@@ -942,7 +963,7 @@
 																	<div class="card-body">
 																		<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
 																		<p class="card-text">'.$elemento["nome"].'</p>
-																		<p class="card-text-description">'.$elemento["Sinossi"].'</p>			
+																		<p class="card-text-description">'.$elemento["sinossi"].'</p>			
 																		<div class="d-flex justify-content-between align-items-center">
 																	</div>
 																</div>
@@ -1046,13 +1067,13 @@
 											$attori->free();
 										}
 
-										$query="SELECT V.id, V.nome, V.durata, V.Sinossi
+										$query="SELECT V.id, V.nome, V.durata, V.sinossi
 										FROM comparizioni C JOIN video V ON V.id=c.idVideo
 										WHERE C.idPersonaggio=$id"; /* Preparazione Query: Video in cui compare il personaggio */
 										if ($video=$conn->query($query)) { /* Query effettuata con successo */
 											echo ('	
 												<div class="container text-center"> 
-													<h2 class="mt-4 mb-4" >Film in cui e\' apparso</h2>
+													<h2 class="mt-4 mb-4" >Video in cui e\' apparso</h2>
 												</div>
 												');
 											if ($video->num_rows>0) { /* Almeno un risultato */
@@ -1063,7 +1084,7 @@
 																<div class="card-body">
 																	<img src="images/video/'.$elemento["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
 																	<p class="card-text">'.$elemento["nome"].'</p>
-																	<p class="card-text-description">'.$elemento["Sinossi"].'</p>
+																	<p class="card-text-description">'.$elemento["sinossi"].'</p>
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Durata: '.$elemento["durata"].' minuti</small>
 																	</div>
@@ -1087,6 +1108,279 @@
 											$video->free();
 											$conn->close();
 										}
+
+										break;
+									
+									case 4: /* Elenco serie TV */
+										$conn=dbConn();
+										$query="SELECT * FROM serie"; /* Preparazione Query: Tutte le serie */
+										echo ('	
+											<div class="container text-center"> 
+												<h2 class="mt-4 mb-4" >Serie piu\' recenti</h2>
+											</div>
+											');
+										if ($serie=$conn->query($query)) { /* Query effettuata con successo */
+											if ($serie->num_rows>0) { /* Almeno un risultato */
+												while ($elemento = $serie->fetch_assoc()) { /* Costruisco un riquadro per ogni serie */
+													echo ('
+														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5)" >
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<img src="images/serie/'.$elemento["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/serie/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
+																	<p class="card-text">'.$elemento["nome"].'</p>
+																	<p class="card-text-description">'.$elemento["sinossi"].'</p>
+														');
+														$query="SELECT COUNT(S.id) nepisodi
+														FROM serie S JOIN video V ON S.id=V.idSerie 
+														WHERE V.idSerie=1"; /* Preparazione Query: Numero episodi della serie */
+														if ($risultato=$conn->query($query)) { /* Query effettuata con successo */
+															if ($risultato->num_rows==1) { /* Almeno un risultato */
+																$nepisodi = $risultato->fetch_assoc();
+													echo ('			
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Episodi: '.$nepisodi["nepisodi"].'</small>
+																	</div>
+																</div>
+															</div>
+														</div>
+														');
+															}
+														}
+														$risultato->free();
+												}
+											}
+											else { /* Comunicazione mancanza di elementi */
+												echo ('
+														<div class="col-md-3 ">
+															<div class="card mb-4 shadow-sm">
+																<div class="card-body">
+																	<p class="card-text">Nessun risultato di ricerca trovato</p>
+																</div>
+															</div>
+														</div>
+													');
+											}
+											$serie->free();
+											$conn->close();
+										}
+
+										break;
+									
+									case 5: /* Dettagli serie TV */
+											$id=$_GET["id"]; /* idSerie */
+											$conn=dbConn();				
+	
+											$query="SELECT * FROM serie WHERE id=$id"; /* Preparazione Query: Dettagli Serie */
+											$risultati=$conn->query($query);
+											$serie = $risultati->fetch_assoc();
+											$risultati->free();
+	
+											echo ('
+													<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
+													<div class="container text-center">
+														<h1 class="mt-4 mb-4">'.$serie["nome"].'</h1>
+														<img src="images/serie/'.$id.'.jpg" class="img-fluid mt-4 mb-4" onerror="this.onerror=null;this.src=\'images/serie/default.jpg\';" alt="Locandina di '.$serie["nome"].'">
+														<div class="container-sm col-md-6 py2">
+															<p class="card-text" style="text-align:center !important">'.$serie["sinossi"].'</p>
+														</div>
+													</div>
+													</div>
+													<div class="row">
+												');
+											
+											$query="SELECT Pers.*,Pggi.nome nomeP 
+											FROM partecipazioni P JOIN interpretazioni I ON I.idAttore=P.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+											JOIN persone Pers ON Pers.id=P.idPersona 
+											WHERE P.idVideo IN 
+															(SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
+												AND P.selettore=2 
+											GROUP BY P.idPersona"; /* Preparazione Query: Attori Serie  */
+	
+											if ($attori=$conn->query($query)) { /* Risultati della query */
+												echo ('
+													<div class="container text-center"> 
+														<h2 class="mt-4 mb-4" >Attori</h2>
+													</div>
+													');
+												if ($attori->num_rows>0) {
+													while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
+														echo ('
+															<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',2);" >
+																<div class="card h-100 mb-4 shadow-sm">
+																	<div class="card-body">
+																		<img src="images/persone/'.$attore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$attore["nome"].' '.$attore["cognome"].'">
+																		<p class="card-text">'.$attore["nome"].' '.$attore["cognome"].'</p>
+															');
+														if ($attore["nomeP"]!=null)
+															echo ('		<p class="card-text">'.$attore["nomeP"].'</p>');
+																			
+														echo ('
+																	</div>
+																</div>
+															</div>		
+														');
+													}
+												}
+												else { /* Comunicazione mancanza di elementi */
+													echo ('
+															<div class="col-md-3 ">
+																<div class="card mb-4 shadow-sm">
+																	<div class="card-body">
+																		<p class="card-text">Nessun risultato di ricerca trovato</p>
+																	</div>
+																</div>
+															</div>
+														');
+												}
+												
+												$attori->free();
+											}
+	
+											$query="SELECT Pers.* 
+											FROM partecipazioni P JOIN video V ON V.id=P.idVideo JOIN persone Pers ON Pers.id=P.idPersona 
+											WHERE P.selettore=1 AND P.idVideo IN ( 
+																				SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
+											GROUP BY P.idPersona"; /* Preparazione Query: Registi Serie */
+	
+											if ($registi=$conn->query($query)) { /* Risultati della query */
+												echo ('	
+															<div class="container text-center"> 
+																<h2 class="mt-4 mb-4" >Registi</h2>
+															</div>
+													');
+												if ($registi->num_rows>0) {
+													while ($regista = $registi->fetch_assoc()) { /* Costruisco un riquadro per ogni regista */
+														echo ('
+																<div class="col-md-3 py2" onclick="passa_a('.$regista["id"].',2)" >
+																	<div class="card h-100 mb-4 shadow-sm">
+																		<div class="card-body">
+																			<img src="images/persone/'.$regista["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$regista["nome"].' '.$regista["cognome"].'">
+																			<p class="card-text">'.$regista["nome"].' '.$regista["cognome"].'</p>				
+																		</div>
+																	</div>
+																</div>		
+														');
+													}
+												}
+												else { /* Comunicazione mancanza di elementi */
+													echo ('
+															<div class="col-md-3 ">
+																<div class="card mb-4 shadow-sm">
+																	<div class="card-body">
+																		<p class="card-text">Nessun risultato di ricerca trovato</p>
+																	</div>
+																</div>
+															</div>
+														');
+												}
+												
+												$registi->free();
+											}
+																					
+											$query="SELECT Pers.* 
+											FROM partecipazioni P JOIN video V ON V.id=P.idVideo JOIN persone Pers ON Pers.id=P.idPersona 
+											WHERE P.selettore=3 AND P.idVideo IN ( 
+																				SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
+											GROUP BY P.idPersona"; /* Preparazione Query: Produttori Serie */
+	
+											if ($produttori=$conn->query($query)) { /* Risultati della query */
+												echo ('	
+															<div class="container text-center"> 
+																<h2 class="mt-4 mb-4" >Produttori</h2>
+															</div>
+													');
+												if ($produttori->num_rows>0) {
+													while ($produttore = $produttori->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
+														echo ('
+															<div class="col-md-3 py2" onclick="passa_a('.$produttore["id"].',2)" >
+																<div class="card h-100 mb-4 shadow-sm">
+																	<div class="card-body">
+																		<img src="images/persone/'.$produttore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$produttore["nome"].' '.$produttore["cognome"].'">
+																		<p class="card-text">'.$produttore["nome"].' '.$produttore["cognome"].'</p>				
+																	</div>
+																</div>
+															</div>		
+														');
+													}
+												}
+												else { /* Comunicazione mancanza di elementi */
+													echo ('
+															<div class="col-md-3 ">
+																<div class="card mb-4 shadow-sm">
+																	<div class="card-body">
+																		<p class="card-text">Nessun risultato di ricerca trovato</p>
+																	</div>
+																</div>
+															</div>
+														');
+												}
+												
+												$produttori->free();
+											}
+	
+											$query="SELECT Pggi.* 
+											FROM comparizioni C JOIN personaggi Pggi ON Pggi.id=C.idPersonaggio 
+											WHERE C.idVideo IN ( 
+																SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
+											GROUP BY C.idPersonaggio"; /* Preparazione Query: Personaggi Serie */
+	
+											if ($personaggi=$conn->query($query)) { /* Risultati della query */
+												echo ('
+														<div class="container text-center"> 
+															<h2 class="mt-4 mb-4" >Personaggi</h2>
+														</div>
+													');
+												if ($personaggi->num_rows>0) {
+													while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
+														echo ('
+															<div class="col-md-3 mb-4 py2" onclick="passa_a('.$personaggio["id"].',3)" >
+																<div class="card h-100 mb-4 shadow-sm">
+																	<div class="card-body">
+																		<img src="images/personaggi/'.$personaggio["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$personaggio["nome"].'">
+																		<p class="card-text">'.$personaggio["nome"].'</p>				
+																	</div>
+																</div>
+															</div>		
+														');
+													}
+												}
+												else { /* Comunicazione mancanza di elementi */
+													echo ('
+															<div class="col-md-3 mb-4">
+																<div class="card mb-4 shadow-sm">
+																	<div class="card-body">
+																		<p class="card-text">Nessun risultato di ricerca trovato</p>
+																	</div>
+																</div>
+															</div>
+														');
+												}
+												$personaggi->free();
+											}
+											
+											$conn->close();	
+											
+											echo ('
+																</div>
+															  </div>
+															</div>
+														</div>
+													</div>
+							</div>
+						</div>
+					</div>
+					<div class="container"> 
+						<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
+					</div>
+					');
+	
+										break;
+
+									case 6: /* Elenco saga */
+
+										break;
+
+									case 7: /* Dettagli saga */
 
 										break;
 
