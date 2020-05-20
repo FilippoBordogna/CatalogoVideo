@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 19, 2020 alle 19:41
+-- Creato il: Mag 20, 2020 alle 03:09
 -- Versione del server: 10.1.31-MariaDB
 -- Versione PHP: 7.2.4
 
@@ -72,7 +72,23 @@ INSERT INTO `comparizioni` (`idPersonaggio`, `idVideo`) VALUES
 (7, 10),
 (8, 1),
 (8, 3),
-(8, 7);
+(8, 7),
+(11, 11),
+(11, 12),
+(11, 13),
+(11, 14),
+(12, 11),
+(12, 12),
+(12, 13),
+(12, 14),
+(13, 15),
+(13, 16),
+(13, 17),
+(13, 18),
+(14, 15),
+(14, 16),
+(14, 17),
+(14, 18);
 
 -- --------------------------------------------------------
 
@@ -128,7 +144,11 @@ INSERT INTO `interpretazioni` (`idAttore`, `idPersonaggio`) VALUES
 (8, 9),
 (10, 8),
 (11, 3),
-(12, 10);
+(12, 10),
+(22, 11),
+(23, 12),
+(26, 14),
+(27, 13);
 
 -- --------------------------------------------------------
 
@@ -184,7 +204,39 @@ INSERT INTO `partecipazioni` (`idPersona`, `idVideo`, `selettore`) VALUES
 (19, 9, 1),
 (20, 9, 1),
 (21, 10, 1),
-(21, 10, 3);
+(21, 10, 3),
+(22, 11, 2),
+(22, 12, 2),
+(22, 13, 2),
+(22, 14, 2),
+(23, 11, 2),
+(23, 12, 2),
+(23, 13, 2),
+(23, 14, 2),
+(24, 11, 1),
+(24, 12, 1),
+(24, 13, 1),
+(24, 14, 1),
+(25, 11, 1),
+(25, 12, 1),
+(25, 13, 1),
+(25, 14, 1),
+(26, 15, 2),
+(26, 16, 2),
+(26, 17, 2),
+(26, 18, 2),
+(27, 15, 2),
+(27, 16, 2),
+(27, 17, 2),
+(27, 18, 2),
+(28, 15, 1),
+(28, 16, 1),
+(28, 17, 1),
+(28, 18, 1),
+(29, 15, 1),
+(29, 16, 1),
+(29, 17, 1),
+(29, 18, 1);
 
 -- --------------------------------------------------------
 
@@ -211,7 +263,11 @@ INSERT INTO `personaggi` (`id`, `nome`) VALUES
 (7, 'Star-Lord'),
 (8, 'Happy Hogan'),
 (9, 'Doctor Strange'),
-(10, 'Ant-Man');
+(10, 'Ant-Man'),
+(11, 'Il professore'),
+(12, 'Tokyo'),
+(13, 'John Reese'),
+(14, 'Harold Finch');
 
 -- --------------------------------------------------------
 
@@ -250,7 +306,15 @@ INSERT INTO `persone` (`id`, `nome`, `cognome`) VALUES
 (18, 'Alan', 'Taylor'),
 (19, 'Anthony', 'Russo'),
 (20, 'Joe', 'Russo'),
-(21, 'James', 'Gunn');
+(21, 'James', 'Gunn'),
+(22, 'Alvaro', 'Morte'),
+(23, 'Ursula', 'Corbero'),
+(24, ' Alex ', 'Rodrigo'),
+(25, 'Alejandro', 'Bazzano'),
+(26, 'Michael', 'Emerson'),
+(27, 'Jim', 'Caviezel'),
+(28, 'Jonathan', 'Nolan'),
+(29, 'Greg', 'Plageman');
 
 -- --------------------------------------------------------
 
@@ -291,7 +355,7 @@ INSERT INTO `recensionevideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`
 (1, 6, 6, 'Non ho capito perchè non c&#39;era spider-man', 5),
 (1, 7, 10, 'Tony ❤ Pepper', 5),
 (2, 3, 10, 'Bello', 3),
-(2, 4, 5, 'Non molto bello', NULL),
+(2, 4, 8, 'Non mi sembrava bello ma l&#39;ho rivalutato.', NULL),
 (6, 1, 8, 'Gran bel film', NULL);
 
 -- --------------------------------------------------------
@@ -321,8 +385,17 @@ INSERT INTO `saghe` (`id`, `nome`) VALUES
 
 CREATE TABLE `serie` (
   `id` int(11) NOT NULL,
-  `nome` varchar(50) NOT NULL
+  `nome` varchar(50) NOT NULL,
+  `sinossi` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dump dei dati per la tabella `serie`
+--
+
+INSERT INTO `serie` (`id`, `nome`, `sinossi`) VALUES
+(1, 'La casa di Carta', 'La storia narra gli sviluppi di una rapina estremamente ambiziosa e originale: irrompere nella Fábrica Nacional de Moneda y Timbre, a Madrid, far stampare migliaia di milioni di banconote e scappare con il bottino.'),
+(2, 'Person of Interest', 'In seguito agli attentati che colpirono gli Stati Uniti nel 2001, il misterioso genio dell\'informatica miliardario Harold Finch ha costruito La Macchina, un\'intelligenza artificiale (IA), per un progetto segreto antiterroristico dell\'amministrazione americana chiamato Northern Lights.');
 
 -- --------------------------------------------------------
 
@@ -365,14 +438,14 @@ CREATE TABLE `video` (
   `numero` int(11) DEFAULT NULL,
   `stagione` int(11) DEFAULT NULL,
   `selettore` int(11) NOT NULL,
-  `Sinossi` varchar(500) NOT NULL
+  `sinossi` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dump dei dati per la tabella `video`
 --
 
-INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `stagione`, `selettore`, `Sinossi`) VALUES
+INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `stagione`, `selettore`, `sinossi`) VALUES
 (1, 'Iron Man', 126, 1, NULL, 1, NULL, 1, 'Dopo essere sopravvissuto ad un attacco inaspettato in territorio nemico, l\'industriale Tony Stark costruisce un\'armatura ad alta tecnologia e giura di proteggere il mondo nei panni di Iron Man.'),
 (2, 'L\'incredibile Hulk', 135, 1, NULL, 2, NULL, 1, 'Bruce Banner era uno scienziato, ma un\'esposizione accidentale ai raggi gamma ha provocato una mutazione genetica e sconvolto la sua esistenza. Ogni qualvolta le emozioni lo assalgono, Bruce si trasforma in Hulk, mostro verde dalla forza smisurata.'),
 (3, 'Iron Man 2', 124, 1, NULL, 3, NULL, 1, 'Ora che tutto il mondo conosce la vera identità di Iron Man, l\'inventore milionario Tony Stark deve affrontare le pressioni alla collaborazione da parte dei militari e stringere nuove alleanze per affrontare un potente nemico.'),
@@ -382,7 +455,15 @@ INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `sta
 (7, 'Iron Man 3', 131, 1, NULL, 7, NULL, 1, 'Dopo aver salvato New York dalla distruzione ed essere rimasto da allora insonne e preoccupato, Tony Stark rimasto senza armatura deve lottare contro le sue paure interiori per sconfiggere il suo nuovo nemico, il Mandarino.'),
 (8, 'Thor: The Dark World', 112, 1, NULL, 8, NULL, 1, 'Dal personaggio della Marvel, Thor si allea con il perfido Loki per salvare la Terra dei Nove Regni da un antico nemico nato prima ancora dell\'universo.'),
 (9, 'Captain America: The Winter Soldier', 136, 1, NULL, 9, NULL, 1, 'Capitan America, Vedova Nera e un nuovo alleato, Falcon, affrontano un nemico inaspettato mentre lottano per far emergere alla luce del sole un complotto che mette a rischio il mondo intero.'),
-(10, 'Guardiani della Galassia', 125, 1, NULL, 10, NULL, 1, 'Un avventuriero spaziale, Brash Peter Quill, diventa preda di alcuni cacciatori di taglie dopo aver rubato una sfera ambita dal potente Ronan. Per sfuggire alla morte, l\'uomo si allea con quattro improbabili compagni di avventura.');
+(10, 'Guardiani della Galassia', 125, 1, NULL, 10, NULL, 1, 'Un avventuriero spaziale, Brash Peter Quill, diventa preda di alcuni cacciatori di taglie dopo aver rubato una sfera ambita dal potente Ronan. Per sfuggire alla morte, l\'uomo si allea con quattro improbabili compagni di avventura.'),
+(11, ' Eseguire ciò che è stato concordato', 47, NULL, 1, 1, 1, 2, 'A ciascun componente della banda viene dato il nome di una città: Tokyo, narratrice della storia, il cui compagno è appena morto dopo uno scontro a fuoco per un furto; Mosca e Denver, padre e figlio; Berlino, eletto dal Professore a capo delle operazioni; Nairobi, l\'altra donna del gruppo; Río, giovane hacker; Helsinki e Oslo, cugini serbi'),
+(12, 'Incoscenza leale', 41, NULL, 1, 2, 1, 2, 'Río è vivo, è solo ferito alla testa. Berlino, al telefono con il Professore, gli rivela che Tokyo e Río hanno una relazione, ma lei smentisce tutto. Río, invece, quando sono soli, conferma a Berlino che ama Tokyo.'),
+(13, 'Le maschere sono finite', 43, NULL, 1, 1, 2, 2, 'La polizia e la Scientifica stanno passando al setaccio il casale di Toledo in cerca di tracce; il Professore, che ha accompagnato Raquel, è in auto, estremamente nervoso, ma trova un quaderno di Paula, la figlia di Raquel, in cui la maestra scrive alla madre delle sue preoccupazioni per un invito da parte di Alberto, il padre. Dentro all\'edificio vi sono moltissime prove, tattiche, impronte, DNA.'),
+(14, 'Il capo del piano', 44, NULL, 1, 2, 2, 2, 'Berlino è in ostaggio di Tokyo con l\'aiuto di Río e Denver. Tokyo vuole sapere i dettagli del \"piano Chernobyl\", il piano da attuare solo in caso di emergenza, e per farlo lo tortura rompendo alcune boccette del suo farmaco e giocando alla roulette russa con lui. '),
+(15, 'La macchina della conoscenza', 44, NULL, 2, 1, 1, 2, 'La serie inizia con un flashback in cui si vede in un letto John Reese insieme a una donna. Siamo nel 2011, Reese è un barbone di New York.'),
+(16, 'Una voce dal passato', 44, NULL, 2, 2, 1, 2, 'Dopo aver salvato un uomo di nome Bill da alcuni sicari assoldati da sua moglie, Reese pedina Finch per scoprire più informazioni sul suo conto, quando quest\'ultimo chiama l\'ex agente per assegnarli a un\'altra missione.'),
+(17, 'Il piano di emergenza', 42, NULL, 2, 1, 2, 2, 'Reese riceve una serie di parole apparentemente casuali dalla Macchina, che l\'ha contattato tramite un telefono pubblico. Dopo aver assegnato alla Carter il compito di indagare più approfonditamente sulla morte di Alicia Corwin, uccisa da Root durante il rapimento di Finch, egli capisce che le parole identificano tre differenti libri nella biblioteca di Finch.'),
+(18, 'Cattivi geni', 42, NULL, 2, 2, 2, 2, 'Reese e Carter partono per il Texas sulle tracce di Hanna Frey, una ragazzina scomparsa molti anni prima. Nel frattempo, Root tiene prigionieri Finch e Weeks e tortura ed interroga quest’ultimo per sapere la posizione della Macchina, accusandolo di essere un \"codice malevolo\".');
 
 --
 -- Indici per le tabelle scaricate
@@ -516,13 +597,13 @@ ALTER TABLE `curiositavideo`
 -- AUTO_INCREMENT per la tabella `personaggi`
 --
 ALTER TABLE `personaggi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
 -- AUTO_INCREMENT per la tabella `persone`
 --
 ALTER TABLE `persone`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=22;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT per la tabella `saghe`
@@ -534,7 +615,7 @@ ALTER TABLE `saghe`
 -- AUTO_INCREMENT per la tabella `serie`
 --
 ALTER TABLE `serie`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT per la tabella `utenti`
@@ -546,7 +627,7 @@ ALTER TABLE `utenti`
 -- AUTO_INCREMENT per la tabella `video`
 --
 ALTER TABLE `video`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- Limiti per le tabelle scaricate
