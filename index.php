@@ -24,6 +24,8 @@
 		session_unset();
 		session_destroy();
 		session_start();
+		if(isset($_GET["logout"]))
+			$_GET["stato"]=$_GET["logout"];
 	}
 	
 	function dbConn() { /* Connessione al DB */
@@ -133,7 +135,6 @@
 		<script> /* Funzioni JavaScript */
 			function logout(id,stato) { /* Effettua il logout */
 				f.stato.value="logout";
-				f.id.value=id+","+stato;
 				f.submit();
 				//f.passa_a(id,valore)
 			}
@@ -247,7 +248,7 @@
 										<button class="dropdown-item" type="button">Visualizza Profilo</button>
 										<button class="dropdown-item" type="button">Visualizza Recensioni</button>
 										<button class="dropdown-item" type="button">Visualizza Curiosità</button>
-										<button class="dropdown-item" type="button" onclick="logout('.$_GET["id"].','.$_GET["stato"].')">Logout</button>
+										<button class="dropdown-item" type="button" onclick="logout()">Logout</button>
 									</div>
 								</div>
 							'); /* Tendina gestione contenuti */
@@ -259,20 +260,21 @@
 		<main role="main">
 			<form name='f' id='f' method='get'> <!-- Form Principale -->
 				<input type='hidden' name='stato' id='stato'> <!-- Identificativo della pagina da caricare -->
-				<input type='hidden' name='id' id='id'> <!-- Identificativo dell'oggetto a cui si fa riferimento -->
-				<?php
-					if(isset($_GET["stato"])&&$_GET["stato"]=="logout") { /* Operazione di logout */
-						$id_stato = explode(",",$_GET["id"]);
-						echo "<script type='text/javascript'>passa_a($id_stato[0],$id_stato[1]);</script>";
-					}
-				?>
 				<div class="album py-5 bg-light">
 					<div class="container">
 						<div class="row">
 							<?php
+								echo "<input type='hidden' name='id' id='id'";//Identificativo dell'oggetto a cui si fa riferimento
+								if(isset($_GET["id"])&&!empty($_GET["id"])){
+									 echo "value='$_GET[id]'";
+								}
+								echo ">";
 								if(isset($_GET["stato"])&&!empty($_GET["stato"])) { /* Stato conosciuto */
 									$stato=$_GET["stato"];
+									echo "<input type='hidden' name='logout' id='logout' value='$stato'>"; // Identificativo dell'oggetto a cui si fa riferimento -->
 								}
+								
+								
 								else  /* Stato sconosciuto */
 									$stato=0;
 
