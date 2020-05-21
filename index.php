@@ -177,15 +177,12 @@
 						<!--<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24" focusable="false"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>-->
 						<strong>Homepage</strong>
 					</a>
-					<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,6)"> <!-- Scorciatoia Homepage -->
-						<!--<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24" focusable="false"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>-->
-						<strong>Saghe</strong>
-					</a>
-					<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,4)"> <!-- Scorciatoia Homepage -->
-						<!--<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24" focusable="false"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>-->
-						<strong>Serie</strong>
-			  		</a>
-
+					<form id='ricerca' name='ricerca' method='get'>
+						<div class="form-group">
+							<input class=" d-flex align-items-center" name='ricerca' id='ricerca' type="text" placeholder="Ricerca">
+							<input type='submit'>
+						</div>
+					</form>
 					<?php
 						if(!isset($_SESSION["login"])) /* Sessione Login non inizializzata */
 							$_SESSION["login"]=0;
@@ -262,6 +259,14 @@
 			<form name='f' id='f' method='get'> <!-- Form Principale -->
 				<input type='hidden' name='stato' id='stato'> <!-- Identificativo della pagina da caricare -->
 				<div class="album py-5 bg-light">
+				<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,6)"> <!-- Scorciatoia Homepage -->
+						<!--<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24" focusable="false"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>-->
+						<strong>Saghe</strong>
+					</a>
+					<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,4)"> <!-- Scorciatoia Homepage -->
+						<!--<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24" focusable="false"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>-->
+						<strong>Serie</strong>
+			  		</a>
 					<div class="container">
 						<div class="row">
 							<?php
@@ -277,7 +282,10 @@
 								
 								
 								else  /* Stato sconosciuto */
-									$stato=0;
+									if(isset($_GET["ricerca"]))
+										$stato=8;
+									else
+										$stato=0;
 
 								switch($stato) {
 									case 0: /* Homepage */
@@ -1386,7 +1394,95 @@
 									case 7: /* Dettagli saga */
 
 										break;
-
+									case 8: /*ricerca*/
+										$ricerca=$_GET["ricerca"];
+										$conn=dbConn();
+										echo ('
+											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
+											<div class="row">
+										');
+										
+										$query="SELECT id,nome,Sinossi FROM video WHERE selettore=1 AND nome LIKE '%$ricerca%'"; 
+										
+										if ($risultati=$conn->query($query)) { /* Risultati della query */
+											echo ('	
+														<div class="container text-center"> 
+															<h2 class="mt-4 mb-4" >Film</h2>
+														</div>
+												');
+											if ($risultati->num_rows>0) {
+												while ($elemento = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni film */
+													echo ('
+															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',1);" >
+																<div class="card h-100 mb-4 shadow-sm">
+																	<div class="card-body">
+																		<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
+																		<p class="card-text">'.$elemento["nome"].'</p>
+																		<p class="card-text-description">'.$elemento["Sinossi"].'</p>			
+																		<div class="d-flex justify-content-between align-items-center">
+																		</div>
+																	</div>
+																</div>
+															</div>		
+													');
+												}
+											}
+											else { /* Comunicazione mancanza di elementi */
+												echo ('
+														<div class="col-md-3 ">
+															<div class="card mb-4 shadow-sm">
+																<div class="card-body">
+																	<p class="card-text">Nessun risultato di ricerca trovato</p>
+																</div>
+															</div>
+														</div>
+													');
+											}
+											
+											$risultati->free();
+										}
+										
+										$query="SELECT id,nome,cognome FROM persone WHERE nome LIKE '%$ricerca%' OR cognome LIKE '%ricerca%'"; 
+										if ($attori=$conn->query($query)) { /* Risultati della query */
+											echo ('
+												<div class="container text-center"> 
+													<h2 class="mt-4 mb-4" >Persone</h2>
+												</div>
+												');
+											if ($attori->num_rows>0) {
+												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
+													echo ('
+														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',2);" >
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<img src="images/persone/'.$attore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$attore["nome"].' '.$attore["cognome"].'">
+																	<p class="card-text">'.$attore["nome"].' '.$attore["cognome"].'</p>
+																</div>
+															</div>
+														</div>		
+													');
+												}
+											}
+											else { /* Comunicazione mancanza di elementi */
+												echo ('
+														<div class="col-md-3 ">
+															<div class="card mb-4 shadow-sm">
+																<div class="card-body">
+																	<p class="card-text">Nessun risultato di ricerca trovato</p>
+																</div>
+															</div>
+														</div>
+													');
+											}
+											
+											$attori->free();
+											
+										}
+										
+										$conn->close();
+										
+										echo "</div>";
+										break;
 									default:
 										echo "<h1><strong>404. PAGE NOT FOUND</strong></h1>";
 										break;
