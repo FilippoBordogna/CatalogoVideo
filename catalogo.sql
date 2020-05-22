@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 22, 2020 alle 04:22
+-- Creato il: Mag 22, 2020 alle 13:09
 -- Versione del server: 10.1.31-MariaDB
 -- Versione PHP: 7.2.4
 
@@ -88,7 +88,15 @@ INSERT INTO `comparizioni` (`idPersonaggio`, `idVideo`) VALUES
 (14, 15),
 (14, 16),
 (14, 17),
-(14, 18);
+(14, 18),
+(15, 19),
+(15, 20),
+(15, 21),
+(15, 22),
+(16, 19),
+(16, 20),
+(16, 21),
+(16, 22);
 
 -- --------------------------------------------------------
 
@@ -148,7 +156,9 @@ INSERT INTO `interpretazioni` (`idAttore`, `idPersonaggio`) VALUES
 (22, 11),
 (23, 12),
 (26, 14),
-(27, 13);
+(27, 13),
+(30, 15),
+(31, 16);
 
 -- --------------------------------------------------------
 
@@ -236,7 +246,27 @@ INSERT INTO `partecipazioni` (`idPersona`, `idVideo`, `selettore`) VALUES
 (29, 15, 1),
 (29, 16, 1),
 (29, 17, 1),
-(29, 18, 1);
+(29, 18, 1),
+(30, 19, 2),
+(30, 20, 2),
+(30, 21, 2),
+(30, 22, 2),
+(31, 19, 2),
+(31, 20, 2),
+(31, 21, 2),
+(31, 22, 2),
+(32, 19, 1),
+(33, 20, 1),
+(33, 21, 1),
+(33, 22, 1),
+(34, 19, 3),
+(34, 20, 3),
+(34, 21, 3),
+(34, 22, 3),
+(35, 19, 3),
+(35, 20, 3),
+(35, 21, 3),
+(35, 22, 3);
 
 -- --------------------------------------------------------
 
@@ -267,7 +297,9 @@ INSERT INTO `personaggi` (`id`, `nome`) VALUES
 (11, 'Il professore'),
 (12, 'Tokyo'),
 (13, 'John Reese'),
-(14, 'Harold Finch');
+(14, 'Harold Finch'),
+(15, 'Peeta Mellark'),
+(16, 'Katniss Everdeen');
 
 -- --------------------------------------------------------
 
@@ -314,7 +346,13 @@ INSERT INTO `persone` (`id`, `nome`, `cognome`) VALUES
 (26, 'Michael', 'Emerson'),
 (27, 'Jim', 'Caviezel'),
 (28, 'Jonathan', 'Nolan'),
-(29, 'Greg', 'Plageman');
+(29, 'Greg', 'Plageman'),
+(30, 'Josh', 'Hutcherson'),
+(31, 'Jennifer', 'Lawrence'),
+(32, 'Gary', 'Ross'),
+(33, 'Francis', 'Lawrence'),
+(34, 'Nina', 'Jacobson'),
+(35, 'Jon', 'Kilik');
 
 -- --------------------------------------------------------
 
@@ -368,7 +406,15 @@ INSERT INTO `recensionevideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`
 (1, 7, 10, 'Tony ❤ Pepper', 5),
 (2, 3, 10, 'Bello', 3),
 (2, 4, 8, 'Non mi sembrava bello ma l&#39;ho rivalutato.', NULL),
-(6, 1, 8, 'Gran bel film', NULL);
+(6, 1, 8, 'Gran bel film', NULL),
+(11, 7, 9, 'Ottimo inizio per questa serie', 5),
+(12, 4, 5, 'Che brutta serie. Venite a vedere la mia su www.utente-banana.it', NULL),
+(13, 1, 10, 'Troppo emozionante questo episodio. Molti colpi di scena', 6),
+(14, 7, 3, 'Quanto odio Berlino', 3),
+(15, 4, 9, 'Non vedo l\'ora di vedere altri episodi. Questa serie promette bene', 6),
+(16, 1, 10, 'Proprio bella questa serie. Il professore e Tokyo sono fantastici', NULL),
+(17, 4, 8, 'Quanto è affascinante il personaggio di Harold Finch: genio nascosto', 5),
+(18, 7, 7, 'Molto difficile capire tutti gli stravolgimenti se non si è davvero attenti', 3);
 
 -- --------------------------------------------------------
 
@@ -387,7 +433,8 @@ CREATE TABLE `saghe` (
 
 INSERT INTO `saghe` (`id`, `nome`) VALUES
 (1, 'Marvel Cinematic Universe'),
-(2, 'The wizarding world');
+(2, 'The Wizarding World'),
+(3, 'Hunger Games');
 
 -- --------------------------------------------------------
 
@@ -475,7 +522,11 @@ INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `sta
 (15, 'La macchina della conoscenza', 44, NULL, 2, 1, 1, 2, 'La serie inizia con un flashback in cui si vede in un letto John Reese insieme a una donna. Siamo nel 2011, Reese è un barbone di New York.'),
 (16, 'Una voce dal passato', 44, NULL, 2, 2, 1, 2, 'Dopo aver salvato un uomo di nome Bill da alcuni sicari assoldati da sua moglie, Reese pedina Finch per scoprire più informazioni sul suo conto, quando quest\'ultimo chiama l\'ex agente per assegnarli a un\'altra missione.'),
 (17, 'Il piano di emergenza', 42, NULL, 2, 1, 2, 2, 'Reese riceve una serie di parole apparentemente casuali dalla Macchina, che l\'ha contattato tramite un telefono pubblico. Dopo aver assegnato alla Carter il compito di indagare più approfonditamente sulla morte di Alicia Corwin, uccisa da Root durante il rapimento di Finch, egli capisce che le parole identificano tre differenti libri nella biblioteca di Finch.'),
-(18, 'Cattivi geni', 42, NULL, 2, 2, 2, 2, 'Reese e Carter partono per il Texas sulle tracce di Hanna Frey, una ragazzina scomparsa molti anni prima. Nel frattempo, Root tiene prigionieri Finch e Weeks e tortura ed interroga quest’ultimo per sapere la posizione della Macchina, accusandolo di essere un \"codice malevolo\".');
+(18, 'Cattivi geni', 42, NULL, 2, 2, 2, 2, 'Reese e Carter partono per il Texas sulle tracce di Hanna Frey, una ragazzina scomparsa molti anni prima. Nel frattempo, Root tiene prigionieri Finch e Weeks e tortura ed interroga quest’ultimo per sapere la posizione della Macchina, accusandolo di essere un \"codice malevolo\".'),
+(19, 'Hunger Games', 143, 3, NULL, 1, NULL, 2, 'Ogni anno, come punizione per aver scatenato la ribellione anni prima, in ogni distretto vengono scelti un ragazzo e una ragazza di età compresa tra i dodici e i diciotto anni per partecipare agli Hunger Games, un evento nel quale i partecipanti devono combattere in un luogo detto \"arena\", che viene controllata dagli Strateghi per mezzo di computer molto sofisticati, finché uno solo rimane vivo'),
+(20, 'Hunger Games: La ragazza di fuoco', 146, 3, NULL, 2, NULL, 2, 'Katniss Everdeen ritorna a casa in seguito alla vittoria ottenuta nell\'ultima edizione degli Hunger Games insieme al suo compagno Peeta Mellark. Ora i due alloggiano al Villaggio dei Vincitori, presente in ogni distretto, assieme al loro mentore Haymitch Abernathy.\r\n\r\nPer i due giovani è giunto il momento di partire per il Tour della Vittoria, un viaggio attraverso i distretti per ricordare coloro che sono morti nei giochi.'),
+(21, 'Hunger Games: Il canto della rivolta - Parte 1', 123, 3, NULL, 3, NULL, 2, 'Katniss Everdeen si trova nel Distretto 13 in stato confusionale, dopo aver distrutto l\'arena dei settantacinquesimi Hunger Games. Appena la ragazza inizia a riprendersi viene nominata da Plutarch Heavensbee e dalla presidentessa Alma Coin come immagine simbolo della ribellione, ma la ragazza, ormai nota a tutti come la \"ghiandaia imitatrice\", inizialmente rifiuta l\'offerta poiché ancora molto turbata.'),
+(22, 'Hunger Games: Il canto della rivolta parte 2', 137, 3, NULL, 4, NULL, 2, 'La nazione di Panem è in guerra. Tutti i distretti sono ormai uniti nella rivolta contro Capitol City, guidata da Katniss Everdeen, che continua a vestire i panni della ghiandaia imitatrice e quindi a impersonare il simbolo della rivoluzione stessa. Nel frattempo Peeta è ancora sotto shock a causa del depistaggio cerebrale causatogli dal Presidente Snow mentre era prigioniero a Capitol City e i suoi sentimenti di odio verso Katniss sono ancora presenti, benché lentamente comincino a svanire.');
 
 --
 -- Indici per le tabelle scaricate
@@ -609,19 +660,19 @@ ALTER TABLE `curiositavideo`
 -- AUTO_INCREMENT per la tabella `personaggi`
 --
 ALTER TABLE `personaggi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT per la tabella `persone`
 --
 ALTER TABLE `persone`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT per la tabella `saghe`
 --
 ALTER TABLE `saghe`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT per la tabella `serie`
@@ -639,7 +690,7 @@ ALTER TABLE `utenti`
 -- AUTO_INCREMENT per la tabella `video`
 --
 ALTER TABLE `video`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
 
 --
 -- Limiti per le tabelle scaricate
