@@ -1163,7 +1163,7 @@
 										FROM recensionevideo R 
 										INNER JOIN utenti U ON U.id=R.idUtente
 										LEFT JOIN utenti A ON A.id=R.idAdmin
-										WHERE R.testo IS NOT NULL AND idVideo=$id
+										WHERE idVideo=$id
 										ORDER BY R.idAdmin DESC,R.idUtente
 										LIMIT 4;";
 										$recensioni=$conn->query($query);
@@ -1183,8 +1183,9 @@
 														'<div class="col-md-3 py2">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
-																	<h6 class="mt-1 ml-2">'.$riga["username"].' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>
-																	<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																	<h6 class="mt-1 ml-2">'.$riga["username"].' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>';
+																	if($riga["testo"]!=null)
+																		echo '<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
 																	if($riga["admin"]!=null)
 																	echo '
 																		<div class="d-flex justify-content-end bd-highlight mb-3">
@@ -1706,7 +1707,7 @@
 										FROM recensioneserie R 
 										INNER JOIN utenti U ON U.id=R.idUtente
 										LEFT JOIN utenti A ON A.id=R.idAdmin
-										WHERE R.testo IS NOT NULL AND idSerie=$id
+										WHERE idSerie=$id
 										ORDER BY R.idAdmin DESC,R.idUtente
 										LIMIT 4;";
 										$recensioni=$conn->query($query);
@@ -1726,7 +1727,9 @@
 														'<div class="col-md-3 py2">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
-																	<h6 class="mt-1 ml-2">'.$riga["username"].' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>
+																	<h6 class="mt-1 ml-2">'.$riga["username"].' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>';
+																	if($riga["testo"]!=null)
+																		echo '
 																	<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
 																	if($riga["admin"]!=null)
 																	echo '
