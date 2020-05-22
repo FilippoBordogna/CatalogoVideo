@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 20, 2020 alle 20:12
+-- Creato il: Mag 22, 2020 alle 04:22
 -- Versione del server: 10.1.31-MariaDB
 -- Versione PHP: 7.2.4
 
@@ -329,6 +329,18 @@ CREATE TABLE `recensioneserie` (
   `testo` varchar(255) DEFAULT NULL,
   `idAdmin` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dump dei dati per la tabella `recensioneserie`
+--
+
+INSERT INTO `recensioneserie` (`idSerie`, `idUtente`, `voto`, `testo`, `idAdmin`) VALUES
+(1, 1, 5, 'Non un granchè', 6),
+(1, 4, 10, 'Stupenda', NULL),
+(1, 7, 8, 'Molto carina. Mi sono sfuggiti alcuni passaggi', 3),
+(2, 1, 9, 'Molto carina', 5),
+(2, 4, 4, 'Non un granchè', NULL),
+(2, 7, 7, 'Bella ma meglio la casa di carta', 3);
 
 -- --------------------------------------------------------
 
