@@ -473,11 +473,17 @@
 											'); /* Link mostra tutte le serie */
 
 										/* MIGLIORI SAGHE */
-										$query="SELECT S.*, AVG(RS.voto) mediaVoti, MAX(V.stagione) nStagioni
-										FROM recensioneserie RS JOIN serie S ON S.id=RS.idSerie JOIN video V on V.idserie=S.id
-										WHERE RS.idAdmin IS NOT NULL
-										GROUP BY S.id
-										ORDER BY mediaVoti DESC
+										$query="SELECT AVG (Medie.mediaVoti) media, COUNT(DISTINCT V.id) nFilm, S.id, S.nome
+										FROM (
+												SELECT  AVG(R.voto) mediaVoti, V.*
+												FROM recensionevideo R JOIN video V ON V.id=R.idVideo JOIN saghe S ON S.id=V.idSaga
+												WHERE R.idAdmin IS NOT NULL
+												GROUP BY V.id
+											) Medie
+										JOIN saghe S ON S.id=Medie.idSaga
+                                        JOIN video V ON V.idSaga=Medie.idSaga
+										GROUP BY Medie.idSaga
+										ORDER BY Medie.mediaVoti DESC
 										LIMIT 8"; /* Preparazione Query: Migliori saghe (base voto) */
 										
 										echo ('	
@@ -494,12 +500,11 @@
 																<div class="card-body">
 																	<img src="images/saghe/'.$saga["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/saghe/default.jpg\';" alt="Locandina di '.$saga["nome"].'">
 																	<p class="card-text">'.$saga["nome"].'</p>
-																	<p class="card-text-description">'.$saga["sinossi"].'</p>
 																	<div class="d-flex flex-row-reverse align-items-center">
-																		<small class="text-muted">Film: '.$saga["nStagioni"].'</small>
+																		<small class="text-muted">Film: '.$saga["nFilm"].'</small>
 																	</div>
 																	<div class="d-flex flex-row-reverse align-items-center">
-																		<small class="text-muted">Voto Medio: '.round($saga["mediaVoti"],2).'</small>
+																		<small class="text-muted">Voto Medio: '.round($saga["media"],2).'</small>
 																	</div>
 																</div>
 															</div>
@@ -2191,6 +2196,48 @@
 											$serie->free();	
 										}
 										
+										$query="SELECT S.id, S.nome, COUNT(*) nFilm
+										FROM saghe S
+										JOIN video V ON S.id=V.idSaga
+										WHERE S.nome LIKE '%$ricerca%'
+										GROUP BY S.id"; /* Preparazione Query: Tutte le saghe */
+										echo ('	
+											<div class="container text-center"> 
+												<h2 class="mt-4 mb-4" >Saghe</h2>
+											</div>
+											');
+										if ($saghe=$conn->query($query)) { /* Query effettuata con successo */
+											if ($saghe->num_rows>0) { /* Almeno un risultato */
+												while ($saga = $saghe->fetch_assoc()) { /* Costruisco un riquadro per ogni saga TV */
+													echo ('
+														<div class="col-md-3 py2" onclick="passa_a('.$saga["id"].',6)">
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<img src="images/saghe/'.$saga["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/saghe/default.jpg\';" alt="Locandina di '.$saga["nome"].'">
+																	<p class="card-text">'.$saga["nome"].'</p>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Film: '.$saga["nFilm"].'</small>
+																	</div>
+																</div>
+															</div>
+														</div>
+													');
+												}
+											}
+											else { /* Comunicazione mancanza di saghe */
+												echo ('
+														<div class="col-md-3 ">
+															<div class="card mb-4 shadow-sm">
+																<div class="card-body">
+																	<p class="card-text">Nessuna saga è ancora stata recensita</p>
+																</div>
+															</div>
+														</div>
+													');
+											}
+											$saghe->free();
+										}
+										
 										$query="SELECT id,nome,cognome FROM persone WHERE nome LIKE '%$ricerca%' OR cognome LIKE '%$ricerca%'"; 
 										if ($attori=$conn->query($query)) { /* Risultati della query */
 											echo ('
@@ -2253,6 +2300,12 @@
 											}																				
 											$personaggi->free();
 										}
+										echo ('	
+											<div class="container text-center"> 
+												<h2 class="mt-4 mb-4" >Migliori Saghe</h2>
+											</div>
+											');
+											
 										
 										
 										$conn->close();
