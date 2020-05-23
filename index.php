@@ -1,16 +1,10 @@
 <?php
 	/* 
 		DA FARE:
-		- Aggiungere il numero di stagioni nell'elenco serie (case 2)
-		- Aggiungere la lista degli episodi,delle stagioni, le recensioni e le curiosità in dettagli serie (case 5)
-		- Pagina tutte le saghe (case 3)
-		- Pagina dettagli saghe (case 7)
-		- Aggiungere campo datauscita al video
+		- Aggiungere campo datauscita al video (da discutere)
 		- Copiare e incollare quanto fatto per le recensioni dei film per le curiosità dei film (non c'è voto, possono esserci più commenti(?))
-		- Copiare e incollare quanto sopra per le recensioni e le curiosità delle serie
-		- Copiare e incollare quanto sopra per le recensioni e le curiosità delle saghe (?)
+		- Copiare e incollare quanto sopra per le curiosità delle serie
 		- Permettere ad Admin di validare commenti  
-		- Ricerca
 		- Registrazione (nuova pagina)
 		- Ultimi accessi (ultimo) per controllo
 		- Rifare lo schema ER/logico in base alle modifiche (PIPPO)
@@ -29,26 +23,27 @@
 		- 9 DETTAGLI PERSONAGGI
 		- 10 RICERCA
 	*/
-	/* Controllo Sessioni */
+
+	// Controllo Sessioni 
 	session_start();
-	if(!isset($_SESSION["login"]) || $_SESSION["login"]!=1) /* Mancata presenza di dati integri per login */
+	if(!isset($_SESSION["login"]) || $_SESSION["login"]!=1) // Mancata presenza di dati integri per login 
 		session_unset();
-	if(isset($_GET["stato"])&&$_GET["stato"]=="logout") { /* Operazione di logout */
+	if(isset($_GET["stato"])&&$_GET["stato"]=="logout") { // Operazione di logout 
 		session_unset();
 		session_destroy();
-		session_start();
+		session_start(); // Chiudo e riapro la sessione
 		if(isset($_GET["logout"]))
 			$_GET["stato"]=$_GET["logout"];
 	}
 	
-	function dbConn() { /* Connessione al DB */
-		$host = ""; /* Host Server MySQL */
-		$user = "root"; /* User Server MySQL */
-		$pwd = ""; /* Password Server MySQL */
-		$dbname = "catalogo"; /* Nome DB MySQL */
-		$conn = new mysqli ( $host , $user , $pwd , $dbname ); /* Inizializzazione Connesione DB */
-		if ($conn->connect_errno) { /* Controllo della corretta connesione */
-			printf("Errore nella connessione al DB:</br>", $conn->connect_error); /* Stampa eventuali errori */
+	function dbConn() { // Connessione al DB 
+		$host = ""; // Host Server MySQL 
+		$user = "root"; // User Server MySQL 
+		$pwd = ""; // Password Server MySQL 
+		$dbname = "catalogo"; // Nome DB MySQL 
+		$conn = new mysqli ( $host , $user , $pwd , $dbname ); // Inizializzazione Connesione DB 
+		if ($conn->connect_errno) { //
+			printf("Errore nella connessione al DB:</br>", $conn->connect_error); // Stampa eventuali errori 
 			exit();
 		}
 		return $conn;
@@ -59,7 +54,8 @@
 <!doctype html>
 <html lang="it">
 	<head>
-		<meta charset="utf-8">
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<!--<meta charset="utf-8">-->
 		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 		<meta name="description" content="">
 		<meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
@@ -123,43 +119,42 @@
 			}
 		}
 
-		.col-md-3 :hover {
+		.col-md-3 :hover { 
 			cursor: pointer;
 			background-color: black;
 			transition: all 0.7s;
 			color: white;	   
-		}
+		} /* Quando passo su una casella la evidenzio */
 
 		.card-text-description {
 			display: none;
-		}
+		} /* Quando non punto su una casella la descrizione è nascosta  */
 
 		.col-md-3 :hover .card-text-description {
 			display: block;
-		}
+		} /* Quando punto su una casella la descrizione è visibile  */
 
 		.text-left :hover {
 			cursor: pointer;
-		}
+		} /* Quanto passo su una casella cambia il cursore nella manina */
 
 		</style>
-		
-		<!--<link href="album.css" rel="stylesheet">-->
-		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-		<script> /* Funzioni JavaScript */
-			function logout(id,stato) { /* Effettua il logout */
+		<!-- -->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!-- Libreria Bootstrap ? -->
+		<script> // Funzioni JavaScript 
+			function logout(id,stato) { // Effettua il logout 
 				f.stato.value="logout";
 				f.submit();
 			}
 			
-			function passa_a(id,stato,pagina) { /* Cambia lo stato (e quindi la pagina) e l'identificativo */
+			function passa_a(id,stato,pagina) { // Modifica lo stato (e quindi la pagina), l'identificativo e il numero di pagina
 				f.id.value=id;
 				f.stato.value=stato;
 				f.pagina.value=pagina;
 				f.submit();
 			}
 			
-			function recensione(id) { /* Controlli sulla recensione ed effettivo inserimento */
+			function recensione(id) { // Controlli sulla recensione ed effettivo inserimento 
 				if(f.rate.value==0)
 					alert("Errore! Devi inserire un voto per lasciare una recensione");
 				else{
@@ -169,12 +164,12 @@
 					recensioni.submit();
 				}
 			}
-			function elimina(id,idUtente) { /* Elimina una recensione */
+			function elimina(id,idUtente) { // Elimina una recensione 
 				recensioni.rate.value="ELIMINA";
 				recensioni.idUtente.value=idUtente;
 				recensioni.submit();
 			}
-			function verifica(id,idUtente){ /* Verifica della recensione da parte dell'admin */
+			function verifica(id,idUtente){ // Verifica della recensione da parte dell'admin 
 				recensioni.rate.value="VERIFICA";
 				recensioni.idUtente.value=idUtente;
 				recensioni.submit();
@@ -187,36 +182,37 @@
 		  	<div class="navbar navbar-dark bg-dark shadow-sm"> <!-- Base della Navbar-->
 		 		<div class="container d-flex justify-content-between"> <!-- Contenitore delle scorciatoie -->
 			  		<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,0,null)"> <!-- Scorciatoia Homepage -->
-						<!--<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" aria-hidden="true" class="mr-2" viewBox="0 0 24 24" focusable="false"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>-->
 						<strong>Homepage</strong>
 					</a>
 					
 					<?php
-						if(!isset($_SESSION["login"])) /* Sessione Login non inizializzata */
+						if(!isset($_SESSION["login"])) // Sessione Login non inizializzata
 							$_SESSION["login"]=0;
-						if(isset($_POST["user"]) && isset($_POST["pass"])){ /* Username e Password specificati */
+						if(isset($_POST["user"]) && isset($_POST["pass"])){ // Username e Password specificati 
 							$login=1;
-							$utente=filter_var(trim($_POST["user"]), FILTER_SANITIZE_STRING);
-							$password=filter_var(trim($_POST["pass"]), FILTER_SANITIZE_STRING);
-							$conn=dbConn();
-							$query="SELECT * FROM utenti WHERE email='".$utente."' AND password='".md5($password)."';"; /* Preparazione Query: Controllo Accesso */
-							$risultati=$conn->query($query); /* Risultati della query */
-							if (!$risultati->num_rows!=1){
+							$utente=filter_var(trim($_POST["user"]), FILTER_SANITIZE_STRING); // Sanifico la stringa (evito SQL Injection)
+							$password=filter_var(trim($_POST["pass"]), FILTER_SANITIZE_STRING); // Sanifico la stringa (evito SQL Injection)
+							$conn=dbConn(); // Connessione al DB
+							$query="SELECT * FROM utenti WHERE email='".$utente."' AND password='".md5($password)."';"; // Preparazione Query: Controllo Accesso 
+							$risultati=$conn->query($query); // Risultati della query 
+							if (!$risultati->num_rows!=1) { // 1 unico risultato
+								// Prelevo il valore
 								$riga=$risultati->fetch_assoc();
 								$admin=$riga["admin"];
-								$risultati->free();
+								$risultati->free(); // Dealloco l'oggetto
+								// Setto la sessione
 								$_SESSION["user"]=$riga["username"];
 								$_SESSION["idUser"]=$riga["id"];
 								$_SESSION["admin"]=$riga["admin"];
 								$_SESSION["login"]=1;
 							}
-							else
-								$login=0;
+							else // Piu' di un utente con la stessa login (ERRORE) 
+								$login=0; // Annullo l'operazione di login 
 						
-							$conn->close();
+							$conn->close(); // Chiudo la connessione al DB
 						}
 
-						if($_SESSION["login"]==0) /* Utente non loggato */
+						if($_SESSION["login"]==0) // Utente non loggato 
 							echo (' 
 								<div class="dropdown">
 									<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -243,8 +239,8 @@
 										<a class="dropdown-item" href="#">Forgot password?</a>
 									</div>
 								</div>
-								'); /* Tendina Login */
-						else /* Utente loggato */
+								'); // Tendina Login 
+						else // Utente loggato 
 							echo ('
 								<div class="dropdown">
 									<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -257,14 +253,14 @@
 										<button class="dropdown-item" type="button" onclick="logout()">Logout</button>
 									</div>
 								</div>
-							'); /* Tendina gestione contenuti */
+							'); // Tendina di gestione dei contenuti
 					?>
 				</div>
 		  	</div>
 		</header>
 
 		<main role="main">
-			<form id='search' name='search' method='get'>
+			<form id='search' name='search' method='get'> <!-- Form Ricerca -->
 				<div class="container d-flex justify-content-center mt-2">
 					<div class="form-row align-items-center">
 						<div class="col-auto">
@@ -277,59 +273,60 @@
 				</div>
 				
 			</form>
-			<form name='f' id='f' method='get'> <!-- Form Principale -->
+			<form name='f' id='f' method='get'> <!-- Form stato, id, pagina, logout (facoltativo) -->
 				<input type='hidden' name='stato' id='stato'> <!-- Identificativo della pagina da caricare -->
 				<div class="album py-5 bg-light">
 					<div class="container">
 						<div class="row">
 							<?php
-								echo "<input type='hidden' name='id' id='id'"; /* Identificativo dell'oggetto a cui si fa riferimento */
-								if(isset($_GET["id"])&&!empty($_GET["id"])){ /* Id conosciuto */
+								echo "<input type='hidden' name='id' id='id'"; // Identificativo dell'oggetto a cui si fa riferimento
+								if(isset($_GET["id"])&&!empty($_GET["id"])){ // Id conosciuto
 									 echo "value='$_GET[id]'";
 								}
 								echo ">";
 
-								echo "<input type='hidden' name='pagina' id='pagina'"; /* Numero di pagina */
-								if(isset($_GET["pagina"])&&!empty($_GET["pagina"])) { /* Pagina conosciuta */
+								echo "<input type='hidden' name='pagina' id='pagina'"; // Numero di pagina 
+								if(isset($_GET["pagina"])&&!empty($_GET["pagina"])) { // Pagina conosciuta
 									 echo "value='$_GET[pagina]'>";
 								}
 								else
 									echo "value='1'>";
 
-								if(isset($_GET["stato"])&&!empty($_GET["stato"])) { /* Stato conosciuto */
+								if(isset($_GET["stato"])&&!empty($_GET["stato"])) { // Stato conosciuto
 									$stato=$_GET["stato"];
 									echo "<input type='hidden' name='logout' id='logout' value='$stato'>"; // Valore di ritorno post logout
 								}
-								else if(isset($_GET["ricerca"])) /* Richiesta di ricerca */
+								else if(isset($_GET["ricerca"])) // Richiesta di ricerca 
 										$stato=10;
-									else /* Stato sconosciuto */
+									else // Stato sconosciuto 
 										$stato=0;
 
-								switch($stato) {
+								switch($stato) { // Seleziono la pagina da vedere di cui poi (nei case) caricherò dinamicamente il contenuto
 									case 0: /* 
 											****************
 											*** HOMEPAGE ***
 											****************
 											*/
 
-										$conn=dbConn();
+										$conn=dbConn(); // Connessione al DB
 
-										/* MIGLIORI VIDEO*/
+										// MIGLIORI VIDEO
 										$query="SELECT V.id, V.nome, V.durata, V.idSaga, V.numero, V.sinossi, AVG(RV.voto) mediaVoti
 										FROM recensionevideo RV JOIN video V ON V.id=RV.idVideo
 										WHERE RV.idAdmin IS NOT NULL AND V.selettore!=2
 										GROUP BY RV.idVideo
 										ORDER BY mediaVoti DESC
-										LIMIT 8"; /* Preparazione Query: Migliori video (base voto) */
+										LIMIT 8"; // Preparazione Query: Migliori video (base voto) 
 										
 										echo ('	
 											<div class="container text-center"> 
 												<h2 class="mt-4 mb-4" >Migliori Video</h2>
 											</div>
-											');
-										if ($video=$conn->query($query)) { /* Query effettuata con successo */
-											if ($video->num_rows>0) { /* Almeno un risultato */
-												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+											'); // Titolo
+
+										if ($video=$conn->query($query)) { // Query effettuata con successo
+											if ($video->num_rows>0) { // Almeno un risultato
+												while ($elemento = $video->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null)">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -346,10 +343,10 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Costruisco un riquadro per ogni video 
 												}
 											}
-											else { /* Comunicazione mancanza di video */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -358,27 +355,28 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di video recensiti
 											}
-											$video->free();	
+											$video->free();	// Dealloco l'oggetto
 										}
 
-										/* MIGLIORI FILM*/
+										// MIGLIORI FILM
 										$query="SELECT V.id, V.nome, V.durata, V.sinossi, AVG(RV.voto) mediaVoti
 										FROM recensionevideo RV JOIN video V ON V.id=RV.idVideo
 										WHERE RV.idAdmin IS NOT NULL AND V.selettore=1
 										GROUP BY RV.idVideo
 										ORDER BY mediaVoti DESC
-										LIMIT 8"; /* Preparazione Query: Migliori film (base voto) */
+										LIMIT 8"; // Preparazione Query: Migliori film (base voto)
 										
 										echo ('	
 											<div class="container text-center"> 
 												<h2 class="mt-4 mb-4" >Migliori Film</h2>
 											</div>
-											');
-										if ($video=$conn->query($query)) { /* Query effettuata con successo */
-											if ($video->num_rows>0) { /* Almeno un risultato */
-												while ($film = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni film */
+											'); // Titolo
+
+										if ($video=$conn->query($query)) { // Query effettuata con successo 
+											if ($video->num_rows>0) { // Almeno un risultato 
+												while ($film = $video->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$film["id"].',5,null)">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -395,10 +393,10 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Costruisco un riquadro per ogni film
 												}
 											}
-											else { /* Comunicazione mancanza di film */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -407,30 +405,31 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di film recensiti
 											}
-											$video->free();	
+											$video->free();	// Dealloco l'oggetto
 										}
 										echo ('	
 														<div class="container" onclick="passa_a(null,1,1)"><a href="#">Vedi tutti</a></div>	
-											'); /* Link mostra tutti i film */
+											'); // Link che mostra tutti i film (case 1) */
 
-										/* MIGLIORI SERIE TV */
+										// MIGLIORI SERIE TV
 										$query="SELECT S.*, AVG(RS.voto) mediaVoti, MAX(V.stagione) nStagioni, COUNT(DISTINCT V.id) nEpisodi
 										FROM recensioneserie RS JOIN serie S ON S.id=RS.idSerie JOIN video V on V.idserie=S.id
 										WHERE RS.idAdmin IS NOT NULL
 										GROUP BY S.id
 										ORDER BY mediaVoti DESC
-										LIMIT 8"; /* Preparazione Query: Migliori serie TV (base voto) */
+										LIMIT 8"; // Preparazione Query: Migliori serie TV (base voto)
 										
 										echo ('	
 											<div class="container text-center"> 
 												<h2 class="mt-4 mb-4" >Migliori Serie TV</h2>
 											</div>
-											');
-										if ($video=$conn->query($query)) { /* Query effettuata con successo */
-											if ($video->num_rows>0) { /* Almeno un risultato */
-												while ($serie = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni serie TV */
+											'); // Titolo
+
+										if ($video=$conn->query($query)) { // Query effettuata con successo
+											if ($video->num_rows>0) { // Almeno un risultato 
+												while ($serie = $video->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$serie["id"].',6,null)">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -450,10 +449,10 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Costruisco un riquadro per ogni serie TV
 												}
 											}
-											else { /* Comunicazione mancanza di serie TV */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -462,15 +461,15 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di serie TV recensite
 											}
-											$video->free();
+											$video->free(); // Dealloco l'oggetto
 										}
 										echo ('	
 														<div class="container" onclick="passa_a(null,2,1)"><a href="#">Vedi tutte</a></div>	
-											'); /* Link mostra tutte le serie */
+											'); // Link che mostra tutte le serie (case 2)
 
-										/* MIGLIORI SAGHE */
+										// MIGLIORI SAGHE
 										$query="SELECT AVG (Medie.mediaVoti) media, COUNT(DISTINCT V.id) nFilm, S.id, S.nome
 										FROM (
 												SELECT  AVG(R.voto) mediaVoti, V.*
@@ -482,16 +481,17 @@
                                         JOIN video V ON V.idSaga=Medie.idSaga
 										GROUP BY Medie.idSaga
 										ORDER BY Medie.mediaVoti DESC
-										LIMIT 8"; /* Preparazione Query: Migliori saghe (base voto) */
+										LIMIT 8"; // Preparazione Query: Migliori saghe (base voto)
 										
 										echo ('	
 											<div class="container text-center"> 
 												<h2 class="mt-4 mb-4" >Migliori Saghe</h2>
 											</div>
-											');
-										if ($saghe=$conn->query($query)) { /* Query effettuata con successo */
-											if ($saghe->num_rows>0) { /* Almeno un risultato */
-												while ($saga = $saghe->fetch_assoc()) { /* Costruisco un riquadro per ogni saga TV */
+											'); // Titolo
+
+										if ($saghe=$conn->query($query)) { // Query effettuata con successo
+											if ($saghe->num_rows>0) { // Almeno un risultato 
+												while ($saga = $saghe->fetch_assoc()) {  
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$saga["id"].',7,null)">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -508,9 +508,9 @@
 															</div>
 														</div>
 													');
-												}
+												} // Costruisco un riquadro per ogni saga TV
 											}
-											else { /* Comunicazione mancanza di saghe */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -519,30 +519,31 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di saghe recensite
 											}
-											$saghe->free();
+											$saghe->free(); // Dealloco l'oggetto
 										}
 										echo ('	
 														<div class="container" onclick="passa_a(null,3,1)"><a href="#">Vedi tutte</a></div>	
-											'); /* Link mostra tutte le saghe */
+											'); // Link che mostra tutte le saghe (case 3) */
 
-										/* MIGLIORI DOCUMENTARI */
+										// MIGLIORI DOCUMENTARI 
 										$query="SELECT V.id, V.nome, V.durata, V.sinossi, AVG(RV.voto) mediaVoti
 										FROM recensionevideo RV JOIN video V ON V.id=RV.idVideo
 										WHERE RV.idAdmin IS NOT NULL AND V.selettore=3
 										GROUP BY RV.idVideo
 										ORDER BY mediaVoti DESC
-										LIMIT 8"; /* Preparazione Query: Migliori documentari (base voto) */
+										LIMIT 8"; // Preparazione Query: Migliori documentari (base voto) 
 										
 										echo ('	
 											<div class="container text-center"> 
 												<h2 class="mt-4 mb-4" >Migliori Documentari</h2>
 											</div>
-											');
-										if ($video=$conn->query($query)) { /* Query effettuata con successo */
-											if ($video->num_rows>0) { /* Almeno un risultato */
-												while ($documentario = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni documentario */
+											'); // Titolo
+
+										if ($video=$conn->query($query)) { // Query effettuata con successo
+											if ($video->num_rows>0) { // Almeno un risultato
+												while ($documentario = $video->fetch_assoc()) {
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$documentario["id"].',5,null)">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -559,10 +560,10 @@
 																</div>
 															</div>
 														</div>
-													');
+													');  // Costruisco un riquadro per ogni documentario
 												}
 											}
-											else { /* Comunicazione mancanza di documentari */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -571,15 +572,15 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di documentari recensiti
 											}
-											$video->free();
+											$video->free(); // Dealloco l'oggetto
 										}
 										echo ('	
 														<div class="container" onclick="passa_a(null,4,1)"><a href="#">Vedi tutti</a></div>	
-											'); /* Link mostra tutte i documentari */
+											'); // Link che mostra tutte i documentari
 
-										$conn->close();
+										$conn->close(); // Chiudo la connessione al DB
 										break;
 									
 
@@ -588,7 +589,7 @@
 										*** TUTTI FILM ***
 										******************
 										*/
-										$conn=dbConn();
+										$conn=dbConn(); // Connessione al DB
 										$pagina=$_GET["pagina"]; /* Numero pagina corrente */
 										$stato=$_GET["stato"];/* Stato della pagina corrente */
 										$nris=8; /* Riusltati da mostrare per pagina */
@@ -647,7 +648,7 @@
 														</div>
 													');
 											}
-											$video->free();
+											$video->free(); // Dealloco l'oggetto
 										}
 										echo "<div class='container'>";
 										if ($pagina!=1)
@@ -673,7 +674,7 @@
 											</diV>
 											');
 
-										$conn->close();
+										$conn->close(); // Chiudo la connessione al DB
 										break;
 
 									case 2: /* 
@@ -682,7 +683,7 @@
 										*************************
 										*/
 
-										$conn=dbConn();
+										$conn=dbConn(); // Connessione al DB
 										$pagina=$_GET["pagina"]; /* Numero pagina corrente */
 										$stato=$_GET["stato"];/* Stato della pagina corrente */
 										$nris=8; /* Riusltati da mostrare per pagina */
@@ -724,7 +725,7 @@
 														');
 															}
 														}
-														$risultato->free();
+														$risultato->free(); // Dealloco l'oggetto
 												}
 											}
 											else { /* Comunicazione mancanza di elementi */
@@ -738,7 +739,7 @@
 														</div>
 													');
 											}
-											$serie->free();	
+											$serie->free();	// Dealloco l'oggetto
 										}
 										
 										echo "<div class='container'>";
@@ -765,7 +766,7 @@
 											</diV>
 											');
 
-										$conn->close();
+										$conn->close(); // Chiudo la connessione al DB
 										break;
 
 									case 3: /* 
@@ -773,7 +774,7 @@
 										*** TUTTE LE SAGHE ***
 										**********************
 										*/
-										$conn=dbConn();
+										$conn=dbConn(); // Connessione al DB
 										$pagina=$_GET["pagina"]; /* Numero pagina corrente */
 										$stato=$_GET["stato"];/* Stato della pagina corrente */
 										$nris=8; /* Riusltati da mostrare per pagina */
@@ -823,7 +824,7 @@
 														</div>
 													');
 											}
-											$saghe->free();	
+											$saghe->free();	// Dealloco l'oggetto
 										}
 										
 										echo "<div class='container'>";
@@ -850,7 +851,7 @@
 											</diV>
 											');
 
-										$conn->close();
+										$conn->close(); // Chiudo la connessione al DB
 										break;
 									
 									case 4: /* 
@@ -871,7 +872,7 @@
 										**********************
 										*/
 										$id=$_GET["id"]; /* idVideo */
-										$conn=dbConn();
+										$conn=dbConn(); // Connessione al DB
 										
 										
 										if(isset($_POST["rate"])&&isset($_SESSION["idUser"])) { /* E' stato dato un voto */
@@ -928,7 +929,7 @@
 										WHERE V.id=$id;"; /* Preparazione Query: Dettagli video */
 										$risultati=$conn->query($query);
 										$video = $risultati->fetch_assoc();
-										$risultati->free();
+										$risultati->free(); // Dealloco l'oggetto
 
 										echo ('
 												<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
@@ -1000,7 +1001,7 @@
 													');
 											}
 											
-											$attori->free();
+											$attori->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT Par.idPersona, Per.nome, Per.cognome
@@ -1039,7 +1040,7 @@
 													');
 											}
 											
-											$registi->free();
+											$registi->free(); // Dealloco l'oggetto
 										}
 																				
 										$query="SELECT Par.idPersona, Per.nome, Per.cognome
@@ -1078,7 +1079,7 @@
 													');
 											}
 											
-											$produttori->free();
+											$produttori->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT P.* 
@@ -1117,7 +1118,7 @@
 													');
 											}
 										}
-										$personaggi->free();
+										$personaggi->free(); // Dealloco l'oggetto
 										
 										if($_SESSION["login"]==1){
 											$query="SELECT voto, testo, username FROM recensionevideo LEFT JOIN Utenti ON idAdmin=id WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
@@ -1398,7 +1399,7 @@
 												
 												}
 										}
-										$conn->close();
+										$conn->close(); // Chiudo la connessione al DB
 								
 			echo ('
 						</div>
@@ -1417,7 +1418,7 @@
 										*/
 
 										$id=$_GET["id"]; /* idSerie */
-										$conn=dbConn();				
+										$conn=dbConn(); // Connessione al DB				
 
 										if(isset($_POST["rate"])&&isset($_SESSION["idUser"])) { /* E' stato dato un voto */
 											$voto=$_POST["rate"];
@@ -1471,7 +1472,7 @@
 										$query="SELECT * FROM serie WHERE id=$id"; /* Preparazione Query: Dettagli Serie */
 										$risultati=$conn->query($query);
 										$serie = $risultati->fetch_assoc();
-										$risultati->free();
+										$risultati->free(); // Dealloco l'oggetto
 
 										echo ('
 												<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
@@ -1534,7 +1535,7 @@
 													');
 											}
 											
-											$attori->free();
+											$attori->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT Pers.* 
@@ -1575,7 +1576,7 @@
 													');
 											}
 											
-											$registi->free();
+											$registi->free(); // Dealloco l'oggetto
 										}
 																				
 										$query="SELECT Pers.* 
@@ -1616,7 +1617,7 @@
 													');
 											}
 											
-											$produttori->free();
+											$produttori->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT Pggi.* 
@@ -1656,7 +1657,7 @@
 														</div>
 													');
 											}
-											$personaggi->free();
+											$personaggi->free(); // Dealloco l'oggetto
 										}
 										
 										
@@ -1948,8 +1949,8 @@
 										}
 										
 										
-										
-										$conn->close();	
+										 
+										$conn->close();	// Chiudo la connessione al DB
 										
 										echo ('
 															</div>
@@ -1973,7 +1974,7 @@
 										**********************
 										*/
 										$id=$_GET["id"]; /* idPersona */
-										$conn=dbConn();
+										$conn=dbConn(); // Connessione al DB
 										
 										$query="SELECT S.id,S.nome,count(*) nFilm FROM saghe S 
 										JOIN video V ON V.idSaga=S.id
@@ -1981,7 +1982,7 @@
 										GROUP BY S.id"; /* Preparazione Query: Dettagli Serie */
 										$risultati=$conn->query($query);
 										$saga = $risultati->fetch_assoc();
-										$risultati->free();
+										$risultati->free(); // Dealloco l'oggetto
 
 										echo ('
 												<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
@@ -2028,7 +2029,7 @@
 												}
 											}
 											
-											$video->free();
+											$video->free(); // Dealloco l'oggetto
 										}
 										
 										$query="SELECT Pers.*,Pggi.nome nomeP 
@@ -2075,7 +2076,7 @@
 													');
 											}
 											
-											$attori->free();
+											$attori->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT Pers.* 
@@ -2116,7 +2117,7 @@
 													');
 											}
 											
-											$registi->free();
+											$registi->free(); // Dealloco l'oggetto
 										}
 																				
 										$query="SELECT Pers.* 
@@ -2157,7 +2158,7 @@
 													');
 											}
 											
-											$produttori->free();
+											$produttori->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT Pggi.* 
@@ -2197,7 +2198,7 @@
 														</div>
 													');
 											}
-											$personaggi->free();
+											$personaggi->free(); // Dealloco l'oggetto
 										}
 										
 										break;
@@ -2208,11 +2209,11 @@
 										************************
 										*/
 										$id=$_GET["id"]; /* idPersona */
-										$conn=dbConn();
+										$conn=dbConn(); // Connessione al DB
 										$query="SELECT nome,cognome FROM persone WHERE id=$id;"; /* Preparazione Query: Dettagli Persona */
 										$risultati=$conn->query($query);
 										$persona = $risultati->fetch_assoc();
-										$risultati->free();
+										$risultati->free(); // Dealloco l'oggetto
 
 										echo ('
 												<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
@@ -2251,7 +2252,7 @@
 												}
 											}
 											
-											$video->free();
+											$video->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT V.nome,V.durata,V.sinossi,V.id
@@ -2282,7 +2283,7 @@
 													');
 												}
 											}																				
-											$video->free();
+											$video->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT V.nome,V.durata,V.sinossi,V.id
@@ -2313,7 +2314,7 @@
 													');
 												}
 											}																				
-											$video->free();
+											$video->free(); // Dealloco l'oggetto
 										}
 										//-------------------------------------------------
 										$query="SELECT Pggi.* 
@@ -2341,7 +2342,7 @@
 														');
 												}
 											}																				
-											$personaggi->free();
+											$personaggi->free(); // Dealloco l'oggetto
 										}
 			echo ('
 						</div>
@@ -2359,11 +2360,11 @@
 											****************************
 											*/
 										$id=$_GET["id"]; /* idPersonaggio */
-										$conn=dbConn();
+										$conn=dbConn(); // Connessione al DB
 										$query="SELECT nome FROM personaggi WHERE id=$id"; /* Preparazione Query: Dettagli personaggio */
 										$risultati=$conn->query($query);
 										$personaggio = $risultati->fetch_assoc();
-										$risultati->free();
+										$risultati->free(); // Dealloco l'oggetto
 
 										echo ('
 												<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
@@ -2409,7 +2410,7 @@
 													');
 											}
 											
-											$attori->free();
+											$attori->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT V.id, V.nome, V.durata, V.sinossi
@@ -2450,8 +2451,8 @@
 														</div>
 													');
 											}
-											$video->free();
-											$conn->close();
+											$video->free(); // Dealloco l'oggetto
+											$conn->close(); // Chiudo la connessione al DB
 										}
 
 										break;
@@ -2462,7 +2463,7 @@
 										***************
 										*/
 										$ricerca=$_GET["ricerca"];
-										$conn=dbConn();
+										$conn=dbConn(); // Connessione al DB
 										echo ('
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 										');
@@ -2507,7 +2508,7 @@
 													');
 											}
 											
-											$risultati->free();
+											$risultati->free(); // Dealloco l'oggetto
 										}
 										
 										
@@ -2548,7 +2549,7 @@
 														');
 															}
 														}
-														$risultato->free();
+														$risultato->free(); // Dealloco l'oggetto
 												}
 											}
 											else { /* Comunicazione mancanza di elementi */
@@ -2562,7 +2563,7 @@
 														</div>
 													');
 											}
-											$serie->free();	
+											$serie->free();	// Dealloco l'oggetto
 										}
 										
 										$query="SELECT S.id, S.nome, COUNT(*) nFilm
@@ -2604,7 +2605,7 @@
 														</div>
 													');
 											}
-											$saghe->free();
+											$saghe->free(); // Dealloco l'oggetto
 										}
 										
 										$query="SELECT id,nome,cognome FROM persone WHERE nome LIKE '%$ricerca%' OR cognome LIKE '%$ricerca%'"; 
@@ -2639,7 +2640,7 @@
 														</div>
 													');
 											}	
-											$attori->free();
+											$attori->free(); // Dealloco l'oggetto
 										}
 										
 										
@@ -2667,7 +2668,7 @@
 														');
 												}
 											}																				
-											$personaggi->free();
+											$personaggi->free(); // Dealloco l'oggetto
 										}
 										echo ('	
 											<div class="container text-center"> 
@@ -2679,7 +2680,7 @@
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 										');
 										
-										$conn->close();
+										$conn->close(); // Chiudo la connessione al DB
 										
 										break;
 									default:
@@ -2691,70 +2692,74 @@
 										*** DETTAGLI STAGIONI ***
 										*************************
 										*/
+										$pagina=$_GET["pagina"]; /* Stagione da mostare */
 										$id=$_GET["id"]; /* idSerie */
-										$conn=dbConn();				
+										$conn=dbConn(); // Connessione al DB
+										$query="SELECT *
+										FROM video V
+										JOIN serie S ON V.idSerie=S.id
+										WHERE S.id=$id"; /* Preparazione Query: Nome della serie */	
+										$nStag=$conn->query("SELECT COUNT( DISTINCT stagione) nStag FROM video WHERE idSerie=$id")->fetch_assoc()["nStag"]; /* Numero di stagioni */
+
 										echo ('
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 										');
-										
-										$query="SELECT S.nome, MAX(V.stagione) nStagioni
-										FROM video V
-										JOIN serie S ON V.idSerie=S.id
-										WHERE S.id=$id";
 										
 										if ($stagioni=$conn->query($query)) { /* Risultati della query */
 											if ($stagioni->num_rows>0) {
 												$elemento = $stagioni->fetch_assoc();  /* Costruisco un riquadro per ogni video */
 												echo ('
 														<div class="container text-center">
-															<h1 class="mt-4 mb-4" >Episodi della serie "'.$elemento['nome'].'"</h1>
+															<h1 class="mt-4 mb-4" >'.$elemento['nome'].'</h1>
 														</div>
-												');
-												$nStag=$elemento['nStagioni'];
-												
+														<div class="container">'.
+															$elemento['sinossi'].'
+														</div>
+													');												
 											}
-											
-											$stagioni->free();
+											$stagioni->free(); // Dealloco l'oggetto
 										}
-										for($i=1;$i<=$nStag;$i++){
-											$query="SELECT V.*
-											FROM video V
-											JOIN serie S ON V.idSerie=S.id
-											WHERE S.id=$id AND V.stagione=$i
-											ORDER BY V.numero";
-											if ($video=$conn->query($query)) { /* Risultati della query */
-												if ($video->num_rows>0) {
-													echo ('	
-														<div class="container text-center"> 
-															<h2 class="mt-4 mb-4" >Episodi della stagione '.$i.'</h2>
-														</div>
-														');
 
-													while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
-														echo ('
-															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null);" >
-																<div class="card h-100 mb-4 shadow-sm">
-																	<div class="card-body">
-																		<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
-																		<p class="card-text">'.$elemento["nome"].'</p>
-																		<p class="card-text-description">'.$elemento["sinossi"].'</p>			
-																		<div class="d-flex justify-content-between align-items-center">
-																		</div>
-																		<div class="d-flex flex-row-reverse align-items-center">
-																			<small class="text-muted">Durata: '.$elemento["durata"].' minuti</small>
-																		</div>
+										echo '<div class="container"> <select id="sel" onchange="passa_a('.$id.',11,sel.value)">';
+										for($i=1;$i<=$nStag;$i++) {
+											echo '<option value="'.$i.'"';
+											if($i==$pagina)
+												echo ' selected';
+											echo '>Stagione '.$i.'</option>';
+										}
+										echo '</select></div>';
+										
+										$query="SELECT V.*
+										FROM video V
+										JOIN serie S ON V.idSerie=S.id
+										WHERE S.id=$id AND V.stagione=$pagina
+										ORDER BY V.numero";
+										if ($video=$conn->query($query)) { /* Risultati della query */
+											if ($video->num_rows>0) {
+												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+													echo ('
+														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null);" >
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
+																	<p class="card-text">'.$elemento["nome"].'</p>
+																	<p class="card-text-description">'.$elemento["sinossi"].'</p>			
+																	<div class="d-flex justify-content-between align-items-center">
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Durata: '.$elemento["durata"].' minuti</small>
 																	</div>
 																</div>
-															</div>		
-														');
-													}
+															</div>
+														</div>		
+													');
 												}
-												
-												$video->free();
 											}
+												
+											$video->free(); // Dealloco l'oggetto
 										}
-										
-										break;
+																
+									break;
 								}
 		 
 							?>
