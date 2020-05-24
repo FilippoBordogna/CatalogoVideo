@@ -2164,7 +2164,7 @@
 															</div>
 														</div>';
 												}
-												$query="C.testo,U.username, U.id, A.username admin
+												$query="SELECT C.testo,U.username, U.id, A.username admin
 												FROM curiositaserie C 
 												INNER JOIN utenti U ON U.id=C.idUtente
 												LEFT JOIN utenti A ON A.id=C.idAdmin
@@ -2203,13 +2203,12 @@
 																							<small class="text-muted">Verificato da '.$riga["admin"].'</small>
 																						</div>';
 																				echo '</div>';
+																				echo '<div class="modal-footer">';
 																						if($_SESSION["idUser"]==$riga["id"])
-																							echo' <div class="modal-footer">
-																									<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>
-																							</div>';
+																							echo' <button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>';
+																							
 																						if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null)
-																							echo'
-																								<div class="modal-footer">';
+																							
 																							if($_SESSION["idUser"]!=$riga["id"])
 																								echo'	<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>';
 																									
