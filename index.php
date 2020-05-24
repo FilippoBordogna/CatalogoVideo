@@ -174,6 +174,22 @@
 				recensioni.idUtente.value=idUtente;
 				recensioni.submit();
 			}
+			function controllo(){
+				if(registrazione.pass1.value!=registrazione.pass2.value){
+					document.getElementById('avviso1').style.visibility="visible";
+					return false;
+				}
+				else
+					if(registrazione.pass1.value==""||registrazione.newUser.value==""||registrazione.newEmail.value==""){
+						document.getElementById('avviso1').style.visibility="hidden";
+						document.getElementById('avviso2').style.visibility="visible";
+						return false;
+					}
+					else{
+						registrazione.submit();
+						return true;
+					}
+			}
 			
 		</script>
   	</head>
@@ -211,35 +227,83 @@
 						
 							$conn->close(); // Chiudo la connessione al DB
 						}
+						if(isset($_POST["newUser"])){ // Username nuovi specificato 
+							$user=filter_var(trim($_POST["newUser"]), FILTER_SANITIZE_STRING); // Sanifico la stringa (evito SQL Injection)
+							$email=filter_var(trim($_POST["newEmail"]), FILTER_SANITIZE_STRING); // Sanifico la stringa (evito SQL Injection)
+							$password=filter_var(trim($_POST["pass1"]), FILTER_SANITIZE_STRING); // Sanifico la stringa (evito SQL Injection)
+							$conn=dbConn(); // Connessione al DB
+							$query="INSERT INTO utenti (username,email,password,admin)
+							VALUES ('$user','$email','$password',0)";
+							if($conn->query($query)) /* Inserimento nel DB riuscito */
+								echo "<script type='text/javascript'>alert('L\'utente è stato inserito!');</script>";
+							else /* Inserimento nel DB NON riuscito */
+								echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+							$conn->close(); // Chiudo la connessione al DB
+						}
 
-						if($_SESSION["login"]==0) // Utente non loggato 
+						if($_SESSION["login"]==0){ // Utente non loggato 
 							echo (' 
 								<div class="dropdown">
 									<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										Login
 									</button>
 									<div class="dropdown-menu dropdown-menu-right">
-									<form class="px-4 py-3" method="post">
-										<div class="form-group">
-											<label class="ml-2" for="exampleDropdownFormEmail1">Email address</label>
-											<input type="email" class="form-control" id="user" name="user" placeholder="email@example.com">
-										</div>
-										<div class="form-group">
-											<label class="ml-2" for="exampleDropdownFormPassword1">Password</label>
-											<input type="password" class="form-control" id="pass" name="pass" placeholder="Password">
-										</div>
-										<div class="form-check ml-2">
-											<input type="checkbox" class="form-check-input" id="dropdownCheck">
-											<label class="form-check-label" for="dropdownCheck">Remember me</label>
-										</div>
-										<button type="submit" class="btn btn-primary ml-2 mt-2">Sign in</button>
-									</form>
-									<div class="dropdown-divider"></div>
-										<a class="dropdown-item" href="#">New around here? Sign up</a>
-										<a class="dropdown-item" href="#">Forgot password?</a>
+										<form class="px-4 py-3" method="post">
+											<div class="form-group">
+												<label class="ml-2" for="exampleDropdownFormEmail1">Indirizzo email</label>
+												<input type="email" class="form-control" id="user" name="user" placeholder="email@email.com">
+											</div>
+											<div class="form-group">
+												<label class="ml-2" for="exampleDropdownFormPassword1">Password</label>
+												<input type="password" class="form-control" id="pass" name="pass" placeholder="Password">
+											</div>
+											<button type="submit" class="btn btn-primary ml-2 mt-2">Login</button>
+										</form>
+										<div class="dropdown-divider"></div>
+										<a class="dropdown-item" data-toggle="modal" data-target="#register">Non ancora iscritto? Registrati!</a>
 									</div>
 								</div>
 								'); // Tendina Login 
+								echo '
+									<div class="modal fade" id="register" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									  <div class="modal-dialog" role="document">
+										<div class="modal-content">
+										  <div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">Registrazione</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											  <span aria-hidden="true">&times;</span>
+											</button>
+										  </div>
+										  <div class="modal-body">
+											<form class="px-4 py-3" name="registrazione" id="registrazione" onsubmit="return controllo()" method="post">
+												<div class="form-group">
+													<label class="ml-2" >Username</label>
+													<input type="text" class="form-control" id="newUser" name="newUser" placeholder="Username">
+												</div>
+												<div class="form-group">
+													<label class="ml-2" >Indirizzo email</label>
+													<input type="email" class="form-control" id="newEmail" name="newEmail" placeholder="email@email.com">
+												</div>
+												<div class="form-group">
+													<label class="ml-2">Password</label>
+													<input type="password" class="form-control" id="pass1" name="pass1" placeholder="Password">
+												</div>
+												<div class="form-group">
+													<label class="ml-2">Conferma password</label>
+													<input type="password" class="form-control" id="pass2" name="pass2" placeholder="Password">
+												</div>
+												<p style="color:red; visibility:hidden" id="avviso1" name="avviso1" class="ml-2">Le due password devono coincidere</p>
+												<p style="color:red; visibility:hidden" id="avviso2" name="avviso2" class="ml-2">Non ci possono essere campi vuoti!</p>
+												
+												</div>
+												<div class="modal-footer">
+													<button type="submit" class="btn btn-primary">Registrati</button>
+												</div>
+										  </form>
+										</div>
+									  </div>
+									</div>';
+						}
 						else // Utente loggato 
 							echo ('
 								<div class="dropdown">
