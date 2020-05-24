@@ -2,10 +2,12 @@
 	/* 
 		DA FARE:
 		- Aggiungere campo datauscita al video (da discutere)
+		- Aggiungere nazionalit video (da discutere)
+		- Aggiungere filtri sulle ricerche o sulle viualizzazioni (da discutere)
+		- Aggiungere ordinamenti divers sui dati (da discutere)
 		- Copiare e incollare quanto fatto per le recensioni dei film per le curiosità dei film (non c'è voto, possono esserci più commenti(?))
 		- Copiare e incollare quanto sopra per le curiosità delle serie
-		- Permettere ad Admin di validare commenti  
-		- Registrazione (nuova pagina)
+		- Permettere ad Admin di validare commenti
 		- Ultimi accessi (ultimo) per controllo
 		- Rifare lo schema ER/logico in base alle modifiche (PIPPO)
 
@@ -164,8 +166,19 @@
 					recensioni.submit();
 				}
 			}
+			function curios(id) { // Controlli sulla curiosita ed effettivo inserimento 
+				if(f.textcur.value!=""){
+					curiosita.cur.value=f.textcur.value;
+					curiosita.submit();
+				}
+			}
 			function elimina(id,idUtente) { // Elimina una recensione 
 				recensioni.rate.value="ELIMINA";
+				recensioni.idUtente.value=idUtente;
+				recensioni.submit();
+			}
+			function eliminaC(id,idUtente) { // Elimina una recensione 
+				recensioni.check.value="ELIMINA";
 				recensioni.idUtente.value=idUtente;
 				recensioni.submit();
 			}
@@ -173,6 +186,28 @@
 				recensioni.rate.value="VERIFICA";
 				recensioni.idUtente.value=idUtente;
 				recensioni.submit();
+			}
+			
+			function verificaC(id,idUtente){ // Verifica della recensione da parte dell'admin 
+				recensioni.check.value="VERIFICA";
+				recensioni.idUtente.value=idUtente;
+				recensioni.submit();
+			}
+			function controllo(){
+				if(registrazione.pass1.value!=registrazione.pass2.value){
+					document.getElementById('avviso1').style.visibility="visible";
+					return false;
+				}
+				else
+					if(registrazione.pass1.value==""||registrazione.newUser.value==""||registrazione.newEmail.value==""){
+						document.getElementById('avviso1').style.visibility="hidden";
+						document.getElementById('avviso2').style.visibility="visible";
+						return false;
+					}
+					else{
+						registrazione.submit();
+						return true;
+					}
 			}
 			
 		</script>
@@ -211,35 +246,83 @@
 						
 							$conn->close(); // Chiudo la connessione al DB
 						}
+						if(isset($_POST["newUser"])){ // Username nuovi specificato 
+							$user=filter_var(trim($_POST["newUser"]), FILTER_SANITIZE_STRING); // Sanifico la stringa (evito SQL Injection)
+							$email=filter_var(trim($_POST["newEmail"]), FILTER_SANITIZE_STRING); // Sanifico la stringa (evito SQL Injection)
+							$password=filter_var(trim($_POST["pass1"]), FILTER_SANITIZE_STRING); // Sanifico la stringa (evito SQL Injection)
+							$conn=dbConn(); // Connessione al DB
+							$query="INSERT INTO utenti (username,email,password,admin)
+							VALUES ('$user','$email','$password',0)";
+							if($conn->query($query)) /* Inserimento nel DB riuscito */
+								echo "<script type='text/javascript'>alert('L\'utente è stato inserito!');</script>";
+							else /* Inserimento nel DB NON riuscito */
+								echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+							$conn->close(); // Chiudo la connessione al DB
+						}
 
-						if($_SESSION["login"]==0) // Utente non loggato 
+						if($_SESSION["login"]==0){ // Utente non loggato 
 							echo (' 
 								<div class="dropdown">
 									<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 										Login
 									</button>
 									<div class="dropdown-menu dropdown-menu-right">
-									<form class="px-4 py-3" method="post">
-										<div class="form-group">
-											<label class="ml-2" for="exampleDropdownFormEmail1">Email address</label>
-											<input type="email" class="form-control" id="user" name="user" placeholder="email@example.com">
-										</div>
-										<div class="form-group">
-											<label class="ml-2" for="exampleDropdownFormPassword1">Password</label>
-											<input type="password" class="form-control" id="pass" name="pass" placeholder="Password">
-										</div>
-										<div class="form-check ml-2">
-											<input type="checkbox" class="form-check-input" id="dropdownCheck">
-											<label class="form-check-label" for="dropdownCheck">Remember me</label>
-										</div>
-										<button type="submit" class="btn btn-primary ml-2 mt-2">Sign in</button>
-									</form>
-									<div class="dropdown-divider"></div>
-										<a class="dropdown-item" href="#">New around here? Sign up</a>
-										<a class="dropdown-item" href="#">Forgot password?</a>
+										<form class="px-4 py-3" method="post">
+											<div class="form-group">
+												<label class="ml-2" for="exampleDropdownFormEmail1">Indirizzo email</label>
+												<input type="email" class="form-control" id="user" name="user" placeholder="email@email.com">
+											</div>
+											<div class="form-group">
+												<label class="ml-2" for="exampleDropdownFormPassword1">Password</label>
+												<input type="password" class="form-control" id="pass" name="pass" placeholder="Password">
+											</div>
+											<button type="submit" class="btn btn-primary ml-2 mt-2">Login</button>
+										</form>
+										<div class="dropdown-divider"></div>
+										<a class="dropdown-item" data-toggle="modal" data-target="#register">Non ancora iscritto? Registrati!</a>
 									</div>
 								</div>
 								'); // Tendina Login 
+								echo '
+									<div class="modal fade" id="register" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+									  <div class="modal-dialog" role="document">
+										<div class="modal-content">
+										  <div class="modal-header">
+											<h5 class="modal-title" id="exampleModalLabel">Registrazione</h5>
+											<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+											  <span aria-hidden="true">&times;</span>
+											</button>
+										  </div>
+										  <div class="modal-body">
+											<form class="px-4 py-3" name="registrazione" id="registrazione" onsubmit="return controllo()" method="post">
+												<div class="form-group">
+													<label class="ml-2" >Username</label>
+													<input type="text" class="form-control" id="newUser" name="newUser" placeholder="Username">
+												</div>
+												<div class="form-group">
+													<label class="ml-2" >Indirizzo email</label>
+													<input type="email" class="form-control" id="newEmail" name="newEmail" placeholder="email@email.com">
+												</div>
+												<div class="form-group">
+													<label class="ml-2">Password</label>
+													<input type="password" class="form-control" id="pass1" name="pass1" placeholder="Password">
+												</div>
+												<div class="form-group">
+													<label class="ml-2">Conferma password</label>
+													<input type="password" class="form-control" id="pass2" name="pass2" placeholder="Password">
+												</div>
+												<p style="color:red; visibility:hidden" id="avviso1" name="avviso1" class="ml-2">Le due password devono coincidere</p>
+												<p style="color:red; visibility:hidden" id="avviso2" name="avviso2" class="ml-2">Non ci possono essere campi vuoti!</p>
+												
+												</div>
+												<div class="modal-footer">
+													<button type="submit" class="btn btn-primary">Registrati</button>
+												</div>
+										  </form>
+										</div>
+									  </div>
+									</div>';
+						}
 						else // Utente loggato 
 							echo ('
 								<div class="dropdown">
@@ -1469,6 +1552,41 @@
 											}
 										}
 										
+										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { /* E' stata iserita una curiosita */
+											if(isset($_POST["check"]))
+												$check=$_POST["check"];
+											$cur="'".filter_var($_POST["cur"], FILTER_SANITIZE_STRING)."'";
+											if($check!="ELIMINA"&&$check!="VERIFICA") { /* Pubblico o modifico la recensione */
+												
+												$query="INSERT INTO curiositaserie (idSerie,idUtente,testo,idAdmin) VALUES ($id,$_SESSION[idUser],$cur,null)";
+												if($conn->query($query)) /* Inserimento nel DB riuscito */
+													echo "<script type='text/javascript'>alert('La tua curiosita è stata inserita!');</script>";
+												else /* Inserimento nel DB NON riuscito */
+													echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";	
+											
+											}
+											else{
+												if($voto=="ELIMINA") { /* Eliminazione del DB riuscita */
+													$query="DELETE FROM curiositaserie WHERE idSerie=$id AND idUtente=$_POST[idUtente]";
+													//echo $recens;
+													if($conn->query($query))
+														echo "<script type='text/javascript'>alert('La curiosita è stata eliminata!');</script>";
+													else
+														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+													
+												}
+												else
+												{
+													$query="UPDATE curiositasere SET idAdmin=$_SESSION[idUser] WHERE idSerie=$id AND idUtente=$_POST[idUtente]";
+													//echo $recens;
+													if($conn->query($query))
+														echo "<script type='text/javascript'>alert('La curiosita è stata verificata!');</script>";
+													else
+														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+												}
+											}
+										}
+										
 										$query="SELECT * FROM serie WHERE id=$id"; /* Preparazione Query: Dettagli Serie */
 										$risultati=$conn->query($query);
 										$serie = $risultati->fetch_assoc();
@@ -1948,6 +2066,168 @@
 												}
 										}
 										
+										/*
+										**************************
+										*****CURIOSITA' SERIE*****
+										**************************
+										*/
+										
+										if($_SESSION["login"]==1){
+											echo('
+												<div class="container text-center"> 
+													<!-- Button trigger modal -->
+													<button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#curiositaMod">
+													  Lascia una curiosita
+													</button>
+					
+													<!-- Modal -->
+													
+													<div class="modal fade" id="curiositaMod" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+													  <div class="modal-dialog modal-dialog-centered" role="document">
+														<div class="modal-content">
+														  <div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLongTitle">Curiosità</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															  <span aria-hidden="true">&times;</span>
+															</button>
+														  </div>
+														  
+														  <div class="modal-body" style="margin:0 auto;">
+																<div class="form-group">
+																<textarea id="textcur" name="textcur" class="form-control" rows="5" maxlength="255" placeholder="Scrivi la tua curiosità"></textarea>
+																</div>
+														  </div>
+														  
+														  <div class="modal-footer">
+															<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+															<button type="button" onclick="curios('.$id.')" class="btn btn-primary">Salva curiosità</button>
+														  </div>
+														</div>
+													  </div>
+													</div>
+												</div>');
+										}
+											
+										
+										echo ('
+													<div class="container text-center"> 
+														<h2 class="mt-4 mb-4" >Curiosità degli utenti</h2>
+													</div>
+												');
+										$query="SELECT C.testo,U.username, U.id, A.username admin
+										FROM curiositaserie C 
+										INNER JOIN utenti U ON U.id=C.idUtente
+										LEFT JOIN utenti A ON A.id=C.idAdmin
+										WHERE idSerie=$id
+										ORDER BY C.idAdmin DESC,C.idUtente
+										LIMIT 4;";
+										$curiosita=$conn->query($query);
+										if($curiosita->num_rows==0){
+											echo 	
+												'<div class="col-md-3 py2">
+													<div class="card h-100 mb-4 shadow-sm">
+														<div class="card-body">
+															<p class="card-text" style="text-align:center !important">Non è presente ancora nessuna curiosita</p>
+														</div>
+													</div>
+												</div>';
+										}		
+										else{
+												while($riga = $curiosita->fetch_assoc()){
+													echo 	
+														'<div class="col-md-3 py2">
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<h6 class="mt-1 ml-2">'.$riga["username"].'</h6>';
+																	
+																	echo '
+																		<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																	if($riga["admin"]!=null)
+																	echo '
+																		<div class="d-flex justify-content-end bd-highlight mb-3">
+																			<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																		</div>';
+																echo '</div>';
+																		if($_SESSION["idUser"]==$riga["id"])
+																			echo' <div class="modal-footer">
+																					<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>
+																			</div>';
+																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null)
+																			echo'
+																				<div class="modal-footer">';
+																			if($_SESSION["idUser"]!=$riga["id"])
+																				echo'	<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>';
+																					
+																			echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																				</div>';
+																	echo '
+															</div>
+														</div>';
+												}
+												$query="C.testo,U.username, U.id, A.username admin
+												FROM curiositaserie C 
+												INNER JOIN utenti U ON U.id=C.idUtente
+												LEFT JOIN utenti A ON A.id=C.idAdmin
+												WHERE C.testo IS NOT NULL AND idSerie=$id
+												ORDER BY C.idAdmin DESC,C.idUtente;";
+												$curiosita=$conn->query($query);
+												if($curiosita->num_rows>4){
+													echo '
+													<div class="container text-center">
+														<button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#curiositaScroll">
+														  Visualizza tutte le recensioni
+														</button>
+														<!-- Modal -->
+														<div class="modal fade" id="curiositaScroll" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+														  <div class="modal-dialog modal-dialog-scrollable" role="document">
+															<div class="modal-content">
+															  <div class="modal-header">
+																<h5 class="modal-title" id="exampleModalScrollableTitle">Curiosita degli utenti</h5>
+																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+																  <span aria-hidden="true">&times;</span>
+																</button>
+															  </div>
+															  <div class="modal-body">';
+															  while($riga = $curiosita->fetch_assoc()){
+																  echo 	
+																		'<div class="col-md-3 py2">
+																			<div class="card h-100 mb-4 shadow-sm">
+																				<div class="card-body">
+																					<h6 class="mt-1 ml-2">'.$riga["username"].'</h6>';
+																					
+																					echo '
+																						<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																					if($riga["admin"]!=null)
+																					echo '
+																						<div class="d-flex justify-content-end bd-highlight mb-3">
+																							<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																						</div>';
+																				echo '</div>';
+																						if($_SESSION["idUser"]==$riga["id"])
+																							echo' <div class="modal-footer">
+																									<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>
+																							</div>';
+																						if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null)
+																							echo'
+																								<div class="modal-footer">';
+																							if($_SESSION["idUser"]!=$riga["id"])
+																								echo'	<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>';
+																									
+																							echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																								</div>';
+																					echo '
+																			</div>
+																		</div>';
+															  }
+															  echo '
+															</div>
+														  </div>
+														</div>
+													</div>
+												</div>';
+												
+												}
+										}
 										
 										 
 										$conn->close();	// Chiudo la connessione al DB
@@ -2775,7 +3055,17 @@
 			<input type='hidden' name='idUtente' id='idUtente'> <!-- Memorizzazione recensione -->
 				
 		</form>
-		<footer class="text-muted">
+
+		<form name="curiosita" id="curiosita" method="post" action="
+		<?php
+			echo "index.php?stato=$_GET[stato]&id=$_GET[id]";
+		?>
+		">
+			<input type='hidden' name='check' id='check'> <!-- Memorizzazione voto -->
+			<input type='hidden' name='cur' id='cur'> <!-- Memorizzazione recensione -->
+			<input type='hidden' name='idUtente' id='idUtente'> <!-- Memorizzazione recensione -->
+				
+		</form>		<footer class="text-muted">
 			<div class="container">
 				<p class="float-right">
 				<a href="#">Back to top</a>
