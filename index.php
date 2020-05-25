@@ -26,7 +26,7 @@
 		- 10 RICERCA
 	*/
 
-	// Controllo Sessioni 
+	// Controllo Sessioni
 	session_start();
 	if(!isset($_SESSION["login"]) || $_SESSION["login"]!=1) // Mancata presenza di dati integri per login 
 		session_unset();
@@ -177,21 +177,21 @@
 				recensioni.idUtente.value=idUtente;
 				recensioni.submit();
 			}
-			function eliminaC(id,idUtente) { // Elimina una recensione 
-				recensioni.check.value="ELIMINA";
-				recensioni.idUtente.value=idUtente;
-				recensioni.submit();
+			function eliminaC(id) { // Elimina una recensione 
+				curiosita.check.value="ELIMINA";
+				curiosita.idCur.value=id;
+				curiosita.submit();
 			}
-			function verifica(id,idUtente){ // Verifica della recensione da parte dell'admin 
+			function verifica(idUtente){ // Verifica della recensione da parte dell'admin 
 				recensioni.rate.value="VERIFICA";
 				recensioni.idUtente.value=idUtente;
 				recensioni.submit();
 			}
 			
-			function verificaC(id,idUtente){ // Verifica della recensione da parte dell'admin 
-				recensioni.check.value="VERIFICA";
-				recensioni.idUtente.value=idUtente;
-				recensioni.submit();
+			function verificaC(id){ // Verifica della recensione da parte dell'admin 
+				curiosita.check.value="VERIFICA";
+				curiosita.idCur.value=id;
+				curiosita.submit();
 			}
 			function controllo(){
 				if(registrazione.pass1.value!=registrazione.pass2.value){
@@ -1006,7 +1006,42 @@
 												}
 											}
 										}
-
+										
+										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { /* E' stata iserita una curiosita */
+											if(isset($_POST["check"]))
+												$check=$_POST["check"];
+											$cur="'".filter_var($_POST["cur"], FILTER_SANITIZE_STRING)."'";
+											if($check!="ELIMINA"&&$check!="VERIFICA") { /* Pubblico o modifico la recensione */
+												
+												$query="INSERT INTO curiositavideo (idVideo,idUtente,testo,idAdmin) VALUES ($id,$_SESSION[idUser],$cur,null)";
+												if($conn->query($query)) /* Inserimento nel DB riuscito */
+													echo "<script type='text/javascript'>alert('La tua curiosita è stata inserita!');</script>";
+												else /* Inserimento nel DB NON riuscito */
+													echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";	
+											
+											}
+											else{
+												if($check=="ELIMINA") { /* Eliminazione del DB riuscita */
+													$query="DELETE FROM curiositavideo WHERE id=$_POST[idCur]";
+													//echo $query;
+													if($conn->query($query))
+														echo "<script type='text/javascript'>alert('La curiosita è stata eliminata!');</script>";
+													else
+														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+													
+												}
+												else
+												{
+													$query="UPDATE curiositavideo SET idAdmin=$_SESSION[idUser] WHERE id=$_POST[idCur]";
+													//echo $query;
+													if($conn->query($query))
+														echo "<script type='text/javascript'>alert('La curiosita è stata verificata!');</script>";
+													else
+														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+												}
+											}
+										}
+										
 										$query="SELECT V.id,V.nome,V.durata,V.idSaga,v.idSerie,V.numero,V.stagione,V.sinossi,Se.nome nomeSe,Sa.nome nomeSa 
 										FROM video V LEFT JOIN serie Se ON V.idSerie=Se.id LEFT JOIN saghe Sa ON Sa.id=V.idSaga 
 										WHERE V.id=$id;"; /* Preparazione Query: Dettagli video */
@@ -1403,74 +1438,238 @@
 												</div>';
 										}		
 										else{
-												while($riga = $recensioni->fetch_assoc()){
+											while($riga = $recensioni->fetch_assoc()){
+												echo 	
+													'<div class="col-md-3 py2">
+														<div class="card h-100 mb-4 shadow-sm">
+															<div class="card-body">
+																<h6 class="mt-1 ml-2">'.$riga["username"].' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>';
+																if($riga["testo"]!=null)
+																	echo '<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																if($riga["admin"]!=null)
+																echo '
+																	<div class="d-flex justify-content-end bd-highlight mb-3">
+																		<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																	</div>';
+															echo '</div>';
+																	if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null)
+																		echo'
+																			<div class="modal-footer">
+																				<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>
+																				<button type="button" class="btn btn-primary" onclick="verifica('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																			</div>';
+																echo '
+														</div>
+													</div>';
+											}
+											$query="SELECT R.voto, R.testo,U.username, U.id, A.username admin
+											FROM recensionevideo R 
+											INNER JOIN utenti U ON U.id=R.idUtente
+											LEFT JOIN utenti A ON A.id=R.idAdmin
+											WHERE R.testo IS NOT NULL AND idVideo=$id
+											ORDER BY R.idAdmin DESC,R.idUtente;";
+											$recensioni=$conn->query($query);
+											if($recensioni->num_rows>4){
+												echo '
+												<div class="container text-center">
+													<button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#exampleModalScrollable">
+													  Visualizza tutte le recensioni
+													</button>
+													<!-- Modal -->
+													<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+													  <div class="modal-dialog modal-dialog-scrollable" role="document">
+														<div class="modal-content">
+														  <div class="modal-header">
+															<h5 class="modal-title" id="exampleModalScrollableTitle">Recensioni degli utenti</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															  <span aria-hidden="true">&times;</span>
+															</button>
+														  </div>
+														  <div class="modal-body">';
+														  while($riga = $recensioni->fetch_assoc()){
+															  echo '
+																<div class="card h-100 mb-4 shadow-sm">
+																	<div class="card-body">
+																	<h6 class="mt-1 ml-2">'.$riga["username"].' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>
+																		<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																		if($riga["admin"]!=null)
+																			echo '
+																				<div class="d-flex justify-content-end bd-highlight mb-3">
+																					<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																				</div>';
+																		echo '</div>';
+																	
+																	if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null)
+																		echo'
+																			<div class="modal-footer">
+																				<button type="button"  class="btn btn-secondary" onclick="elimina('.$id.','.$riga["id"].')" data-dismiss="modal">Elimina</button>
+																				<button type="button" class="btn btn-primary" onclick="verifica('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																			</div>';
+																echo '
+																	</div>';
+														  }
+														  echo '
+														</div>
+													  </div>
+													</div>
+												</div>
+											</div>';
+											
+											}
+												
+											
+										}
+										
+										/*
+										**************************
+										*****CURIOSITA' VIDEO*****
+										**************************
+										*/
+										
+										if($_SESSION["login"]==1){
+											echo('
+												<div class="container text-center"> 
+													<!-- Button trigger modal -->
+													<button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#curiositaMod">
+													  Lascia una curiosita
+													</button>
+					
+													<!-- Modal -->
+													
+													<div class="modal fade" id="curiositaMod" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+													  <div class="modal-dialog modal-dialog-centered" role="document">
+														<div class="modal-content">
+														  <div class="modal-header">
+															<h5 class="modal-title" id="exampleModalLongTitle">Curiosità</h5>
+															<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+															  <span aria-hidden="true">&times;</span>
+															</button>
+														  </div>
+														  
+														  <div class="modal-body" style="margin:0 auto;">
+																<div class="form-group">
+																<textarea id="textcur" name="textcur" class="form-control" rows="5" maxlength="255" placeholder="Scrivi la tua curiosità"></textarea>
+																</div>
+														  </div>
+														  
+														  <div class="modal-footer">
+															<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
+															<button type="button" onclick="curios('.$id.')" class="btn btn-primary">Salva curiosità</button>
+														  </div>
+														</div>
+													  </div>
+													</div>
+												</div>');
+										}
+											
+										
+										echo ('
+													<div class="container text-center"> 
+														<h2 class="mt-4 mb-4" >Curiosità degli utenti</h2>
+													</div>
+												');
+										$query="SELECT c.id idCur, C.testo,U.username, U.id, A.username admin
+										FROM curiositavideo C 
+										INNER JOIN utenti U ON U.id=C.idUtente
+										LEFT JOIN utenti A ON A.id=C.idAdmin
+										WHERE idVideo=$id
+										ORDER BY C.idAdmin DESC,C.idUtente
+										LIMIT 4;";
+										$curiosita=$conn->query($query);
+										if($curiosita->num_rows==0){
+											echo 	
+												'<div class="col-md-3 py2">
+													<div class="card h-100 mb-4 shadow-sm">
+														<div class="card-body">
+															<p class="card-text" style="text-align:center !important">Non è presente ancora nessuna curiosita</p>
+														</div>
+													</div>
+												</div>';
+										}		
+										else{
+												while($riga = $curiosita->fetch_assoc()){
 													echo 	
 														'<div class="col-md-3 py2">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
-																	<h6 class="mt-1 ml-2">'.$riga["username"].' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>';
-																	if($riga["testo"]!=null)
-																		echo '<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																	<h6 class="mt-1 ml-2">'.$riga["username"].'</h6>';
+																	
+																	echo '
+																		<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
 																	if($riga["admin"]!=null)
 																	echo '
 																		<div class="d-flex justify-content-end bd-highlight mb-3">
 																			<small class="text-muted">Verificato da '.$riga["admin"].'</small>
 																		</div>';
 																echo '</div>';
-																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null)
-																			echo'
-																				<div class="modal-footer">
-																					<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>
-																					<button type="button" class="btn btn-primary" onclick="verifica('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																		if($_SESSION["idUser"]==$riga["id"]){
+																			echo' <div class="modal-footer">
+																					<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																		}
+																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
+																			if($_SESSION["idUser"]!=$riga["id"])
+																				echo'	<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																					
+																			echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>
 																				</div>';
+																		}
 																	echo '
 															</div>
 														</div>';
 												}
-												$query="SELECT R.voto, R.testo,U.username, U.id, A.username admin
-												FROM recensionevideo R 
-												INNER JOIN utenti U ON U.id=R.idUtente
-												LEFT JOIN utenti A ON A.id=R.idAdmin
-												WHERE R.testo IS NOT NULL AND idVideo=$id
-												ORDER BY R.idAdmin DESC,R.idUtente;";
-												$recensioni=$conn->query($query);
-												if($recensioni->num_rows>4){
+												$query="SELECT C.id idCur, C.testo,U.username, U.id, A.username admin
+												FROM curiositavideo C 
+												INNER JOIN utenti U ON U.id=C.idUtente
+												LEFT JOIN utenti A ON A.id=C.idAdmin
+												WHERE C.testo IS NOT NULL AND idVideo=$id
+												ORDER BY C.idAdmin DESC,C.idUtente;";
+												$curiosita=$conn->query($query);
+												if($curiosita->num_rows>4){
 													echo '
 													<div class="container text-center">
-														<button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#exampleModalScrollable">
+														<button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#curiositaScroll">
 														  Visualizza tutte le recensioni
 														</button>
 														<!-- Modal -->
-														<div class="modal fade" id="exampleModalScrollable" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+														<div class="modal fade" id="curiositaScroll" tabindex="-1" role="dialog" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
 														  <div class="modal-dialog modal-dialog-scrollable" role="document">
 															<div class="modal-content">
 															  <div class="modal-header">
-																<h5 class="modal-title" id="exampleModalScrollableTitle">Recensioni degli utenti</h5>
+																<h5 class="modal-title" id="exampleModalScrollableTitle">Curiosita degli utenti</h5>
 																<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 																  <span aria-hidden="true">&times;</span>
 																</button>
 															  </div>
 															  <div class="modal-body">';
-															  while($riga = $recensioni->fetch_assoc()){
-																  echo '
-																	<div class="card h-100 mb-4 shadow-sm">
-																		<div class="card-body">
-																		<h6 class="mt-1 ml-2">'.$riga["username"].' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>
-																			<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
-																			if($riga["admin"]!=null)
-																				echo '
-																					<div class="d-flex justify-content-end bd-highlight mb-3">
-																						<small class="text-muted">Verificato da '.$riga["admin"].'</small>
-																					</div>';
-																			echo '</div>';
-																		
-																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null)
-																			echo'
-																				<div class="modal-footer">
-																					<button type="button"  class="btn btn-secondary" onclick="elimina('.$id.','.$riga["id"].')" data-dismiss="modal">Elimina</button>
-																					<button type="button" class="btn btn-primary" onclick="verifica('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
-																				</div>';
-																	echo '
+															  while($riga = $curiosita->fetch_assoc()){
+																  echo 	
+																		'<div class="col-md-3 py2">
+																			<div class="card h-100 mb-4 shadow-sm">
+																				<div class="card-body">
+																					<h6 class="mt-1 ml-2">'.$riga["username"].'</h6>';
+																					
+																					echo '
+																						<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																					if($riga["admin"]!=null)
+																					echo '
+																						<div class="d-flex justify-content-end bd-highlight mb-3">
+																							<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																						</div>';
+																				echo '</div>';
+																				echo '<div class="modal-footer">';
+																						if($_SESSION["idUser"]==$riga["id"]){
+																							echo' <button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																						}
+																						if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
+																							
+																							if($_SESSION["idUser"]!=$riga["id"])
+																								echo'	<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																									
+																							echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>
+																								</div>';
+																						}
+																					echo '
+																			</div>
 																		</div>';
 															  }
 															  echo '
@@ -1482,6 +1681,7 @@
 												
 												}
 										}
+										
 										$conn->close(); // Chiudo la connessione al DB
 								
 			echo ('
@@ -1566,8 +1766,8 @@
 											
 											}
 											else{
-												if($voto=="ELIMINA") { /* Eliminazione del DB riuscita */
-													$query="DELETE FROM curiositaserie WHERE idSerie=$id AND idUtente=$_POST[idUtente]";
+												if($check=="ELIMINA") { /* Eliminazione del DB riuscita */
+													$query="DELETE FROM curiositaserie WHERE id=$_POST[idCur]";
 													//echo $recens;
 													if($conn->query($query))
 														echo "<script type='text/javascript'>alert('La curiosita è stata eliminata!');</script>";
@@ -1577,7 +1777,7 @@
 												}
 												else
 												{
-													$query="UPDATE curiositasere SET idAdmin=$_SESSION[idUser] WHERE idSerie=$id AND idUtente=$_POST[idUtente]";
+													$query="UPDATE curiositaserie SET idAdmin=$_SESSION[idUser] WHERE id=$_POST[idCur]";
 													//echo $recens;
 													if($conn->query($query))
 														echo "<script type='text/javascript'>alert('La curiosita è stata verificata!');</script>";
@@ -2051,7 +2251,7 @@
 																			echo'
 																				<div class="modal-footer">
 																					<button type="button"  class="btn btn-secondary" onclick="elimina('.$id.','.$riga["id"].')" data-dismiss="modal">Elimina</button>
-																					<button type="button" class="btn btn-primary" onclick="verifica('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																					<button type="button" class="btn btn-primary" onclick="verifica('.$riga["id"].')" data-dismiss="modal">Verifica</button>
 																				</div>';
 																	echo '
 																		</div>';
@@ -2114,7 +2314,7 @@
 														<h2 class="mt-4 mb-4" >Curiosità degli utenti</h2>
 													</div>
 												');
-										$query="SELECT C.testo,U.username, U.id, A.username admin
+										$query="SELECT c.id idCur, C.testo,U.username, U.id, A.username admin
 										FROM curiositaserie C 
 										INNER JOIN utenti U ON U.id=C.idUtente
 										LEFT JOIN utenti A ON A.id=C.idAdmin
@@ -2148,23 +2348,22 @@
 																			<small class="text-muted">Verificato da '.$riga["admin"].'</small>
 																		</div>';
 																echo '</div>';
-																		if($_SESSION["idUser"]==$riga["id"])
+																		if($_SESSION["idUser"]==$riga["id"]){
 																			echo' <div class="modal-footer">
-																					<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>
-																			</div>';
-																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null)
-																			echo'
-																				<div class="modal-footer">';
+																					<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																		}
+																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
 																			if($_SESSION["idUser"]!=$riga["id"])
-																				echo'	<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>';
+																				echo'	<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
 																					
 																			echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
 																				</div>';
+																		}
 																	echo '
 															</div>
 														</div>';
 												}
-												$query="SELECT C.testo,U.username, U.id, A.username admin
+												$query="SELECT C.id idCur, C.testo,U.username, U.id, A.username admin
 												FROM curiositaserie C 
 												INNER JOIN utenti U ON U.id=C.idUtente
 												LEFT JOIN utenti A ON A.id=C.idAdmin
@@ -2204,16 +2403,17 @@
 																						</div>';
 																				echo '</div>';
 																				echo '<div class="modal-footer">';
-																						if($_SESSION["idUser"]==$riga["id"])
-																							echo' <button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>';
-																							
-																						if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null)
+																						if($_SESSION["idUser"]==$riga["id"]){
+																							echo' <button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																						}
+																						if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
 																							
 																							if($_SESSION["idUser"]!=$riga["id"])
-																								echo'	<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>';
+																								echo'	<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
 																									
-																							echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																							echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>
 																								</div>';
+																						}
 																					echo '
 																			</div>
 																		</div>';
@@ -3062,7 +3262,7 @@
 		">
 			<input type='hidden' name='check' id='check'> <!-- Memorizzazione voto -->
 			<input type='hidden' name='cur' id='cur'> <!-- Memorizzazione recensione -->
-			<input type='hidden' name='idUtente' id='idUtente'> <!-- Memorizzazione recensione -->
+			<input type='hidden' name='idCur' id='idCur'> <!-- Memorizzazione recensione -->
 				
 		</form>		<footer class="text-muted">
 			<div class="container">
