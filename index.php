@@ -122,8 +122,8 @@
 		.col-md-3 :hover { 
 			cursor: pointer;
 			background-color: black;
-			transition: all 0.7s;
-			color: white;	   
+			color: white;	  
+			transition: all 0.7s; 
 		} /* Quando passo su una casella la evidenzio */
 
 		.card-text-description {
@@ -1802,7 +1802,7 @@
 														<p class="card-text" style="text-align:center !important">'.$serie["sinossi"].'</p>
 													</div>
 													<div class="container text-left">
-														<p class="card-text mt-4" onclick="passa_a('.$serie["id"].',11,null);"><strong>Stagioni: </strong><a href="#">Visualizza tutti gli episodi</a></p>
+														<p class="card-text mt-4" onclick="passa_a('.$serie["id"].',11,1);"><strong>Stagioni: </strong><a href="#">Visualizza tutti gli episodi</a></p>
 													</div>
 												</div>
 												</div>
@@ -2349,7 +2349,7 @@
 																			<small class="text-muted">Verificato da '.$riga["admin"].'</small>
 																		</div>';
 																echo '</div>';
-																		if($_SESSION["idUser"]==$riga["id"]){
+																		if(isset($_SESSION["idUser"])&&$_SESSION["idUser"]==$riga["id"]){
 																			echo' <div class="modal-footer">
 																					<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
 																		}
@@ -2361,7 +2361,7 @@
 																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
 																			echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>';
 																		}
-																		if($_SESSION["idUser"]==$riga["id"]||(isset($_SESSION["admin"])&&$_SESSION["admin"]==1))
+																		if(isset($_SESSION["idUser"]) && $_SESSION["idUser"]==$riga["id"]||(isset($_SESSION["admin"])&&$_SESSION["admin"]==1))
 																			echo '</div>';
 																	echo '
 															</div>
