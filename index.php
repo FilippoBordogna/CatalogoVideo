@@ -19,6 +19,10 @@
 		- 8 DETTAGLI PERSONE
 		- 9 DETTAGLI PERSONAGGI
 		- 10 RICERCA
+		- 13 CURIOSITA DELL'UTENTE
+		- 12 RECENSIONI DELL'UTENTE
+		- 11 PROFILO UTENTE
+		
 	*/
 
 	// Controllo Sessioni
@@ -204,7 +208,14 @@
 						return true;
 					}
 			}
-			
+			function check(){
+				if(changepw.newpw.value==changepw.newpwc.value)
+					return true;
+				else{
+					document.getElementById('avviso').style.visibility="visible";
+					return false;
+				}
+			}
 		</script>
   	</head>
   	<body>
@@ -325,9 +336,9 @@
 										'.$_SESSION["user"].'
 									</button>
 									<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-										<button class="dropdown-item" type="button">Visualizza Profilo</button>
-										<button class="dropdown-item" type="button">Visualizza Recensioni</button>
-										<button class="dropdown-item" type="button">Visualizza Curiosità</button>
+										<button class="dropdown-item" type="button" onclick="passa_a(null,13,null)">Visualizza Profilo</button>
+										<button class="dropdown-item" type="button" onclick="passa_a(null,11,null)">Visualizza Recensioni</button>
+										<button class="dropdown-item" type="button" onclick="passa_a(null,12,null)">Visualizza Curiosità</button>
 										<button class="dropdown-item" type="button" onclick="logout()">Logout</button>
 									</div>
 								</div>
@@ -3234,13 +3245,96 @@
 											}
 												
 											$video->free(); // Dealloco l'oggetto
+										
 										}
 																
-									break;
+										break;
+									
+									case 11:
+										
+										
+										break;
+									case 12:
+										
+										
+										break;
+									case 13:
+										/*
+										********************
+										***PROFILO UTENTE***
+										********************
+										*/
+										echo "</form>";
+										
+										$conn=dbConn();
+										
+										if(isset($_POST["newpw"])){
+											$id=$_SESSION["idUser"];
+											$query="SELECT password FROM utenti WHERE id=$id AND password='".md5($_POST["oldpw"])."'";
+											if($result=$conn->query($query))
+												if($result->num_rows>0){
+													$query="UPDATE utenti SET password='".md5($_POST["newpw"])."'";
+													if($conn->query($query)) /* Inserimento nel DB riuscito */
+														echo "<script type='text/javascript'>alert('La password è stata modificata con successo!');</script>";
+													else /* Inserimento nel DB NON riuscito */
+														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+													
+												}
+										}
+										echo ('	
+											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
+											<div class="container text-center"> 
+												<h1 class="mt-4 mb-4" >Profilo utente</h1>
+											'); // Titolo
+										if(isset($_SESSION["idUser"])){
+											$query="SELECT * FROM utenti WHERE id=$id";
+											if($result=$conn->query($query))
+												if($result->num_rows>0){
+													$utente=$result->fetch_assoc();
+													
+													echo '
+															<h3>Username:'.$utente["username"].'</h3>
+															<h3>Email:'.$utente["email"].'</h3>
+													';
+													if($utente["admin"]==1)
+														echo '<h3>Questo è un profilo amministratore</h3>';
+													echo'
+															<form name="changepw" id="changepw" method="post" onsubmit="return check()" action="index.php?stato='.$_GET['stato'].'">
+																<div class="form-group row">
+																	<label for="inputPassword" class="col-sm-2 col-form-label">Vecchia password</label>
+																	<div class="col-sm-10">
+																	  <input type="password" class="form-control" id="oldpw" name="oldpw" placeholder="Vecchia password" required>
+																	</div>
+																</div>
+																<div class="form-group row">
+																	<label for="inputPassword" class="col-sm-2 col-form-label">Nuova password</label>
+																	<div class="col-sm-10">
+																	  <input type="password" class="form-control" id="newpw" name="newpw" placeholder="Nuova password" required>
+																	</div>
+																</div>
+																<div class="form-group row">
+																	<label for="inputPassword" class="col-sm-2 col-form-label">Conferma password</label>
+																	<div class="col-sm-10">
+																	  <input type="password" class="form-control" id="newpwc" name="newpwc" placeholder="Conferma password" required>
+																	</div>
+																</div>
+																<p style="color:red; visibility:hidden" id="avviso" name="avviso" class="ml-2">Le due password devono coincidere</p>
+
+																<button type="submit" class="btn btn-primary ml-2 mt-2">Cambia password</button>
+		
+													';
+														$result->free();
+												}
+										}	
+										echo '</div>';
+										
+										$conn->close();
+										
+										break;
 								}
 		 
 							?>
-			</form>
+			
 		</main>
 		<form name="recensioni" id="recensioni" method="post" action="
 		<?php
