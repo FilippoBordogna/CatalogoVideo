@@ -33,8 +33,11 @@
 		session_unset();
 		session_destroy();
 		session_start(); // Chiudo e riapro la sessione
-		if(isset($_GET["logout"]))
+		if(isset($_GET["logout"])) {
 			$_GET["stato"]=$_GET["logout"];
+			if($_GET["stato"]<=14 && $_GET["stato"]>=12)
+			$_GET["stato"]=0;
+		}	
 	}
 	
 	function dbConn() { // Connessione al DB 
@@ -143,7 +146,7 @@
 		<!-- -->
 		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!-- Libreria Bootstrap ? -->
 		<script> // Funzioni JavaScript 
-			function logout(id,stato) { // Effettua il logout 
+			function logout() { // Effettua il logout 
 				f.stato.value="logout";
 				f.submit();
 			}
@@ -208,7 +211,7 @@
 						return true;
 					}
 			}
-			function check(){
+			function check() {
 				if(changepw.newpw.value==changepw.newpwc.value)
 					return true;
 				else{
@@ -336,9 +339,9 @@
 										'.$_SESSION["user"].'
 									</button>
 									<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-										<button class="dropdown-item" type="button" onclick="passa_a(null,13,null)">Visualizza Profilo</button>
-										<button class="dropdown-item" type="button" onclick="passa_a(null,11,null)">Visualizza Recensioni</button>
-										<button class="dropdown-item" type="button" onclick="passa_a(null,12,null)">Visualizza Curiosità</button>
+										<button class="dropdown-item" type="button" onclick="passa_a(null,14,null)">Visualizza Profilo</button>
+										<button class="dropdown-item" type="button" onclick="passa_a(null,12,null)">Visualizza Recensioni</button>
+										<button class="dropdown-item" type="button" onclick="passa_a(null,13,null)">Visualizza Curiosità</button>
 										<button class="dropdown-item" type="button" onclick="logout()">Logout</button>
 									</div>
 								</div>
@@ -3250,15 +3253,15 @@
 																
 										break;
 									
-									case 11:
-										
-										
-										break;
 									case 12:
 										
-										
+										echo ("A");
 										break;
 									case 13:
+										
+										
+										break;
+									case 14:
 										/*
 										********************
 										***PROFILO UTENTE***
@@ -3287,17 +3290,18 @@
 												<h1 class="mt-4 mb-4" >Profilo utente</h1>
 											'); // Titolo
 										if(isset($_SESSION["idUser"])){
+											$id=$_SESSION["idUser"];
 											$query="SELECT * FROM utenti WHERE id=$id";
 											if($result=$conn->query($query))
 												if($result->num_rows>0){
 													$utente=$result->fetch_assoc();
 													
 													echo '
-															<h3>Username:'.$utente["username"].'</h3>
-															<h3>Email:'.$utente["email"].'</h3>
+															<h3><strong>Username: </strong>'.$utente["username"].'</h3>
+															<h3><strong>Email: </strong>'.$utente["email"].'</h3>
 													';
 													if($utente["admin"]==1)
-														echo '<h3>Questo è un profilo amministratore</h3>';
+														echo '<h3>Sei un <strong>AMMINISTRATORE</strong></h3>';
 													echo'
 															<form name="changepw" id="changepw" method="post" onsubmit="return check()" action="index.php?stato='.$_GET['stato'].'">
 																<div class="form-group row">
