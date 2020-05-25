@@ -1,10 +1,8 @@
 <?php
 	/* 
 		DA FARE:
-		- Aggiungere campo datauscita al video (da discutere)
-		- Aggiungere nazionalità video (da discutere)
-		- Aggiungere filtri sulle ricerche o sulle viualizzazioni (da discutere)
-		- Aggiungere ordinamenti diversi sui dati (da discutere)
+		- Effettuare funzioni tendina una volta loggato
+		- Aggiungere ordinamenti diversi sui dati (nazionalita, anno uscita, voto)
 		- Ultimi accessi (ultimo) per controllo
 		- Rifare lo schema ER/logico in base alle modifiche (PIPPO)
 
@@ -392,7 +390,7 @@
 
 										// MIGLIORI VIDEO
 										$query="SELECT V.id, V.nome, V.durata, V.idSaga, V.numero, V.sinossi, AVG(RV.voto) mediaVoti
-										FROM recensionevideo RV JOIN video V ON V.id=RV.idVideo
+										FROM recensionivideo RV JOIN video V ON V.id=RV.idVideo
 										WHERE RV.idAdmin IS NOT NULL AND V.selettore!=2
 										GROUP BY RV.idVideo
 										ORDER BY mediaVoti DESC
@@ -403,7 +401,6 @@
 												<h2 class="mt-4 mb-4" >Migliori Video</h2>
 											</div>
 											'); // Titolo
-
 										if ($video=$conn->query($query)) { // Query effettuata con successo
 											if ($video->num_rows>0) { // Almeno un risultato
 												while ($elemento = $video->fetch_assoc()) { 
@@ -442,7 +439,7 @@
 
 										// MIGLIORI FILM
 										$query="SELECT V.id, V.nome, V.durata, V.sinossi, AVG(RV.voto) mediaVoti
-										FROM recensionevideo RV JOIN video V ON V.id=RV.idVideo
+										FROM recensionivideo RV JOIN video V ON V.id=RV.idVideo
 										WHERE RV.idAdmin IS NOT NULL AND V.selettore=1
 										GROUP BY RV.idVideo
 										ORDER BY mediaVoti DESC
@@ -495,7 +492,7 @@
 
 										// MIGLIORI SERIE TV
 										$query="SELECT S.*, AVG(RS.voto) mediaVoti, MAX(V.stagione) nStagioni, COUNT(DISTINCT V.id) nEpisodi
-										FROM recensioneserie RS JOIN serie S ON S.id=RS.idSerie JOIN video V on V.idserie=S.id
+										FROM recensioniserie RS JOIN serie S ON S.id=RS.idSerie JOIN video V on V.idserie=S.id
 										WHERE RS.idAdmin IS NOT NULL
 										GROUP BY S.id
 										ORDER BY mediaVoti DESC
@@ -553,7 +550,7 @@
 										$query="SELECT AVG (Medie.mediaVoti) media, COUNT(DISTINCT V.id) nFilm, S.id, S.nome
 										FROM (
 												SELECT  AVG(R.voto) mediaVoti, V.*
-												FROM recensionevideo R JOIN video V ON V.id=R.idVideo JOIN saghe S ON S.id=V.idSaga
+												FROM recensionivideo R JOIN video V ON V.id=R.idVideo JOIN saghe S ON S.id=V.idSaga
 												WHERE R.idAdmin IS NOT NULL
 												GROUP BY V.id
 											) Medie
@@ -609,7 +606,7 @@
 
 										// MIGLIORI DOCUMENTARI 
 										$query="SELECT V.id, V.nome, V.durata, V.sinossi, AVG(RV.voto) mediaVoti
-										FROM recensionevideo RV JOIN video V ON V.id=RV.idVideo
+										FROM recensionivideo RV JOIN video V ON V.id=RV.idVideo
 										WHERE RV.idAdmin IS NOT NULL AND V.selettore=3
 										GROUP BY RV.idVideo
 										ORDER BY mediaVoti DESC
@@ -674,7 +671,7 @@
 										$stato=$_GET["stato"];/* Stato della pagina corrente */
 										$nris=8; /* Riusltati da mostrare per pagina */
 										$query="SELECT V.id, V.nome, V.durata, V.sinossi, AVG(RV.voto) mediaVoti
-										FROM recensionevideo RV RIGHT JOIN video V ON V.id=RV.idVideo
+										FROM recensionivideo RV RIGHT JOIN video V ON V.id=RV.idVideo
 										WHERE V.selettore=1
 										GROUP BY V.id
 										ORDER BY mediaVoti DESC
@@ -961,11 +958,11 @@
 												$rec="'".filter_var($_POST["rec"], FILTER_SANITIZE_STRING)."'";
 											else
 												$rec="null";
-											$query="SELECT * FROM recensionevideo WHERE idVideo=$id AND idUtente=$_SESSION[idUser]"; /* Controllo che non abbia già fatto una recensione */
+											$query="SELECT * FROM recensionivideo WHERE idVideo=$id AND idUtente=$_SESSION[idUser]"; /* Controllo che non abbia già fatto una recensione */
 											$controllo=$conn->query($query);
 											if($voto!="ELIMINA"&&$voto!="VERIFICA") { /* Pubblico o modifico la recensione */
 												if($controllo->num_rows==0){ /* Non ha già recensito:  */
-													$recens="INSERT INTO recensionevideo VALUES ($id,$_SESSION[idUser],'$voto',$rec,null)";
+													$recens="INSERT INTO recensionivideo VALUES ($id,$_SESSION[idUser],'$voto',$rec,null)";
 													
 													if($conn->query($recens)) /* Inserimento nel DB riuscito */
 														echo "<script type='text/javascript'>alert('La tua recensione è stata inserita!');</script>";
@@ -973,7 +970,7 @@
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";	
 												}
 												else{
-													$recens="UPDATE recensionevideo SET voto='$voto', testo=$rec, idAdmin=null 
+													$recens="UPDATE recensionivideo SET voto='$voto', testo=$rec, idAdmin=null 
 													WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
 													
 													if($conn->query($recens)) /* Modifica del DB riuscita */
@@ -984,7 +981,7 @@
 											}
 											else{
 												if($voto=="ELIMINA") { /* Eliminazione del DB riuscita */
-													$recens="DELETE FROM recensionevideo WHERE idVideo=$id AND idUtente=$_POST[idUtente]";
+													$recens="DELETE FROM recensionivideo WHERE idVideo=$id AND idUtente=$_POST[idUtente]";
 													//echo $recens;
 													if($conn->query($recens))
 														echo "<script type='text/javascript'>alert('La recensione è stata eliminata!');</script>";
@@ -994,7 +991,7 @@
 												}
 												else
 												{
-													$recens="UPDATE recensionevideo SET idAdmin=$_SESSION[idUser] WHERE idVideo=$id AND idUtente=$_POST[idUtente]";
+													$recens="UPDATE recensionivideo SET idAdmin=$_SESSION[idUser] WHERE idVideo=$id AND idUtente=$_POST[idUtente]";
 													//echo $recens;
 													if($conn->query($recens))
 														echo "<script type='text/javascript'>alert('La recensione è stata verificata!');</script>";
@@ -1075,9 +1072,9 @@
 													</div>
 												');
 										
-										$query="SELECT Par.idPersona, Per.nome, Per.cognome, Pggi.nome nomeP 
-										FROM partecipazioni Par JOIN video V ON Par.idVideo=V.id JOIN persone Per ON Per.id=Par.idPersona JOIN interpretazioni I ON I.idAttore=Per.id JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
-										WHERE V.id=$id AND Par.selettore=2"; /* Preparazione Query: Attori Film */
+										$query="SELECT AV.idPersona, Per.nome, Per.cognome, Pggi.nome nomeP 
+										FROM attorivideo AV JOIN video V ON AV.idVideo=V.id JOIN persone Per ON Per.id=AV.idPersona JOIN interpretazioni I ON I.idAttore=Per.id JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										WHERE V.id=$id"; /* Preparazione Query: Attori Film */
 
 										if ($attori=$conn->query($query)) { /* Risultati della query */
 											echo ('
@@ -1119,9 +1116,9 @@
 											$attori->free(); // Dealloco l'oggetto
 										}
 
-										$query="SELECT Par.idPersona, Per.nome, Per.cognome
-										FROM partecipazioni Par JOIN video V ON Par.idVideo=V.id JOIN persone Per ON Per.id=Par.idPersona
-										WHERE V.id=$id AND Par.selettore=1"; /* Preparazione Query: Registi Film */
+										$query="SELECT RV.idPersona, Per.nome, Per.cognome
+										FROM registivideo RV JOIN video V ON RV.idVideo=V.id JOIN persone Per ON Per.id=RV.idPersona 
+										WHERE V.id=$id"; /* Preparazione Query: Registi Film */
 
 										if ($registi=$conn->query($query)) { /* Risultati della query */
 											echo ('	
@@ -1158,9 +1155,9 @@
 											$registi->free(); // Dealloco l'oggetto
 										}
 																				
-										$query="SELECT Par.idPersona, Per.nome, Per.cognome
-										FROM partecipazioni Par JOIN video V ON Par.idVideo=V.id JOIN persone Per ON Per.id=Par.idPersona 
-										WHERE V.id=$id AND Par.selettore=3"; /* Preparazione Query: Produttori Film */
+										$query="SELECT PV.idPersona, Per.nome, Per.cognome
+										FROM produttorivideo PV JOIN video V ON PV.idVideo=V.id JOIN persone Per ON Per.id=PV.idPersona 
+										WHERE V.id=$id"; /* Preparazione Query: Produttori Film */
 
 										if ($produttori=$conn->query($query)) { /* Risultati della query */
 											echo ('	
@@ -1236,7 +1233,7 @@
 										$personaggi->free(); // Dealloco l'oggetto
 										
 										if($_SESSION["login"]==1){
-											$query="SELECT voto, testo, username FROM recensionevideo LEFT JOIN Utenti ON idAdmin=id WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
+											$query="SELECT voto, testo, username FROM recensionivideo LEFT JOIN Utenti ON idAdmin=id WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
 											$recensione=$conn->query($query);
 											if($recensione->num_rows==0){
 												echo('
@@ -1417,7 +1414,7 @@
 													</div>
 												');
 										$query="SELECT R.voto, R.testo,U.username, U.id, A.username admin
-										FROM recensionevideo R 
+										FROM recensionivideo R 
 										INNER JOIN utenti U ON U.id=R.idUtente
 										LEFT JOIN utenti A ON A.id=R.idAdmin
 										WHERE idVideo=$id
@@ -1460,7 +1457,7 @@
 													</div>';
 											}
 											$query="SELECT R.voto, R.testo,U.username, U.id, A.username admin
-											FROM recensionevideo R 
+											FROM recensionivideo R 
 											INNER JOIN utenti U ON U.id=R.idUtente
 											LEFT JOIN utenti A ON A.id=R.idAdmin
 											WHERE R.testo IS NOT NULL AND idVideo=$id
@@ -1709,11 +1706,11 @@
 												$rec="'".filter_var($_POST["rec"], FILTER_SANITIZE_STRING)."'";
 											else
 												$rec="null";
-											$query="SELECT * FROM recensioneserie WHERE idSerie=$id AND idUtente=$_SESSION[idUser]"; /* Controllo che non abbia già fatto una recensione */
+											$query="SELECT * FROM recensioniserie WHERE idSerie=$id AND idUtente=$_SESSION[idUser]"; /* Controllo che non abbia già fatto una recensione */
 											$controllo=$conn->query($query);
 											if($voto!="ELIMINA"&&$voto!="VERIFICA") { /* Pubblico o modifico la recensione */
 												if($controllo->num_rows==0){ /* Non ha già recensito:  */
-													$recens="INSERT INTO recensioneserie VALUES ($id,$_SESSION[idUser],'$voto',$rec,null)";
+													$recens="INSERT INTO recensioniserie VALUES ($id,$_SESSION[idUser],'$voto',$rec,null)";
 													
 													if($conn->query($recens)) /* Inserimento nel DB riuscito */
 														echo "<script type='text/javascript'>alert('La tua recensione è stata inserita!');</script>";
@@ -1721,7 +1718,7 @@
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";	
 												}
 												else{
-													$recens="UPDATE recensioneserie SET voto='$voto', testo=$rec, idAdmin=null 
+													$recens="UPDATE recensioniserie SET voto='$voto', testo=$rec, idAdmin=null 
 													WHERE idSerie=$id AND idUtente=$_SESSION[idUser]";
 													
 													if($conn->query($recens)) /* Modifica del DB riuscita */
@@ -1732,7 +1729,7 @@
 											}
 											else{
 												if($voto=="ELIMINA") { /* Eliminazione del DB riuscita */
-													$recens="DELETE FROM recensioneserie WHERE idSerie=$id AND idUtente=$_POST[idUtente]";
+													$recens="DELETE FROM recensioniserie WHERE idSerie=$id AND idUtente=$_POST[idUtente]";
 													//echo $recens;
 													if($conn->query($recens))
 														echo "<script type='text/javascript'>alert('La recensione è stata eliminata!');</script>";
@@ -1742,7 +1739,7 @@
 												}
 												else
 												{
-													$recens="UPDATE recensioneserie SET idAdmin=$_SESSION[idUser] WHERE idSerie=$id AND idUtente=$_POST[idUtente]";
+													$recens="UPDATE recensioniserie SET idAdmin=$_SESSION[idUser] WHERE idSerie=$id AND idUtente=$_POST[idUtente]";
 													//echo $recens;
 													if($conn->query($recens))
 														echo "<script type='text/javascript'>alert('La recensione è stata verificata!');</script>";
@@ -1809,12 +1806,11 @@
 											');
 										
 										$query="SELECT Pers.*,Pggi.nome nomeP 
-										FROM partecipazioni P JOIN interpretazioni I ON I.idAttore=P.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
-										JOIN persone Pers ON Pers.id=P.idPersona 
-										WHERE P.idVideo IN 
-														(SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
-											AND P.selettore=2 
-										GROUP BY P.idPersona"; /* Preparazione Query: Attori Serie  */
+										FROM attorivideo AV JOIN interpretazioni I ON I.idAttore=AV.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										JOIN persone Pers ON Pers.id=AV.idPersona 
+										WHERE AV.idVideo IN 
+														(SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id)  
+										GROUP BY AV.idPersona"; /* Preparazione Query: Attori Serie  */
 
 										if ($attori=$conn->query($query)) { /* Risultati della query */
 											echo ('
@@ -1857,10 +1853,10 @@
 										}
 
 										$query="SELECT Pers.* 
-										FROM partecipazioni P JOIN video V ON V.id=P.idVideo JOIN persone Pers ON Pers.id=P.idPersona 
-										WHERE P.selettore=1 AND P.idVideo IN ( 
-																			SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
-										GROUP BY P.idPersona"; /* Preparazione Query: Registi Serie */
+										FROM registivideo RV JOIN video V ON V.id=RV.idVideo JOIN persone Pers ON Pers.id=RV.idPersona 
+										WHERE RV.idVideo IN ( 
+															SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
+										GROUP BY RV.idPersona"; /* Preparazione Query: Registi Serie */
 
 										if ($registi=$conn->query($query)) { /* Risultati della query */
 											echo ('	
@@ -1898,10 +1894,10 @@
 										}
 																				
 										$query="SELECT Pers.* 
-										FROM partecipazioni P JOIN video V ON V.id=P.idVideo JOIN persone Pers ON Pers.id=P.idPersona 
-										WHERE P.selettore=3 AND P.idVideo IN ( 
-																			SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
-										GROUP BY P.idPersona"; /* Preparazione Query: Produttori Serie */
+										FROM produttorivideo PV JOIN video V ON V.id=PV.idVideo JOIN persone Pers ON Pers.id=PV.idPersona 
+										WHERE PV.idVideo IN ( 
+															SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
+										GROUP BY PV.idPersona"; /* Preparazione Query: Produttori Serie */
 
 										if ($produttori=$conn->query($query)) { /* Risultati della query */
 											echo ('	
@@ -1986,7 +1982,7 @@
 										*/
 										
 										if($_SESSION["login"]==1){
-											$query="SELECT voto, testo, username FROM recensioneserie LEFT JOIN Utenti ON idAdmin=id WHERE idSerie=$id AND idUtente=$_SESSION[idUser]";
+											$query="SELECT voto, testo, username FROM recensioniserie LEFT JOIN Utenti ON idAdmin=id WHERE idSerie=$id AND idUtente=$_SESSION[idUser]";
 											$recensione=$conn->query($query);
 											if($recensione->num_rows==0){
 												echo('
@@ -2167,7 +2163,7 @@
 													</div>
 												');
 										$query="SELECT R.voto, R.testo,U.username, U.id, A.username admin
-										FROM recensioneserie R 
+										FROM recensioniserie R 
 										INNER JOIN utenti U ON U.id=R.idUtente
 										LEFT JOIN utenti A ON A.id=R.idAdmin
 										WHERE idSerie=$id
@@ -2211,7 +2207,7 @@
 														</div>';
 												}
 												$query="SELECT R.voto, R.testo,U.username, U.id, A.username admin
-												FROM recensioneserie R 
+												FROM recensioniserie R 
 												INNER JOIN utenti U ON U.id=R.idUtente
 												LEFT JOIN utenti A ON A.id=R.idAdmin
 												WHERE R.testo IS NOT NULL AND idSerie=$id
@@ -2515,12 +2511,11 @@
 										}
 										
 										$query="SELECT Pers.*,Pggi.nome nomeP 
-										FROM partecipazioni P JOIN interpretazioni I ON I.idAttore=P.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
-										JOIN persone Pers ON Pers.id=P.idPersona 
-										WHERE P.idVideo IN 
-														(SELECT V.id FROM video V JOIN saghe S ON V.idSaga=S.id WHERE S.id=$id) 
-											AND P.selettore=2 
-										GROUP BY P.idPersona"; /* Preparazione Query: Attori Serie  */
+										FROM attorivideo AV JOIN interpretazioni I ON I.idAttore=AV.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										JOIN persone Pers ON Pers.id=AV.idPersona 
+										WHERE AV.idVideo IN 
+														(SELECT V.id FROM video V JOIN saghe S ON V.idSaga=S.id WHERE S.id=$id)  
+										GROUP BY AV.idPersona"; /* Preparazione Query: Attori Saga  */
 										if ($attori=$conn->query($query)) { /* Risultati della query */
 											echo ('
 												<div class="container text-center"> 
@@ -2562,10 +2557,10 @@
 										}
 
 										$query="SELECT Pers.* 
-										FROM partecipazioni P JOIN video V ON V.id=P.idVideo JOIN persone Pers ON Pers.id=P.idPersona 
-										WHERE P.selettore=1 AND P.idVideo IN ( 
-																			SELECT V.id FROM video V JOIN saghe S ON V.idSaga=S.id WHERE S.id=$id) 
-										GROUP BY P.idPersona"; /* Preparazione Query: Registi Serie */
+										FROM registivideo RV JOIN video V ON V.id=RV.idVideo JOIN persone Pers ON Pers.id=RV.idPersona 
+										WHERE RV.idVideo IN ( 
+															SELECT V.id FROM video V JOIN saghe S ON V.idSaga=S.id WHERE S.id=$id) 
+										GROUP BY RV.idPersona"; /* Preparazione Query: Registi Saga */
 
 										if ($registi=$conn->query($query)) { /* Risultati della query */
 											echo ('	
@@ -2603,10 +2598,10 @@
 										}
 																				
 										$query="SELECT Pers.* 
-										FROM partecipazioni P JOIN video V ON V.id=P.idVideo JOIN persone Pers ON Pers.id=P.idPersona 
-										WHERE P.selettore=3 AND P.idVideo IN ( 
-																			SELECT V.id FROM video V JOIN saghe S ON V.idSaga=S.id WHERE S.id=$id) 
-										GROUP BY P.idPersona"; /* Preparazione Query: Produttori Serie */
+										FROM produttorivideo PV JOIN video V ON V.id=PV.idVideo JOIN persone Pers ON Pers.id=PV.idPersona 
+										WHERE PV.idVideo IN ( 
+															SELECT V.id FROM video V JOIN saghe S ON V.idSaga=S.id WHERE S.id=$id) 
+										GROUP BY PV.idPersona"; /* Preparazione Query: Produttori Saga */
 
 										if ($produttori=$conn->query($query)) { /* Risultati della query */
 											echo ('	
@@ -2706,8 +2701,8 @@
 											');
 
 										$query="SELECT V.nome,V.durata,V.sinossi,V.id
-										FROM video V JOIN partecipazioni Par ON Par.idVideo=V.id JOIN persone Per ON Par.idPersona=Per.id 
-										WHERE Par.selettore=2 AND Per.id=$id"; /* Preparazione Query: Video da Attore */
+										FROM video V JOIN attorivideo AV ON AV.idVideo=V.id JOIN persone P ON AV.idPersona=P.id 
+										WHERE P.id=$id"; /* Preparazione Query: Video da Attore */
 
 										if ($video=$conn->query($query)) { /* Risultati della query */
 											if ($video->num_rows>0) {
@@ -2738,8 +2733,8 @@
 										}
 
 										$query="SELECT V.nome,V.durata,V.sinossi,V.id
-										FROM video V JOIN partecipazioni Par ON Par.idVideo=V.id JOIN persone Per ON Par.idPersona=Per.id 
-										WHERE Par.selettore=1 AND Per.id=$id"; /* Preparazione Query: Video da Regista */
+										FROM video V JOIN registivideo RV ON RV.idVideo=V.id JOIN persone P ON RV.idPersona=P.id 
+										WHERE P.id=$id"; /* Preparazione Query: Video da Regista */
 
 										if ($video=$conn->query($query)) { /* Risultati della query */
 											if($video->num_rows>0) {
@@ -2769,8 +2764,8 @@
 										}
 
 										$query="SELECT V.nome,V.durata,V.sinossi,V.id
-										FROM video V JOIN partecipazioni Par ON Par.idVideo=V.id JOIN persone Per ON Par.idPersona=Per.id 
-										WHERE Par.selettore=3 AND Per.id=$id"; /* Preparazione Query: Video da Produttore */
+										FROM video V JOIN produttorivideo PV ON PV.idVideo=V.id JOIN persone P ON PV.idPersona=P.id 
+										WHERE P.id=$id"; /* Preparazione Query: Video da Produttore */
 
 										if ($video=$conn->query($query)) { /* Risultati della query */
 											if($video->num_rows>0) {
