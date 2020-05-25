@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 25, 2020 alle 11:00
+-- Creato il: Mag 25, 2020 alle 15:42
 -- Versione del server: 10.1.31-MariaDB
 -- Versione PHP: 7.2.4
 
@@ -27,8 +27,6 @@ SET time_zone = "+00:00";
 --
 -- Struttura della tabella `accessi`
 --
--- Creazione: Mag 19, 2020 alle 17:19
---
 
 CREATE TABLE `accessi` (
   `id` int(11) NOT NULL,
@@ -38,32 +36,78 @@ CREATE TABLE `accessi` (
   `idUtente` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- --------------------------------------------------------
+
 --
--- RELAZIONI PER TABELLA `accessi`:
---   `idUtente`
---       `utenti` -> `id`
+-- Struttura della tabella `attorivideo`
 --
+
+CREATE TABLE `attorivideo` (
+  `idVideo` int(11) NOT NULL,
+  `idPersona` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- Dump dei dati per la tabella `attorivideo`
+--
+
+INSERT INTO `attorivideo` (`idVideo`, `idPersona`) VALUES
+(1, 1),
+(1, 10),
+(2, 11),
+(3, 1),
+(3, 5),
+(3, 10),
+(4, 4),
+(4, 6),
+(5, 2),
+(6, 1),
+(6, 2),
+(6, 3),
+(6, 4),
+(6, 5),
+(6, 6),
+(7, 1),
+(7, 10),
+(8, 4),
+(9, 2),
+(9, 5),
+(10, 7),
+(11, 22),
+(11, 23),
+(12, 22),
+(12, 23),
+(13, 22),
+(13, 23),
+(14, 22),
+(14, 23),
+(15, 26),
+(15, 27),
+(16, 26),
+(16, 27),
+(17, 26),
+(17, 27),
+(18, 26),
+(18, 27),
+(19, 30),
+(19, 31),
+(20, 30),
+(20, 31),
+(21, 30),
+(21, 31),
+(22, 30),
+(22, 31);
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `comparizioni`
 --
--- Creazione: Mag 19, 2020 alle 17:18
---
 
 CREATE TABLE `comparizioni` (
   `idPersonaggio` int(11) NOT NULL,
   `idVideo` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `comparizioni`:
---   `idPersonaggio`
---       `personaggi` -> `id`
---   `idVideo`
---       `video` -> `id`
---
 
 --
 -- Dump dei dati per la tabella `comparizioni`
@@ -121,8 +165,6 @@ INSERT INTO `comparizioni` (`idPersonaggio`, `idVideo`) VALUES
 --
 -- Struttura della tabella `curiositaserie`
 --
--- Creazione: Mag 19, 2020 alle 17:18
---
 
 CREATE TABLE `curiositaserie` (
   `id` int(11) NOT NULL,
@@ -133,21 +175,16 @@ CREATE TABLE `curiositaserie` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- RELAZIONI PER TABELLA `curiositaserie`:
---   `idSerie`
---       `serie` -> `id`
---   `idUtente`
---       `utenti` -> `id`
---   `idAdmin`
---       `utenti` -> `id`
+-- Dump dei dati per la tabella `curiositaserie`
 --
+
+INSERT INTO `curiositaserie` (`id`, `idSerie`, `idUtente`, `idAdmin`, `testo`) VALUES
+(1, 1, 4, NULL, 'Prova\r\n');
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `curiositavideo`
---
--- Creazione: Mag 19, 2020 alle 17:18
 --
 
 CREATE TABLE `curiositavideo` (
@@ -159,31 +196,23 @@ CREATE TABLE `curiositavideo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- RELAZIONI PER TABELLA `curiositavideo`:
---   `idVideo`
---       `video` -> `id`
---   `idUtente`
---       `utenti` -> `id`
---   `idAdmin`
---       `utenti` -> `id`
+-- Dump dei dati per la tabella `curiositavideo`
 --
+
+INSERT INTO `curiositavideo` (`id`, `idVideo`, `idUtente`, `idAdmin`, `testo`) VALUES
+(3, 1, 4, NULL, 'Prova'),
+(4, 1, 4, NULL, 'Prova');
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `generi`
 --
--- Creazione: Mag 24, 2020 alle 17:07
---
 
 CREATE TABLE `generi` (
   `id` int(11) NOT NULL,
   `Tipo` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
-
---
--- RELAZIONI PER TABELLA `generi`:
---
 
 --
 -- Dump dei dati per la tabella `generi`
@@ -224,24 +253,12 @@ INSERT INTO `generi` (`id`, `Tipo`) VALUES
 --
 -- Struttura della tabella `generivideo`
 --
--- Creazione: Mag 24, 2020 alle 17:46
---
 
 CREATE TABLE `generivideo` (
   `id` int(11) NOT NULL,
   `idVideo` int(11) NOT NULL,
   `idGenere` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
-
---
--- RELAZIONI PER TABELLA `generivideo`:
---   `idVideo`
---       `video` -> `id`
---   `idVideo`
---       `video` -> `id`
---   `idGenere`
---       `generi` -> `id`
---
 
 --
 -- Dump dei dati per la tabella `generivideo`
@@ -356,21 +373,11 @@ INSERT INTO `generivideo` (`id`, `idVideo`, `idGenere`) VALUES
 --
 -- Struttura della tabella `interpretazioni`
 --
--- Creazione: Mag 19, 2020 alle 17:18
---
 
 CREATE TABLE `interpretazioni` (
   `idAttore` int(11) NOT NULL,
   `idPersonaggio` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `interpretazioni`:
---   `idAttore`
---       `persone` -> `id`
---   `idPersonaggio`
---       `personaggi` -> `id`
---
 
 --
 -- Dump dei dati per la tabella `interpretazioni`
@@ -398,137 +405,13 @@ INSERT INTO `interpretazioni` (`idAttore`, `idPersonaggio`) VALUES
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `partecipazioni`
---
--- Creazione: Mag 19, 2020 alle 17:18
---
-
-CREATE TABLE `partecipazioni` (
-  `idPersona` int(11) NOT NULL,
-  `idVideo` int(11) NOT NULL,
-  `selettore` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `partecipazioni`:
---   `idPersona`
---       `persone` -> `id`
---   `idVideo`
---       `video` -> `id`
---
-
---
--- Dump dei dati per la tabella `partecipazioni`
---
-
-INSERT INTO `partecipazioni` (`idPersona`, `idVideo`, `selettore`) VALUES
-(1, 1, 2),
-(1, 3, 2),
-(1, 6, 2),
-(1, 7, 2),
-(2, 5, 2),
-(2, 6, 2),
-(2, 9, 2),
-(3, 6, 2),
-(4, 4, 2),
-(4, 6, 2),
-(4, 8, 2),
-(5, 3, 2),
-(5, 6, 2),
-(5, 9, 2),
-(6, 4, 2),
-(6, 6, 2),
-(7, 10, 2),
-(10, 1, 1),
-(10, 1, 2),
-(10, 1, 3),
-(10, 3, 1),
-(10, 3, 2),
-(10, 3, 3),
-(10, 6, 3),
-(10, 7, 2),
-(10, 7, 3),
-(11, 2, 2),
-(13, 2, 1),
-(14, 4, 1),
-(15, 5, 1),
-(16, 6, 1),
-(16, 6, 3),
-(17, 7, 1),
-(18, 8, 1),
-(19, 9, 1),
-(20, 9, 1),
-(21, 10, 1),
-(21, 10, 3),
-(22, 11, 2),
-(22, 12, 2),
-(22, 13, 2),
-(22, 14, 2),
-(23, 11, 2),
-(23, 12, 2),
-(23, 13, 2),
-(23, 14, 2),
-(24, 11, 1),
-(24, 12, 1),
-(24, 13, 1),
-(24, 14, 1),
-(25, 11, 1),
-(25, 12, 1),
-(25, 13, 1),
-(25, 14, 1),
-(26, 15, 2),
-(26, 16, 2),
-(26, 17, 2),
-(26, 18, 2),
-(27, 15, 2),
-(27, 16, 2),
-(27, 17, 2),
-(27, 18, 2),
-(28, 15, 1),
-(28, 16, 1),
-(28, 17, 1),
-(28, 18, 1),
-(29, 15, 1),
-(29, 16, 1),
-(29, 17, 1),
-(29, 18, 1),
-(30, 19, 2),
-(30, 20, 2),
-(30, 21, 2),
-(30, 22, 2),
-(31, 19, 2),
-(31, 20, 2),
-(31, 21, 2),
-(31, 22, 2),
-(32, 19, 1),
-(33, 20, 1),
-(33, 21, 1),
-(33, 22, 1),
-(34, 19, 3),
-(34, 20, 3),
-(34, 21, 3),
-(34, 22, 3),
-(35, 19, 3),
-(35, 20, 3),
-(35, 21, 3),
-(35, 22, 3);
-
--- --------------------------------------------------------
-
---
 -- Struttura della tabella `personaggi`
---
--- Creazione: Mag 19, 2020 alle 17:19
 --
 
 CREATE TABLE `personaggi` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `personaggi`:
---
 
 --
 -- Dump dei dati per la tabella `personaggi`
@@ -557,18 +440,12 @@ INSERT INTO `personaggi` (`id`, `nome`) VALUES
 --
 -- Struttura della tabella `persone`
 --
--- Creazione: Mag 19, 2020 alle 21:59
---
 
 CREATE TABLE `persone` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL,
   `cognome` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `persone`:
---
 
 --
 -- Dump dei dati per la tabella `persone`
@@ -614,12 +491,49 @@ INSERT INTO `persone` (`id`, `nome`, `cognome`) VALUES
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `recensioneserie`
---
--- Creazione: Mag 19, 2020 alle 17:18
+-- Struttura della tabella `produttorivideo`
 --
 
-CREATE TABLE `recensioneserie` (
+CREATE TABLE `produttorivideo` (
+  `idVideo` int(11) NOT NULL,
+  `idPersona` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- Dump dei dati per la tabella `produttorivideo`
+--
+
+INSERT INTO `produttorivideo` (`idVideo`, `idPersona`) VALUES
+(1, 10),
+(3, 10),
+(6, 10),
+(6, 16),
+(7, 10),
+(10, 21),
+(15, 28),
+(15, 29),
+(16, 28),
+(16, 29),
+(17, 28),
+(17, 29),
+(18, 28),
+(18, 29),
+(19, 34),
+(19, 35),
+(20, 34),
+(20, 35),
+(21, 34),
+(21, 35),
+(22, 34),
+(22, 35);
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `recensioniserie`
+--
+
+CREATE TABLE `recensioniserie` (
   `idSerie` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
   `voto` int(11) NOT NULL,
@@ -628,22 +542,11 @@ CREATE TABLE `recensioneserie` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- RELAZIONI PER TABELLA `recensioneserie`:
---   `idSerie`
---       `serie` -> `id`
---   `idUtente`
---       `utenti` -> `id`
---   `idAdmin`
---       `utenti` -> `id`
+-- Dump dei dati per la tabella `recensioniserie`
 --
 
---
--- Dump dei dati per la tabella `recensioneserie`
---
-
-INSERT INTO `recensioneserie` (`idSerie`, `idUtente`, `voto`, `testo`, `idAdmin`) VALUES
+INSERT INTO `recensioniserie` (`idSerie`, `idUtente`, `voto`, `testo`, `idAdmin`) VALUES
 (1, 1, 5, 'Non un granchè', 6),
-(1, 4, 10, 'Stupenda', NULL),
 (1, 7, 8, 'Molto carina. Mi sono sfuggiti alcuni passaggi', 3),
 (2, 1, 9, 'Molto carina', 5),
 (2, 4, 4, 'Non un granchè', NULL),
@@ -652,12 +555,10 @@ INSERT INTO `recensioneserie` (`idSerie`, `idUtente`, `voto`, `testo`, `idAdmin`
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `recensionevideo`
---
--- Creazione: Mag 19, 2020 alle 17:18
+-- Struttura della tabella `recensionivideo`
 --
 
-CREATE TABLE `recensionevideo` (
+CREATE TABLE `recensionivideo` (
   `idVideo` int(11) NOT NULL,
   `idUtente` int(11) NOT NULL,
   `voto` int(11) NOT NULL,
@@ -666,20 +567,10 @@ CREATE TABLE `recensionevideo` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- RELAZIONI PER TABELLA `recensionevideo`:
---   `idVideo`
---       `video` -> `id`
---   `idUtente`
---       `utenti` -> `id`
---   `idAdmin`
---       `utenti` -> `id`
+-- Dump dei dati per la tabella `recensionivideo`
 --
 
---
--- Dump dei dati per la tabella `recensionevideo`
---
-
-INSERT INTO `recensionevideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`) VALUES
+INSERT INTO `recensionivideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`) VALUES
 (1, 1, 10, 'IRON MAN SEI IL MIO EROE! ', 5),
 (1, 3, 10, 'Davvero un gran bel film! Scaricatelo dal corsaronero: https://ilcorsaronero.xyz/tor/95175/Iron_Man_2008_iTA_ENG_AC3_Bluray_1080p_Subs_x264_DSS', 3),
 (1, 5, 9, 'Mi è piaciuto molto, ottimo da vedere mentre si mangia un bel piatto di polenta', 3),
@@ -700,19 +591,61 @@ INSERT INTO `recensionevideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`
 -- --------------------------------------------------------
 
 --
--- Struttura della tabella `saghe`
+-- Struttura della tabella `registivideo`
 --
--- Creazione: Mag 19, 2020 alle 17:19
+
+CREATE TABLE `registivideo` (
+  `idVideo` int(11) NOT NULL,
+  `idPersona` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- Dump dei dati per la tabella `registivideo`
+--
+
+INSERT INTO `registivideo` (`idVideo`, `idPersona`) VALUES
+(1, 10),
+(2, 13),
+(3, 10),
+(4, 14),
+(5, 15),
+(6, 16),
+(7, 17),
+(8, 18),
+(9, 19),
+(9, 20),
+(10, 21),
+(11, 24),
+(11, 25),
+(12, 24),
+(12, 25),
+(13, 24),
+(13, 25),
+(14, 24),
+(14, 25),
+(15, 28),
+(15, 29),
+(16, 28),
+(16, 29),
+(17, 28),
+(17, 29),
+(18, 28),
+(18, 29),
+(19, 32),
+(20, 33),
+(21, 33),
+(22, 33);
+
+-- --------------------------------------------------------
+
+--
+-- Struttura della tabella `saghe`
 --
 
 CREATE TABLE `saghe` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `saghe`:
---
 
 --
 -- Dump dei dati per la tabella `saghe`
@@ -728,18 +661,12 @@ INSERT INTO `saghe` (`id`, `nome`) VALUES
 --
 -- Struttura della tabella `serie`
 --
--- Creazione: Mag 19, 2020 alle 22:11
---
 
 CREATE TABLE `serie` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL,
   `sinossi` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `serie`:
---
 
 --
 -- Dump dei dati per la tabella `serie`
@@ -754,8 +681,6 @@ INSERT INTO `serie` (`id`, `nome`, `sinossi`) VALUES
 --
 -- Struttura della tabella `utenti`
 --
--- Creazione: Mag 19, 2020 alle 17:35
---
 
 CREATE TABLE `utenti` (
   `id` int(11) NOT NULL,
@@ -764,10 +689,6 @@ CREATE TABLE `utenti` (
   `password` varchar(32) NOT NULL,
   `admin` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `utenti`:
---
 
 --
 -- Dump dei dati per la tabella `utenti`
@@ -786,8 +707,6 @@ INSERT INTO `utenti` (`id`, `username`, `email`, `password`, `admin`) VALUES
 --
 -- Struttura della tabella `video`
 --
--- Creazione: Mag 19, 2020 alle 22:13
---
 
 CREATE TABLE `video` (
   `id` int(11) NOT NULL,
@@ -798,44 +717,38 @@ CREATE TABLE `video` (
   `numero` int(11) DEFAULT NULL,
   `stagione` int(11) DEFAULT NULL,
   `selettore` int(11) NOT NULL,
-  `sinossi` varchar(500) DEFAULT NULL
+  `sinossi` varchar(500) DEFAULT NULL,
+  `annoUscita` year(4) NOT NULL,
+  `nazionalita` varchar(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- RELAZIONI PER TABELLA `video`:
---   `idSaga`
---       `saghe` -> `id`
---   `idSerie`
---       `serie` -> `id`
---
 
 --
 -- Dump dei dati per la tabella `video`
 --
 
-INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `stagione`, `selettore`, `sinossi`) VALUES
-(1, 'Iron Man', 126, 1, NULL, 1, NULL, 1, 'Dopo essere sopravvissuto ad un attacco inaspettato in territorio nemico, l\'industriale Tony Stark costruisce un\'armatura ad alta tecnologia e giura di proteggere il mondo nei panni di Iron Man.'),
-(2, 'L\'incredibile Hulk', 135, 1, NULL, 2, NULL, 1, 'Bruce Banner era uno scienziato, ma un\'esposizione accidentale ai raggi gamma ha provocato una mutazione genetica e sconvolto la sua esistenza. Ogni qualvolta le emozioni lo assalgono, Bruce si trasforma in Hulk, mostro verde dalla forza smisurata.'),
-(3, 'Iron Man 2', 124, 1, NULL, 3, NULL, 1, 'Ora che tutto il mondo conosce la vera identità di Iron Man, l\'inventore milionario Tony Stark deve affrontare le pressioni alla collaborazione da parte dei militari e stringere nuove alleanze per affrontare un potente nemico.'),
-(4, 'Thor', 115, 1, NULL, 4, NULL, 1, 'Dopo che le sue azioni sconsiderate hanno riacceso un\'antica guerra, il dio nordico Thor viene spogliato dei propri poteri, scacciato dal regno di Asgard, e costretto a vivere tra gli umani.'),
-(5, 'Captain America - Il primo Vendicatore', 124, 1, NULL, 5, NULL, 1, 'Steve è un giovanotto smilzo che vuole ad ogni costo arruolarsi nell\'esercito per combattere i nazisti. Putroppo viene regolarmente scartato, ma un giorno gli si presenta la possibilità di fare da cavia: gli iniettano così il siero del supersoldato'),
-(6, 'The Avengers', 143, 1, NULL, 6, NULL, 1, 'I leggendari supereroi Iron Man, Hulk, Thor, Capitan America, Occhio di Falco e la Vedova Nera vengono reclutati da un\'agenzia governativa segreta per combattere un nemico inatteso che minaccia la sicurezza della Terra.'),
-(7, 'Iron Man 3', 131, 1, NULL, 7, NULL, 1, 'Dopo aver salvato New York dalla distruzione ed essere rimasto da allora insonne e preoccupato, Tony Stark rimasto senza armatura deve lottare contro le sue paure interiori per sconfiggere il suo nuovo nemico, il Mandarino.'),
-(8, 'Thor: The Dark World', 112, 1, NULL, 8, NULL, 1, 'Dal personaggio della Marvel, Thor si allea con il perfido Loki per salvare la Terra dei Nove Regni da un antico nemico nato prima ancora dell\'universo.'),
-(9, 'Captain America: The Winter Soldier', 136, 1, NULL, 9, NULL, 1, 'Capitan America, Vedova Nera e un nuovo alleato, Falcon, affrontano un nemico inaspettato mentre lottano per far emergere alla luce del sole un complotto che mette a rischio il mondo intero.'),
-(10, 'Guardiani della Galassia', 125, 1, NULL, 10, NULL, 1, 'Un avventuriero spaziale, Brash Peter Quill, diventa preda di alcuni cacciatori di taglie dopo aver rubato una sfera ambita dal potente Ronan. Per sfuggire alla morte, l\'uomo si allea con quattro improbabili compagni di avventura.'),
-(11, ' Eseguire ciò che è stato concordato', 47, NULL, 1, 1, 1, 2, 'A ciascun componente della banda viene dato il nome di una città: Tokyo, narratrice della storia, il cui compagno è appena morto dopo uno scontro a fuoco per un furto; Mosca e Denver, padre e figlio; Berlino, eletto dal Professore a capo delle operazioni; Nairobi, l\'altra donna del gruppo; Río, giovane hacker; Helsinki e Oslo, cugini serbi'),
-(12, 'Incoscenza leale', 41, NULL, 1, 2, 1, 2, 'Río è vivo, è solo ferito alla testa. Berlino, al telefono con il Professore, gli rivela che Tokyo e Río hanno una relazione, ma lei smentisce tutto. Río, invece, quando sono soli, conferma a Berlino che ama Tokyo.'),
-(13, 'Le maschere sono finite', 43, NULL, 1, 1, 2, 2, 'La polizia e la Scientifica stanno passando al setaccio il casale di Toledo in cerca di tracce; il Professore, che ha accompagnato Raquel, è in auto, estremamente nervoso, ma trova un quaderno di Paula, la figlia di Raquel, in cui la maestra scrive alla madre delle sue preoccupazioni per un invito da parte di Alberto, il padre. Dentro all\'edificio vi sono moltissime prove, tattiche, impronte, DNA.'),
-(14, 'Il capo del piano', 44, NULL, 1, 2, 2, 2, 'Berlino è in ostaggio di Tokyo con l\'aiuto di Río e Denver. Tokyo vuole sapere i dettagli del \"piano Chernobyl\", il piano da attuare solo in caso di emergenza, e per farlo lo tortura rompendo alcune boccette del suo farmaco e giocando alla roulette russa con lui. '),
-(15, 'La macchina della conoscenza', 44, NULL, 2, 1, 1, 2, 'La serie inizia con un flashback in cui si vede in un letto John Reese insieme a una donna. Siamo nel 2011, Reese è un barbone di New York.'),
-(16, 'Una voce dal passato', 44, NULL, 2, 2, 1, 2, 'Dopo aver salvato un uomo di nome Bill da alcuni sicari assoldati da sua moglie, Reese pedina Finch per scoprire più informazioni sul suo conto, quando quest\'ultimo chiama l\'ex agente per assegnarli a un\'altra missione.'),
-(17, 'Il piano di emergenza', 42, NULL, 2, 1, 2, 2, 'Reese riceve una serie di parole apparentemente casuali dalla Macchina, che l\'ha contattato tramite un telefono pubblico. Dopo aver assegnato alla Carter il compito di indagare più approfonditamente sulla morte di Alicia Corwin, uccisa da Root durante il rapimento di Finch, egli capisce che le parole identificano tre differenti libri nella biblioteca di Finch.'),
-(18, 'Cattivi geni', 42, NULL, 2, 2, 2, 2, 'Reese e Carter partono per il Texas sulle tracce di Hanna Frey, una ragazzina scomparsa molti anni prima. Nel frattempo, Root tiene prigionieri Finch e Weeks e tortura ed interroga quest’ultimo per sapere la posizione della Macchina, accusandolo di essere un \"codice malevolo\".'),
-(19, 'Hunger Games', 143, 3, NULL, 1, NULL, 2, 'Ogni anno, come punizione per aver scatenato la ribellione anni prima, in ogni distretto vengono scelti un ragazzo e una ragazza di età compresa tra i dodici e i diciotto anni per partecipare agli Hunger Games, un evento nel quale i partecipanti devono combattere in un luogo detto \"arena\", che viene controllata dagli Strateghi per mezzo di computer molto sofisticati, finché uno solo rimane vivo'),
-(20, 'Hunger Games: La ragazza di fuoco', 146, 3, NULL, 2, NULL, 2, 'Katniss Everdeen ritorna a casa in seguito alla vittoria ottenuta nell\'ultima edizione degli Hunger Games insieme al suo compagno Peeta Mellark. Ora i due alloggiano al Villaggio dei Vincitori, presente in ogni distretto, assieme al loro mentore Haymitch Abernathy.\r\n\r\nPer i due giovani è giunto il momento di partire per il Tour della Vittoria, un viaggio attraverso i distretti per ricordare coloro che sono morti nei giochi.'),
-(21, 'Hunger Games: Il canto della rivolta - Parte 1', 123, 3, NULL, 3, NULL, 2, 'Katniss Everdeen si trova nel Distretto 13 in stato confusionale, dopo aver distrutto l\'arena dei settantacinquesimi Hunger Games. Appena la ragazza inizia a riprendersi viene nominata da Plutarch Heavensbee e dalla presidentessa Alma Coin come immagine simbolo della ribellione, ma la ragazza, ormai nota a tutti come la \"ghiandaia imitatrice\", inizialmente rifiuta l\'offerta poiché ancora molto turbata.'),
-(22, 'Hunger Games: Il canto della rivolta parte 2', 137, 3, NULL, 4, NULL, 2, 'La nazione di Panem è in guerra. Tutti i distretti sono ormai uniti nella rivolta contro Capitol City, guidata da Katniss Everdeen, che continua a vestire i panni della ghiandaia imitatrice e quindi a impersonare il simbolo della rivoluzione stessa. Nel frattempo Peeta è ancora sotto shock a causa del depistaggio cerebrale causatogli dal Presidente Snow mentre era prigioniero a Capitol City e i suoi sentimenti di odio verso Katniss sono ancora presenti, benché lentamente comincino a svanire.');
+INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `stagione`, `selettore`, `sinossi`, `annoUscita`, `nazionalita`) VALUES
+(1, 'Iron Man', 126, 1, NULL, 1, NULL, 1, 'Dopo essere sopravvissuto ad un attacco inaspettato in territorio nemico, l\'industriale Tony Stark costruisce un\'armatura ad alta tecnologia e giura di proteggere il mondo nei panni di Iron Man.', 2008, 'USA'),
+(2, 'L\'incredibile Hulk', 135, 1, NULL, 2, NULL, 1, 'Bruce Banner era uno scienziato, ma un\'esposizione accidentale ai raggi gamma ha provocato una mutazione genetica e sconvolto la sua esistenza. Ogni qualvolta le emozioni lo assalgono, Bruce si trasforma in Hulk, mostro verde dalla forza smisurata.', 2008, 'USA'),
+(3, 'Iron Man 2', 124, 1, NULL, 3, NULL, 1, 'Ora che tutto il mondo conosce la vera identità di Iron Man, l\'inventore milionario Tony Stark deve affrontare le pressioni alla collaborazione da parte dei militari e stringere nuove alleanze per affrontare un potente nemico.', 2010, 'USA'),
+(4, 'Thor', 115, 1, NULL, 4, NULL, 1, 'Dopo che le sue azioni sconsiderate hanno riacceso un\'antica guerra, il dio nordico Thor viene spogliato dei propri poteri, scacciato dal regno di Asgard, e costretto a vivere tra gli umani.', 2011, 'USA'),
+(5, 'Captain America - Il primo Vendicatore', 124, 1, NULL, 5, NULL, 1, 'Steve è un giovanotto smilzo che vuole ad ogni costo arruolarsi nell\'esercito per combattere i nazisti. Putroppo viene regolarmente scartato, ma un giorno gli si presenta la possibilità di fare da cavia: gli iniettano così il siero del supersoldato', 2011, 'USA'),
+(6, 'The Avengers', 143, 1, NULL, 6, NULL, 1, 'I leggendari supereroi Iron Man, Hulk, Thor, Capitan America, Occhio di Falco e la Vedova Nera vengono reclutati da un\'agenzia governativa segreta per combattere un nemico inatteso che minaccia la sicurezza della Terra.', 2012, 'USA'),
+(7, 'Iron Man 3', 131, 1, NULL, 7, NULL, 1, 'Dopo aver salvato New York dalla distruzione ed essere rimasto da allora insonne e preoccupato, Tony Stark rimasto senza armatura deve lottare contro le sue paure interiori per sconfiggere il suo nuovo nemico, il Mandarino.', 2013, 'USA'),
+(8, 'Thor: The Dark World', 112, 1, NULL, 8, NULL, 1, 'Dal personaggio della Marvel, Thor si allea con il perfido Loki per salvare la Terra dei Nove Regni da un antico nemico nato prima ancora dell\'universo.', 2013, 'USA'),
+(9, 'Captain America: The Winter Soldier', 136, 1, NULL, 9, NULL, 1, 'Capitan America, Vedova Nera e un nuovo alleato, Falcon, affrontano un nemico inaspettato mentre lottano per far emergere alla luce del sole un complotto che mette a rischio il mondo intero.', 2014, 'USA'),
+(10, 'Guardiani della Galassia', 125, 1, NULL, 10, NULL, 1, 'Un avventuriero spaziale, Brash Peter Quill, diventa preda di alcuni cacciatori di taglie dopo aver rubato una sfera ambita dal potente Ronan. Per sfuggire alla morte, l\'uomo si allea con quattro improbabili compagni di avventura.', 2014, 'USA'),
+(11, ' Eseguire ciò che è stato concordato', 47, NULL, 1, 1, 1, 2, 'A ciascun componente della banda viene dato il nome di una città: Tokyo, narratrice della storia, il cui compagno è appena morto dopo uno scontro a fuoco per un furto; Mosca e Denver, padre e figlio; Berlino, eletto dal Professore a capo delle operazioni; Nairobi, l\'altra donna del gruppo; Río, giovane hacker; Helsinki e Oslo, cugini serbi', 2017, 'ESP'),
+(12, 'Incoscenza leale', 41, NULL, 1, 2, 1, 2, 'Río è vivo, è solo ferito alla testa. Berlino, al telefono con il Professore, gli rivela che Tokyo e Río hanno una relazione, ma lei smentisce tutto. Río, invece, quando sono soli, conferma a Berlino che ama Tokyo.', 2017, 'ESP'),
+(13, 'Le maschere sono finite', 43, NULL, 1, 1, 2, 2, 'La polizia e la Scientifica stanno passando al setaccio il casale di Toledo in cerca di tracce; il Professore, che ha accompagnato Raquel, è in auto, estremamente nervoso, ma trova un quaderno di Paula, la figlia di Raquel, in cui la maestra scrive alla madre delle sue preoccupazioni per un invito da parte di Alberto, il padre. Dentro all\'edificio vi sono moltissime prove, tattiche, impronte, DNA.', 2019, 'ESP'),
+(14, 'Il capo del piano', 44, NULL, 1, 2, 2, 2, 'Berlino è in ostaggio di Tokyo con l\'aiuto di Río e Denver. Tokyo vuole sapere i dettagli del \"piano Chernobyl\", il piano da attuare solo in caso di emergenza, e per farlo lo tortura rompendo alcune boccette del suo farmaco e giocando alla roulette russa con lui. ', 2019, 'ESP'),
+(15, 'La macchina della conoscenza', 44, NULL, 2, 1, 1, 2, 'La serie inizia con un flashback in cui si vede in un letto John Reese insieme a una donna. Siamo nel 2011, Reese è un barbone di New York.', 2011, 'USA'),
+(16, 'Una voce dal passato', 44, NULL, 2, 2, 1, 2, 'Dopo aver salvato un uomo di nome Bill da alcuni sicari assoldati da sua moglie, Reese pedina Finch per scoprire più informazioni sul suo conto, quando quest\'ultimo chiama l\'ex agente per assegnarli a un\'altra missione.', 2011, 'USA'),
+(17, 'Il piano di emergenza', 42, NULL, 2, 1, 2, 2, 'Reese riceve una serie di parole apparentemente casuali dalla Macchina, che l\'ha contattato tramite un telefono pubblico. Dopo aver assegnato alla Carter il compito di indagare più approfonditamente sulla morte di Alicia Corwin, uccisa da Root durante il rapimento di Finch, egli capisce che le parole identificano tre differenti libri nella biblioteca di Finch.', 2012, 'USA'),
+(18, 'Cattivi geni', 42, NULL, 2, 2, 2, 2, 'Reese e Carter partono per il Texas sulle tracce di Hanna Frey, una ragazzina scomparsa molti anni prima. Nel frattempo, Root tiene prigionieri Finch e Weeks e tortura ed interroga quest’ultimo per sapere la posizione della Macchina, accusandolo di essere un \"codice malevolo\".', 2012, 'USA'),
+(19, 'Hunger Games', 143, 3, NULL, 1, NULL, 2, 'Ogni anno, come punizione per aver scatenato la ribellione anni prima, in ogni distretto vengono scelti un ragazzo e una ragazza di età compresa tra i dodici e i diciotto anni per partecipare agli Hunger Games, un evento nel quale i partecipanti devono combattere in un luogo detto \"arena\", che viene controllata dagli Strateghi per mezzo di computer molto sofisticati, finché uno solo rimane vivo', 2012, 'USA'),
+(20, 'Hunger Games: La ragazza di fuoco', 146, 3, NULL, 2, NULL, 2, 'Katniss Everdeen ritorna a casa in seguito alla vittoria ottenuta nell\'ultima edizione degli Hunger Games insieme al suo compagno Peeta Mellark. Ora i due alloggiano al Villaggio dei Vincitori, presente in ogni distretto, assieme al loro mentore Haymitch Abernathy.\r\n\r\nPer i due giovani è giunto il momento di partire per il Tour della Vittoria, un viaggio attraverso i distretti per ricordare coloro che sono morti nei giochi.', 2013, 'USA'),
+(21, 'Hunger Games: Il canto della rivolta - Parte 1', 123, 3, NULL, 3, NULL, 2, 'Katniss Everdeen si trova nel Distretto 13 in stato confusionale, dopo aver distrutto l\'arena dei settantacinquesimi Hunger Games. Appena la ragazza inizia a riprendersi viene nominata da Plutarch Heavensbee e dalla presidentessa Alma Coin come immagine simbolo della ribellione, ma la ragazza, ormai nota a tutti come la \"ghiandaia imitatrice\", inizialmente rifiuta l\'offerta poiché ancora molto turbata.', 2014, 'USA'),
+(22, 'Hunger Games: Il canto della rivolta parte 2', 137, 3, NULL, 4, NULL, 2, 'La nazione di Panem è in guerra. Tutti i distretti sono ormai uniti nella rivolta contro Capitol City, guidata da Katniss Everdeen, che continua a vestire i panni della ghiandaia imitatrice e quindi a impersonare il simbolo della rivoluzione stessa. Nel frattempo Peeta è ancora sotto shock a causa del depistaggio cerebrale causatogli dal Presidente Snow mentre era prigioniero a Capitol City e i suoi sentimenti di odio verso Katniss sono ancora presenti, benché lentamente comincino a svanire.', 2015, 'USA');
 
 --
 -- Indici per le tabelle scaricate
@@ -847,6 +760,13 @@ INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `sta
 ALTER TABLE `accessi`
   ADD PRIMARY KEY (`id`),
   ADD KEY `idUtente` (`idUtente`);
+
+--
+-- Indici per le tabelle `attorivideo`
+--
+ALTER TABLE `attorivideo`
+  ADD PRIMARY KEY (`idVideo`,`idPersona`),
+  ADD KEY `idAttore` (`idPersona`);
 
 --
 -- Indici per le tabelle `comparizioni`
@@ -896,13 +816,6 @@ ALTER TABLE `interpretazioni`
   ADD KEY `idPersonaggio` (`idPersonaggio`);
 
 --
--- Indici per le tabelle `partecipazioni`
---
-ALTER TABLE `partecipazioni`
-  ADD PRIMARY KEY (`idPersona`,`idVideo`,`selettore`),
-  ADD KEY `idVideo` (`idVideo`);
-
---
 -- Indici per le tabelle `personaggi`
 --
 ALTER TABLE `personaggi`
@@ -915,20 +828,34 @@ ALTER TABLE `persone`
   ADD PRIMARY KEY (`id`);
 
 --
--- Indici per le tabelle `recensioneserie`
+-- Indici per le tabelle `produttorivideo`
 --
-ALTER TABLE `recensioneserie`
+ALTER TABLE `produttorivideo`
+  ADD PRIMARY KEY (`idVideo`,`idPersona`),
+  ADD KEY `idProduttore` (`idPersona`);
+
+--
+-- Indici per le tabelle `recensioniserie`
+--
+ALTER TABLE `recensioniserie`
   ADD PRIMARY KEY (`idSerie`,`idUtente`),
   ADD KEY `idUtente` (`idUtente`),
   ADD KEY `idAdmin` (`idAdmin`);
 
 --
--- Indici per le tabelle `recensionevideo`
+-- Indici per le tabelle `recensionivideo`
 --
-ALTER TABLE `recensionevideo`
+ALTER TABLE `recensionivideo`
   ADD PRIMARY KEY (`idVideo`,`idUtente`),
   ADD KEY `idUtente` (`idUtente`),
   ADD KEY `idAdmin` (`idAdmin`);
+
+--
+-- Indici per le tabelle `registivideo`
+--
+ALTER TABLE `registivideo`
+  ADD PRIMARY KEY (`idVideo`,`idPersona`),
+  ADD KEY `idRegista` (`idPersona`);
 
 --
 -- Indici per le tabelle `saghe`
@@ -972,13 +899,13 @@ ALTER TABLE `accessi`
 -- AUTO_INCREMENT per la tabella `curiositaserie`
 --
 ALTER TABLE `curiositaserie`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT per la tabella `curiositavideo`
 --
 ALTER TABLE `curiositavideo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT per la tabella `generi`
@@ -990,7 +917,7 @@ ALTER TABLE `generi`
 -- AUTO_INCREMENT per la tabella `generivideo`
 --
 ALTER TABLE `generivideo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=258;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=321;
 
 --
 -- AUTO_INCREMENT per la tabella `personaggi`
@@ -1039,6 +966,13 @@ ALTER TABLE `accessi`
   ADD CONSTRAINT `accessi_ibfk_1` FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`);
 
 --
+-- Limiti per la tabella `attorivideo`
+--
+ALTER TABLE `attorivideo`
+  ADD CONSTRAINT `attorivideo_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
+  ADD CONSTRAINT `attorivideo_ibfk_2` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`);
+
+--
 -- Limiti per la tabella `comparizioni`
 --
 ALTER TABLE `comparizioni`
@@ -1077,27 +1011,34 @@ ALTER TABLE `interpretazioni`
   ADD CONSTRAINT `interpretazioni_ibfk_2` FOREIGN KEY (`idPersonaggio`) REFERENCES `personaggi` (`id`);
 
 --
--- Limiti per la tabella `partecipazioni`
+-- Limiti per la tabella `produttorivideo`
 --
-ALTER TABLE `partecipazioni`
-  ADD CONSTRAINT `partecipazioni_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
-  ADD CONSTRAINT `partecipazioni_ibfk_2` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`);
+ALTER TABLE `produttorivideo`
+  ADD CONSTRAINT `produttorivideo_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
+  ADD CONSTRAINT `produttorivideo_ibfk_2` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
+  ADD CONSTRAINT `produttorivideo_ibfk_3` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`);
 
 --
--- Limiti per la tabella `recensioneserie`
+-- Limiti per la tabella `recensioniserie`
 --
-ALTER TABLE `recensioneserie`
-  ADD CONSTRAINT `recensioneserie_ibfk_1` FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`),
-  ADD CONSTRAINT `recensioneserie_ibfk_2` FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
-  ADD CONSTRAINT `recensioneserie_ibfk_3` FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`);
+ALTER TABLE `recensioniserie`
+  ADD CONSTRAINT `recensioniserie_ibfk_1` FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`),
+  ADD CONSTRAINT `recensioniserie_ibfk_2` FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
+  ADD CONSTRAINT `recensioniserie_ibfk_3` FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`);
 
 --
--- Limiti per la tabella `recensionevideo`
+-- Limiti per la tabella `recensionivideo`
 --
-ALTER TABLE `recensionevideo`
-  ADD CONSTRAINT `recensionevideo_ibfk_1` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
-  ADD CONSTRAINT `recensionevideo_ibfk_2` FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
-  ADD CONSTRAINT `recensionevideo_ibfk_3` FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`);
+ALTER TABLE `recensionivideo`
+  ADD CONSTRAINT `recensionivideo_ibfk_1` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
+  ADD CONSTRAINT `recensionivideo_ibfk_2` FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
+  ADD CONSTRAINT `recensionivideo_ibfk_3` FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`);
+
+--
+-- Limiti per la tabella `registivideo`
+--
+ALTER TABLE `registivideo`
+  ADD CONSTRAINT `registivideo_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`);
 
 --
 -- Limiti per la tabella `video`
