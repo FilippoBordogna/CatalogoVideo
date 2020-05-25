@@ -2,11 +2,9 @@
 	/* 
 		DA FARE:
 		- Aggiungere campo datauscita al video (da discutere)
-		- Aggiungere nazionalit video (da discutere)
+		- Aggiungere nazionalità video (da discutere)
 		- Aggiungere filtri sulle ricerche o sulle viualizzazioni (da discutere)
-		- Aggiungere ordinamenti divers sui dati (da discutere)
-		- Copiare e incollare quanto fatto per le recensioni dei film per le curiosità dei film (non c'è voto, possono esserci più commenti(?))
-		- Copiare e incollare quanto sopra per le curiosità delle serie
+		- Aggiungere ordinamenti diversi sui dati (da discutere)
 		- Permettere ad Admin di validare commenti
 		- Ultimi accessi (ultimo) per controllo
 		- Rifare lo schema ER/logico in base alle modifiche (PIPPO)
@@ -1606,13 +1604,16 @@
 																			echo' <div class="modal-footer">
 																					<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
 																		}
+																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1)
+																			if($_SESSION["idUser"]!=$riga["id"]){
+																				echo' <div class="modal-footer">
+																					<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																			}
 																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
-																			if($_SESSION["idUser"]!=$riga["id"])
-																				echo'	<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
-																					
-																			echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>
-																				</div>';
+																			echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>';
 																		}
+																		if($_SESSION["idUser"]==$riga["id"]||(isset($_SESSION["admin"])&&$_SESSION["admin"]==1))
+																			echo '</div>';
 																	echo '
 															</div>
 														</div>';
@@ -1643,33 +1644,33 @@
 															  <div class="modal-body">';
 															  while($riga = $curiosita->fetch_assoc()){
 																  echo 	
-																		'<div class="col-md-3 py2">
-																			<div class="card h-100 mb-4 shadow-sm">
-																				<div class="card-body">
-																					<h6 class="mt-1 ml-2">'.$riga["username"].'</h6>';
-																					
-																					echo '
-																						<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
-																					if($riga["admin"]!=null)
-																					echo '
-																						<div class="d-flex justify-content-end bd-highlight mb-3">
-																							<small class="text-muted">Verificato da '.$riga["admin"].'</small>
-																						</div>';
-																				echo '</div>';
-																				echo '<div class="modal-footer">';
-																						if($_SESSION["idUser"]==$riga["id"]){
-																							echo' <button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																	'<div class="card h-100 mb-4 shadow-sm">
+																			<div class="card-body">
+																				<h6 class="mt-1 ml-2">'.$riga["username"].'</h6>';
+																				
+																				echo '
+																					<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																				if($riga["admin"]!=null)
+																				echo '
+																					<div class="d-flex justify-content-end bd-highlight mb-3">
+																						<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																					</div>';
+																			echo '</div>';
+																					if($_SESSION["idUser"]==$riga["id"]){
+																						echo' <div class="modal-footer">
+																								<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																					}
+																					if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1)
+																						if($_SESSION["idUser"]!=$riga["id"]){
+																							echo' <div class="modal-footer">
+																								<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
 																						}
-																						if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
-																							
-																							if($_SESSION["idUser"]!=$riga["id"])
-																								echo'	<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
-																									
-																							echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>
-																								</div>';
-																						}
-																					echo '
-																			</div>
+																					if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
+																						echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>';
+																					}
+																					if($_SESSION["idUser"]==$riga["id"]||(isset($_SESSION["admin"])&&$_SESSION["admin"]==1))
+																						echo '</div>';
+																				echo '
 																		</div>';
 															  }
 															  echo '
@@ -2352,13 +2353,16 @@
 																			echo' <div class="modal-footer">
 																					<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
 																		}
+																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1)
+																			if($_SESSION["idUser"]!=$riga["id"]){
+																				echo' <div class="modal-footer">
+																					<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																			}
 																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
-																			if($_SESSION["idUser"]!=$riga["id"])
-																				echo'	<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
-																					
-																			echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
-																				</div>';
+																			echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>';
 																		}
+																		if($_SESSION["idUser"]==$riga["id"]||(isset($_SESSION["admin"])&&$_SESSION["admin"]==1))
+																			echo '</div>';
 																	echo '
 															</div>
 														</div>';
@@ -2388,34 +2392,34 @@
 															  </div>
 															  <div class="modal-body">';
 															  while($riga = $curiosita->fetch_assoc()){
-																  echo 	
-																		'<div class="col-md-3 py2">
-																			<div class="card h-100 mb-4 shadow-sm">
-																				<div class="card-body">
-																					<h6 class="mt-1 ml-2">'.$riga["username"].'</h6>';
-																					
-																					echo '
-																						<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
-																					if($riga["admin"]!=null)
-																					echo '
-																						<div class="d-flex justify-content-end bd-highlight mb-3">
-																							<small class="text-muted">Verificato da '.$riga["admin"].'</small>
-																						</div>';
-																				echo '</div>';
-																				echo '<div class="modal-footer">';
-																						if($_SESSION["idUser"]==$riga["id"]){
-																							echo' <button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																  echo  '
+																		<div class="card h-100 mb-4 shadow-sm">
+																			<div class="card-body">
+																				<h6 class="mt-1 ml-2">'.$riga["username"].'</h6>';
+																				
+																				echo '
+																					<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																				if($riga["admin"]!=null)
+																				echo '
+																					<div class="d-flex justify-content-end bd-highlight mb-3">
+																						<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																					</div>';
+																			echo '</div>';
+																					if($_SESSION["idUser"]==$riga["id"]){
+																						echo' <div class="modal-footer">
+																								<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
+																					}
+																					if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1)
+																						if($_SESSION["idUser"]!=$riga["id"]){
+																							echo' <div class="modal-footer">
+																								<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
 																						}
-																						if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
-																							
-																							if($_SESSION["idUser"]!=$riga["id"])
-																								echo'	<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
-																									
-																							echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>
-																								</div>';
-																						}
-																					echo '
-																			</div>
+																					if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
+																						echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>';
+																					}
+																					if($_SESSION["idUser"]==$riga["id"]||(isset($_SESSION["admin"])&&$_SESSION["admin"]==1))
+																						echo '</div>';
+																				echo '
 																		</div>';
 															  }
 															  echo '
