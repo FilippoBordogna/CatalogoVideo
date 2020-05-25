@@ -5,7 +5,6 @@
 		- Aggiungere nazionalità video (da discutere)
 		- Aggiungere filtri sulle ricerche o sulle viualizzazioni (da discutere)
 		- Aggiungere ordinamenti diversi sui dati (da discutere)
-		- Permettere ad Admin di validare commenti
 		- Ultimi accessi (ultimo) per controllo
 		- Rifare lo schema ER/logico in base alle modifiche (PIPPO)
 
