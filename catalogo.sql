@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 25, 2020 alle 15:42
+-- Creato il: Mag 26, 2020 alle 21:45
 -- Versione del server: 10.1.31-MariaDB
 -- Versione PHP: 7.2.4
 
@@ -27,6 +27,8 @@ SET time_zone = "+00:00";
 --
 -- Struttura della tabella `accessi`
 --
+-- Creazione: Mag 19, 2020 alle 17:19
+--
 
 CREATE TABLE `accessi` (
   `id` int(11) NOT NULL,
@@ -36,16 +38,32 @@ CREATE TABLE `accessi` (
   `idUtente` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- RELAZIONI PER TABELLA `accessi`:
+--   `idUtente`
+--       `utenti` -> `id`
+--
+
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `attorivideo`
+--
+-- Creazione: Mag 25, 2020 alle 10:50
 --
 
 CREATE TABLE `attorivideo` (
   `idVideo` int(11) NOT NULL,
   `idPersona` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- RELAZIONI PER TABELLA `attorivideo`:
+--   `idPersona`
+--       `persone` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `attorivideo`
@@ -96,18 +114,43 @@ INSERT INTO `attorivideo` (`idVideo`, `idPersona`) VALUES
 (21, 30),
 (21, 31),
 (22, 30),
-(22, 31);
+(22, 31),
+(24, 37),
+(24, 38),
+(24, 39),
+(24, 40),
+(25, 42),
+(25, 43),
+(27, 46),
+(29, 51),
+(29, 52),
+(30, 54),
+(30, 55),
+(31, 56),
+(31, 57),
+(31, 58),
+(32, 60);
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `comparizioni`
 --
+-- Creazione: Mag 19, 2020 alle 17:18
+--
 
 CREATE TABLE `comparizioni` (
   `idPersonaggio` int(11) NOT NULL,
   `idVideo` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `comparizioni`:
+--   `idPersonaggio`
+--       `personaggi` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `comparizioni`
@@ -158,12 +201,16 @@ INSERT INTO `comparizioni` (`idPersonaggio`, `idVideo`) VALUES
 (16, 19),
 (16, 20),
 (16, 21),
-(16, 22);
+(16, 22),
+(17, 31),
+(18, 31);
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `curiositaserie`
+--
+-- Creazione: Mag 19, 2020 alle 17:18
 --
 
 CREATE TABLE `curiositaserie` (
@@ -173,6 +220,16 @@ CREATE TABLE `curiositaserie` (
   `idAdmin` int(11) DEFAULT NULL,
   `testo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `curiositaserie`:
+--   `idSerie`
+--       `serie` -> `id`
+--   `idUtente`
+--       `utenti` -> `id`
+--   `idAdmin`
+--       `utenti` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `curiositaserie`
@@ -186,6 +243,8 @@ INSERT INTO `curiositaserie` (`id`, `idSerie`, `idUtente`, `idAdmin`, `testo`) V
 --
 -- Struttura della tabella `curiositavideo`
 --
+-- Creazione: Mag 19, 2020 alle 17:18
+--
 
 CREATE TABLE `curiositavideo` (
   `id` int(11) NOT NULL,
@@ -194,6 +253,16 @@ CREATE TABLE `curiositavideo` (
   `idAdmin` int(11) DEFAULT NULL,
   `testo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `curiositavideo`:
+--   `idVideo`
+--       `video` -> `id`
+--   `idUtente`
+--       `utenti` -> `id`
+--   `idAdmin`
+--       `utenti` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `curiositavideo`
@@ -208,11 +277,17 @@ INSERT INTO `curiositavideo` (`id`, `idVideo`, `idUtente`, `idAdmin`, `testo`) V
 --
 -- Struttura della tabella `generi`
 --
+-- Creazione: Mag 24, 2020 alle 17:07
+--
 
 CREATE TABLE `generi` (
   `id` int(11) NOT NULL,
   `Tipo` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- RELAZIONI PER TABELLA `generi`:
+--
 
 --
 -- Dump dei dati per la tabella `generi`
@@ -253,12 +328,24 @@ INSERT INTO `generi` (`id`, `Tipo`) VALUES
 --
 -- Struttura della tabella `generivideo`
 --
+-- Creazione: Mag 24, 2020 alle 17:46
+--
 
 CREATE TABLE `generivideo` (
   `id` int(11) NOT NULL,
   `idVideo` int(11) NOT NULL,
   `idGenere` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- RELAZIONI PER TABELLA `generivideo`:
+--   `idVideo`
+--       `video` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--   `idGenere`
+--       `generi` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `generivideo`
@@ -366,18 +453,39 @@ INSERT INTO `generivideo` (`id`, `idVideo`, `idGenere`) VALUES
 (239, 19, 27),
 (240, 20, 27),
 (241, 21, 27),
-(242, 22, 27);
+(242, 22, 27),
+(243, 24, 15),
+(244, 27, 26),
+(245, 27, 15),
+(246, 27, 9),
+(247, 29, 18),
+(248, 30, 9),
+(249, 30, 13),
+(250, 31, 26),
+(251, 31, 1),
+(252, 31, 15),
+(253, 31, 9);
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `interpretazioni`
 --
+-- Creazione: Mag 19, 2020 alle 17:18
+--
 
 CREATE TABLE `interpretazioni` (
   `idAttore` int(11) NOT NULL,
   `idPersonaggio` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `interpretazioni`:
+--   `idAttore`
+--       `persone` -> `id`
+--   `idPersonaggio`
+--       `personaggi` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `interpretazioni`
@@ -400,18 +508,26 @@ INSERT INTO `interpretazioni` (`idAttore`, `idPersonaggio`) VALUES
 (26, 14),
 (27, 13),
 (30, 15),
-(31, 16);
+(31, 16),
+(57, 17),
+(58, 18);
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `personaggi`
 --
+-- Creazione: Mag 19, 2020 alle 17:19
+--
 
 CREATE TABLE `personaggi` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `personaggi`:
+--
 
 --
 -- Dump dei dati per la tabella `personaggi`
@@ -433,12 +549,16 @@ INSERT INTO `personaggi` (`id`, `nome`) VALUES
 (13, 'John Reese'),
 (14, 'Harold Finch'),
 (15, 'Peeta Mellark'),
-(16, 'Katniss Everdeen');
+(16, 'Katniss Everdeen'),
+(17, 'Boaz Rein-Buskila'),
+(18, 'Carmi Cna\'an');
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `persone`
+--
+-- Creazione: Mag 19, 2020 alle 21:59
 --
 
 CREATE TABLE `persone` (
@@ -446,6 +566,10 @@ CREATE TABLE `persone` (
   `nome` varchar(50) NOT NULL,
   `cognome` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `persone`:
+--
 
 --
 -- Dump dei dati per la tabella `persone`
@@ -486,18 +610,55 @@ INSERT INTO `persone` (`id`, `nome`, `cognome`) VALUES
 (32, 'Gary', 'Ross'),
 (33, 'Francis', 'Lawrence'),
 (34, 'Nina', 'Jacobson'),
-(35, 'Jon', 'Kilik');
+(35, 'Jon', 'Kilik'),
+(36, 'Luc', 'Jacquet'),
+(37, 'Michael', 'Moore'),
+(38, 'Donald', 'Rumsfeld'),
+(39, 'George W.', 'Bush'),
+(40, 'Ben', 'Affleck'),
+(41, 'Gianfranco', 'Rosi'),
+(42, 'Pietro', 'Bartolo'),
+(43, 'Samuel', 'Pucillo'),
+(44, 'Robert', 'Kenner'),
+(45, 'Claude', 'Lanzmann'),
+(46, 'Szymon', 'Srebrnik'),
+(47, '‎Alain', ' Resnais'),
+(48, 'Miyuki', 'Kuwano'),
+(49, 'Kei', 'Sato'),
+(50, 'D.A.', 'Pennebaker'),
+(51, 'Bob', 'Dylan'),
+(52, 'Joan', 'Baez'),
+(53, 'Errol', 'Morris'),
+(54, 'Randall Dale', 'Adams'),
+(55, 'Gus', 'Rose'),
+(56, 'Ari', 'Folman'),
+(57, 'Mickey', 'Leon'),
+(58, 'Yehezkel', 'Lazarov'),
+(59, 'Dziga', 'Vertov'),
+(60, 'Mikhail', 'Kaufman');
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `produttorivideo`
 --
+-- Creazione: Mag 25, 2020 alle 10:51
+--
 
 CREATE TABLE `produttorivideo` (
   `idVideo` int(11) NOT NULL,
   `idPersona` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- RELAZIONI PER TABELLA `produttorivideo`:
+--   `idPersona`
+--       `persone` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `produttorivideo`
@@ -532,6 +693,8 @@ INSERT INTO `produttorivideo` (`idVideo`, `idPersona`) VALUES
 --
 -- Struttura della tabella `recensioniserie`
 --
+-- Creazione: Mag 19, 2020 alle 17:18
+--
 
 CREATE TABLE `recensioniserie` (
   `idSerie` int(11) NOT NULL,
@@ -540,6 +703,16 @@ CREATE TABLE `recensioniserie` (
   `testo` varchar(255) DEFAULT NULL,
   `idAdmin` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `recensioniserie`:
+--   `idSerie`
+--       `serie` -> `id`
+--   `idUtente`
+--       `utenti` -> `id`
+--   `idAdmin`
+--       `utenti` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `recensioniserie`
@@ -557,6 +730,8 @@ INSERT INTO `recensioniserie` (`idSerie`, `idUtente`, `voto`, `testo`, `idAdmin`
 --
 -- Struttura della tabella `recensionivideo`
 --
+-- Creazione: Mag 19, 2020 alle 17:18
+--
 
 CREATE TABLE `recensionivideo` (
   `idVideo` int(11) NOT NULL,
@@ -565,6 +740,16 @@ CREATE TABLE `recensionivideo` (
   `testo` varchar(255) DEFAULT NULL,
   `idAdmin` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `recensionivideo`:
+--   `idVideo`
+--       `video` -> `id`
+--   `idUtente`
+--       `utenti` -> `id`
+--   `idAdmin`
+--       `utenti` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `recensionivideo`
@@ -593,11 +778,21 @@ INSERT INTO `recensionivideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`
 --
 -- Struttura della tabella `registivideo`
 --
+-- Creazione: Mag 25, 2020 alle 10:51
+--
 
 CREATE TABLE `registivideo` (
   `idVideo` int(11) NOT NULL,
   `idPersona` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- RELAZIONI PER TABELLA `registivideo`:
+--   `idPersona`
+--       `persone` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `registivideo`
@@ -634,18 +829,33 @@ INSERT INTO `registivideo` (`idVideo`, `idPersona`) VALUES
 (19, 32),
 (20, 33),
 (21, 33),
-(22, 33);
+(22, 33),
+(23, 36),
+(24, 37),
+(25, 41),
+(26, 44),
+(27, 45),
+(29, 50),
+(30, 53),
+(31, 56),
+(32, 59);
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `saghe`
 --
+-- Creazione: Mag 19, 2020 alle 17:19
+--
 
 CREATE TABLE `saghe` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `saghe`:
+--
 
 --
 -- Dump dei dati per la tabella `saghe`
@@ -661,12 +871,18 @@ INSERT INTO `saghe` (`id`, `nome`) VALUES
 --
 -- Struttura della tabella `serie`
 --
+-- Creazione: Mag 19, 2020 alle 22:11
+--
 
 CREATE TABLE `serie` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL,
   `sinossi` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `serie`:
+--
 
 --
 -- Dump dei dati per la tabella `serie`
@@ -681,6 +897,8 @@ INSERT INTO `serie` (`id`, `nome`, `sinossi`) VALUES
 --
 -- Struttura della tabella `utenti`
 --
+-- Creazione: Mag 19, 2020 alle 17:35
+--
 
 CREATE TABLE `utenti` (
   `id` int(11) NOT NULL,
@@ -691,21 +909,27 @@ CREATE TABLE `utenti` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
+-- RELAZIONI PER TABELLA `utenti`:
+--
+
+--
 -- Dump dei dati per la tabella `utenti`
 --
 
 INSERT INTO `utenti` (`id`, `username`, `email`, `password`, `admin`) VALUES
-(1, 'username', 'email@email.com', '5f4dcc3b5aa765d61d8327deb882cf99', 0),
+(1, 'username', 'email@email.com', '21232f297a57a5a743894a0e4a801fc3', 0),
 (3, 'grande capo', 'admin@admin.it', '21232f297a57a5a743894a0e4a801fc3', 1),
-(4, 'utente banana', 'user@user.it', 'ee11cbb19052e40b07aac0ca060c23ee', 0),
-(5, 'barcigabri', 'barcigabri@gmail.com', '20e8fe46be8f49c48ed4eb7e4f8ecdc7', 1),
-(6, 'pippobordo99', 'bordognapippo99@gmail.com', 'c1d48f0d3617b304beafee8490591d6b', 1),
-(7, 'paperino', 'donald@duck.com', 'bac2b77e0926723c6ddbcb81d7d5ff8d', 0);
+(4, 'utente banana', 'user@user.it', '21232f297a57a5a743894a0e4a801fc3', 0),
+(5, 'barcigabri', 'barcigabri@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 1),
+(6, 'pippobordo99', 'bordognapippo99@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 1),
+(7, 'paperino', 'donald@duck.com', '21232f297a57a5a743894a0e4a801fc3', 0);
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `video`
+--
+-- Creazione: Mag 26, 2020 alle 19:10
 --
 
 CREATE TABLE `video` (
@@ -721,6 +945,14 @@ CREATE TABLE `video` (
   `annoUscita` year(4) NOT NULL,
   `nazionalita` varchar(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `video`:
+--   `idSaga`
+--       `saghe` -> `id`
+--   `idSerie`
+--       `serie` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `video`
@@ -748,7 +980,16 @@ INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `sta
 (19, 'Hunger Games', 143, 3, NULL, 1, NULL, 2, 'Ogni anno, come punizione per aver scatenato la ribellione anni prima, in ogni distretto vengono scelti un ragazzo e una ragazza di età compresa tra i dodici e i diciotto anni per partecipare agli Hunger Games, un evento nel quale i partecipanti devono combattere in un luogo detto \"arena\", che viene controllata dagli Strateghi per mezzo di computer molto sofisticati, finché uno solo rimane vivo', 2012, 'USA'),
 (20, 'Hunger Games: La ragazza di fuoco', 146, 3, NULL, 2, NULL, 2, 'Katniss Everdeen ritorna a casa in seguito alla vittoria ottenuta nell\'ultima edizione degli Hunger Games insieme al suo compagno Peeta Mellark. Ora i due alloggiano al Villaggio dei Vincitori, presente in ogni distretto, assieme al loro mentore Haymitch Abernathy.\r\n\r\nPer i due giovani è giunto il momento di partire per il Tour della Vittoria, un viaggio attraverso i distretti per ricordare coloro che sono morti nei giochi.', 2013, 'USA'),
 (21, 'Hunger Games: Il canto della rivolta - Parte 1', 123, 3, NULL, 3, NULL, 2, 'Katniss Everdeen si trova nel Distretto 13 in stato confusionale, dopo aver distrutto l\'arena dei settantacinquesimi Hunger Games. Appena la ragazza inizia a riprendersi viene nominata da Plutarch Heavensbee e dalla presidentessa Alma Coin come immagine simbolo della ribellione, ma la ragazza, ormai nota a tutti come la \"ghiandaia imitatrice\", inizialmente rifiuta l\'offerta poiché ancora molto turbata.', 2014, 'USA'),
-(22, 'Hunger Games: Il canto della rivolta parte 2', 137, 3, NULL, 4, NULL, 2, 'La nazione di Panem è in guerra. Tutti i distretti sono ormai uniti nella rivolta contro Capitol City, guidata da Katniss Everdeen, che continua a vestire i panni della ghiandaia imitatrice e quindi a impersonare il simbolo della rivoluzione stessa. Nel frattempo Peeta è ancora sotto shock a causa del depistaggio cerebrale causatogli dal Presidente Snow mentre era prigioniero a Capitol City e i suoi sentimenti di odio verso Katniss sono ancora presenti, benché lentamente comincino a svanire.', 2015, 'USA');
+(22, 'Hunger Games: Il canto della rivolta parte 2', 137, 3, NULL, 4, NULL, 2, 'La nazione di Panem è in guerra. Tutti i distretti sono ormai uniti nella rivolta contro Capitol City, guidata da Katniss Everdeen, che continua a vestire i panni della ghiandaia imitatrice e quindi a impersonare il simbolo della rivoluzione stessa. Nel frattempo Peeta è ancora sotto shock a causa del depistaggio cerebrale causatogli dal Presidente Snow mentre era prigioniero a Capitol City e i suoi sentimenti di odio verso Katniss sono ancora presenti, benché lentamente comincino a svanire.', 2015, 'USA'),
+(23, 'La marcia dei pinguini', 85, NULL, NULL, NULL, NULL, 3, 'Il documentario francese che ha commosso tutto il mondo parla della lotta per la sopravvivenza del pinguino imperatore.\r\nUn documentario toccante che racconta come l’amore per i propri piccoli non sia un affare solo umano: guardando questo film capirete quanto umano sia il sentimento che i pinguini nutrono per la loro prole.', 2005, 'FRA'),
+(24, 'Fahrenheit 9/11', 122, NULL, NULL, NULL, NULL, 3, 'gioiellino che scardina le falsità e le bugie raccontate da George W. Bush e dalla sua Amministrazione.', 2004, 'USA'),
+(25, 'Fuocoammare', 106, NULL, NULL, NULL, NULL, 3, 'Attraverso gli occhi di Samuele, un ragazzino che vive a Lampedusa, viene raccontato il dramma attualissimo dei migranti che tentano una seconda vita attraversando il mare ma che spesso non solo non arrivano a quella tanto anelata seconda vita: addirittura perdono la prima e unica che gli rimane.', 2016, 'ITA'),
+(26, 'Food Inc.', 94, NULL, NULL, NULL, NULL, 3, NULL, 2008, 'USA'),
+(27, 'Shoah', 613, NULL, NULL, NULL, NULL, 3, 'Documentario del tutto privo di immagini di repertorio. Si analizzano le tre tipologie di superstiti dei campi di concentramento: vittime, carnefici e testimoni. Molte le immagini degli ex nazisti, che avevano accettato d’essere soltanto intervistati in audio. Ciò che ne vien fuori è un ritratto terribile.', 1985, 'FRA'),
+(29, 'Don’t Look Back', 96, NULL, NULL, NULL, NULL, 3, 'Documentario che segue le tappe della tournée inglese di un giovanissimo Bob Dylan. Il tutto prodotto in presa diretta con una cinepresa portatile. Un film documentario che immortala il clima on the road di quei tempi.', 1967, 'USA'),
+(30, 'La sottile linea blu', 106, NULL, NULL, NULL, NULL, 3, 'Un attacco al sistema giudiziario americano, sfruttando la storia di Randall Adams e David Harris, coinvolti in una sparatoria con dei poliziotti. Uno di questi rimase ucciso e le prove offerte dagli altri agenti, che hanno portato Adams al braccio della morte, per molti sono risultate inconsistenti.', 1988, 'USA'),
+(31, 'Valzer con Bashir', 90, NULL, NULL, NULL, NULL, 3, 'Ripercorre infatti i conflitti che coinvolsero il Libano nei primi anni ottanta, culminando con crudezza e assoluta drammaticità nella rappresentazione del massacro di Sabra e Shatila del 1982.', 2008, 'ISR'),
+(32, 'L’uomo con la macchina da presa', 68, NULL, NULL, NULL, NULL, 0, 'Racconta la giornata di un cineoperatore, dall’alba al tramonto. Questi riprende soprattutto scene di vita quotidiana, girando per le strade di Mosca, mostrando una certa arditezza nella ricerca di inquadrature a sensazione.', 1929, 'URS');
 
 --
 -- Indici per le tabelle scaricate
@@ -899,7 +1140,7 @@ ALTER TABLE `accessi`
 -- AUTO_INCREMENT per la tabella `curiositaserie`
 --
 ALTER TABLE `curiositaserie`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT per la tabella `curiositavideo`
@@ -917,19 +1158,19 @@ ALTER TABLE `generi`
 -- AUTO_INCREMENT per la tabella `generivideo`
 --
 ALTER TABLE `generivideo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=321;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=254;
 
 --
 -- AUTO_INCREMENT per la tabella `personaggi`
 --
 ALTER TABLE `personaggi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT per la tabella `persone`
 --
 ALTER TABLE `persone`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
 
 --
 -- AUTO_INCREMENT per la tabella `saghe`
@@ -953,7 +1194,7 @@ ALTER TABLE `utenti`
 -- AUTO_INCREMENT per la tabella `video`
 --
 ALTER TABLE `video`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- Limiti per le tabelle scaricate
@@ -1038,7 +1279,8 @@ ALTER TABLE `recensionivideo`
 -- Limiti per la tabella `registivideo`
 --
 ALTER TABLE `registivideo`
-  ADD CONSTRAINT `registivideo_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`);
+  ADD CONSTRAINT `registivideo_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
+  ADD CONSTRAINT `registivideo_ibfk_2` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`);
 
 --
 -- Limiti per la tabella `video`
