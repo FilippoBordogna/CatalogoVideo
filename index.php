@@ -423,6 +423,7 @@
 												<h2 class="mt-4 mb-4" >Migliori Video</h2>
 											</div>
 											'); // Titolo
+
 										if ($video=$conn->query($query)) { // Query effettuata con successo
 											if ($video->num_rows>0) { // Almeno un risultato
 												while ($elemento = $video->fetch_assoc()) { 
@@ -620,7 +621,7 @@
 																echo '	<small class="text-muted">Anni di produzione: '.$serie["annoUscita"].'-'.$serie["annoFine"].'</small>';
 																else
 																echo '	<small class="text-muted">Anno di produzione: '.$serie["annoUscita"].'</small>';
-															echo '</div>';
+															echo '</div>'; // Costruisco un riquadro per ogni serie TV (pt.1)
 														 
 														$query="SELECT DISTINCT G.tipo
 														FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
@@ -712,13 +713,13 @@
 																		<small class="text-muted">Nazionalità: '.$saga["nazionalita"].'</small>
 																	</div>
 																	<div class="d-flex flex-row-reverse align-items-center">
-														'); // Costruisco un riquadro per ogni saga (pt.1)
+														'); 
 
 														if($saga["annoUscita"]!=$saga["annoFine"])
 															echo '	<small class="text-muted">Anni di produzione: '.$saga["annoUscita"].'-'.$saga["annoFine"].'</small>';
 															else
 															echo '	<small class="text-muted">Anno di produzione: '.$saga["annoUscita"].'</small>';
-														echo '</div>';
+														echo '</div>'; // Costruisco un riquadro per ogni saga (pt.1)
 
 														$query="SELECT DISTINCT G.tipo
 														FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
@@ -930,8 +931,8 @@
 											</div>
 										');
 										
-										if ($video=$conn->query($query)) { // Query effettuata con successo //
-											if ($video->num_rows>0) { // Almeno un risultato //
+										if ($video=$conn->query($query)) { // Query effettuata con successo 
+											if ($video->num_rows>0) { // Almeno un risultato 
 												while ($film = $video->fetch_assoc()) {
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$film["id"].',5,null,null)">
@@ -955,7 +956,7 @@
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Voto Medio: '.round($film["mediaVoti"],2).'</small>
 																	</div>
-															');
+															'); // Costruisco un riquadro per ogni film (pt.1)
 
 													$query="SELECT G.tipo
 													FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
@@ -985,7 +986,7 @@
 															</div>
 														</div>
 													</div>
-															'); // Costruisco un riquadro per ogni film
+															'); // Costruisco un riquadro per ogni film (pt.3)
 												}
 											}
 											else { 
@@ -1167,7 +1168,7 @@
 																</div>
 															</div>
 														</div>
-														'); // Costruisco un riquadro per ogni serie
+														'); // Costruisco un riquadro per ogni serie TV (pt.3)
 												}
 											}
 											else { 
@@ -1308,7 +1309,7 @@
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Voto: '.$saga["mediaVoti"].'</small>
 																	</div>
-																');
+																'); // Costruisco un riquadro per ogni saga (pt.1)
 
 													$query="SELECT DISTINCT G.tipo
 														FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
