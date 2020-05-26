@@ -38,7 +38,7 @@
 			$query="SELECT current_timestamp()-dataOra durata FROM accessi WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra DESC LIMIT 1";
 			$risultato=$conn->query($query);
 			$tempo=$risultato->fetch_assoc();
-			echo $tempo['durata'];
+			//echo $tempo['durata'];
 			if($tempo['durata']>1440)
 				$query="UPDATE accessi SET durata=1440 WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra DESC LIMIT 1";
 			else
@@ -179,9 +179,9 @@
 					alert("Errore! Devi inserire un voto per lasciare una recensione");
 				else{
 					if(f.textarea.value!="")
-						recensioni.rec.value=f.textarea.value;
-					recensioni.rate.value=f.rate.value;
-					recensioni.submit();
+						recensione.rec.value=f.textarea.value;
+					recensione.rate.value=f.rate.value;
+					recensione.submit();
 				}
 			}
 			function curios(id) { // Controlli sulla curiosita ed effettivo inserimento 
@@ -476,7 +476,8 @@
 													
 													$query="SELECT G.tipo
 														FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
-														WHERE GV.idVideo=".$elemento["id"]; // Preparazione query: Categorie video
+														WHERE GV.idVideo=".$elemento["id"]."
+														ORDER BY G.tipo"; // Preparazione query: Categorie video
 													if($generi=$conn->query($query)) { // Query effettuata con successo
 														if ($generi->num_rows>0) { // Almeno un risultato
 															echo ('
@@ -559,7 +560,8 @@
 													
 													$query="SELECT G.tipo
 													FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
-													WHERE GV.idVideo=".$film["id"]; // Preparazione query: Categorie film
+													WHERE GV.idVideo=".$film["id"]."
+													ORDER BY G.tipo"; // Preparazione query: Categorie film
 													if($generi=$conn->query($query)) { // Query effettuata con successo
 														if ($generi->num_rows>0) { // Almeno un risultato
 															echo ('
@@ -654,7 +656,8 @@
 														WHERE GV.idVideo IN (
 																			 SELECT V.id
 																			 FROM video V JOIN serie S ON S.id=V.idSerie
-																			 WHERE S.id=".$serie["id"].")"; // Preparazione query: Categorie serie TV
+																			 WHERE S.id=".$serie["id"].")
+														ORDER BY G.tipo"; // Preparazione query: Categorie serie TV
 														if($generi=$conn->query($query)) { // Query effettuata con successo
 															if ($generi->num_rows>0) { // Almeno un risultato
 																echo ('
@@ -752,7 +755,8 @@
 														WHERE GV.idVideo IN (
 																			 SELECT V.id
 																			 FROM video V JOIN saghe S ON S.id=V.idSaga
-																			 WHERE S.id=".$saga["id"].")"; // Preparazione query: Categorie saga
+																			 WHERE S.id=".$saga["id"].")
+														ORDER BY G.tipo"; // Preparazione query: Categorie saga
 														if($generi=$conn->query($query)) { // Query effettuata con successo
 															if ($generi->num_rows>0) { // Almeno un risultato
 																echo ('
@@ -838,7 +842,8 @@
 														
 														$query="SELECT G.tipo
 														FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
-														WHERE GV.idVideo=".$documentario["id"]; // Preparazione query: Categorie video
+														WHERE GV.idVideo=".$documentario["id"]."
+														ORDER BY G.tipo"; // Preparazione query: Categorie documentario
 														if($generi=$conn->query($query)) { // Query effettuata con successo
 															if ($generi->num_rows>0) { // Almeno un risultato
 																echo ('
@@ -986,7 +991,8 @@
 
 													$query="SELECT G.tipo
 													FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
-													WHERE GV.idVideo=".$film["id"]; // Preparazione query: Categorie film
+													WHERE GV.idVideo=".$film["id"]."
+													GROUP BY G.tipo"; // Preparazione query: Categorie film
 													if($generi=$conn->query($query)) { // Query effettuata con successo
 														if ($generi->num_rows>0) { // Almeno un risultato
 															echo ('
@@ -1169,7 +1175,8 @@
 															WHERE GV.idVideo IN (
 																				 SELECT V.id
 																				 FROM video V JOIN serie S ON S.id=V.idSerie
-																				 WHERE S.id=".$elemento["id"].")"; // Preparazione query: Categorie serie TV
+																				 WHERE S.id=".$elemento["id"].")
+															ORDER BY G.tipo"; // Preparazione query: Categorie serie TV
 															if($generi=$conn->query($query)) { // Query effettuata con successo
 																if ($generi->num_rows>0) { // Almeno un risultato
 																	echo ('
@@ -1342,7 +1349,8 @@
 														WHERE GV.idVideo IN (
 																			 SELECT V.id
 																			 FROM video V JOIN saghe S ON S.id=V.idSaga
-																			 WHERE S.id=".$saga["id"].")"; // Preparazione query: Categorie saga
+																			 WHERE S.id=".$saga["id"]."
+														ORDER BY G.tipo)"; // Preparazione query: Categorie saga
 														if($generi=$conn->query($query)) { // Query effettuata con successo
 															if ($generi->num_rows>0) { // Almeno un risultato
 																echo ('
@@ -1449,13 +1457,13 @@
 										GROUP BY V.id
 										ORDER BY $ord
 										LIMIT $nris
-										OFFSET ".($nris*($pagina-1)); // Preparazione Query: Tutti i film 
-										$nFilm=$conn->query("SELECT COUNT(*) nFilm FROM video WHERE video.selettore=3")->fetch_assoc(); // Numero totale di film 
+										OFFSET ".($nris*($pagina-1)); // Preparazione Query: Tutti i documentari 
+										$nDocumentari=$conn->query("SELECT COUNT(*) nDocumentari FROM video WHERE video.selettore=3")->fetch_assoc(); // Numero totale di documentari 
 
 										echo ('	
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 											<div class="container text-center"> 
-												<h2 class="mt-4 mb-4" >Tutti i Film</h2>
+												<h2 class="mt-4 mb-4" >Tutti i Documentari</h2>
 											</div>
 											'); // Titolo
 
@@ -1480,36 +1488,37 @@
 											</div>
 										');
 										
-										if ($video=$conn->query($query)) { // Query effettuata con successo 
-											if ($video->num_rows>0) { // Almeno un risultato 
-												while ($film = $video->fetch_assoc()) {
+										if ($documentari=$conn->query($query)) { // Query effettuata con successo 
+											if ($documentari->num_rows>0) { // Almeno un risultato 
+												while ($documentario = $documentari->fetch_assoc()) {
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$film["id"].',5,null,null)">
+														<div class="col-md-3 py2" onclick="passa_a('.$documentario["id"].',5,null,null)">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
-																	<img src="images/video/'.$film["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$film["nome"].'">
-																	<p class="card-text">'.$film["nome"].'</p>
-																	<p class="card-text-description">'.$film["sinossi"].'</p>
+																	<img src="images/video/'.$documentario["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$documentario["nome"].'">
+																	<p class="card-text">'.$documentario["nome"].'</p>
+																	<p class="card-text-description">'.$documentario["sinossi"].'</p>
 																	<div class="d-flex flex-row-reverse align-items-center">
-																		<small class="text-muted">Durata: '.$film["durata"].' minuti</small>
+																		<small class="text-muted">Durata: '.$documentario["durata"].' minuti</small>
 																	</div>
 																	<div class="d-flex flex-row-reverse align-items-center">
-																		<small class="text-muted">Anno d\'uscita: '.$film["annoUscita"].'</small>
+																		<small class="text-muted">Anno d\'uscita: '.$documentario["annoUscita"].'</small>
 																	</div>
 																	<div class="d-flex flex-row-reverse align-items-center">
-																		<small class="text-muted">Nazionalità: '.$film["nazionalita"].'</small>
+																		<small class="text-muted">Nazionalità: '.$documentario["nazionalita"].'</small>
 																	</div>
 														');
-													if($film["mediaVoti"]!=null)
+													if($documentario["mediaVoti"]!=null)
 														echo('
 																	<div class="d-flex flex-row-reverse align-items-center">
-																		<small class="text-muted">Voto Medio: '.round($film["mediaVoti"],2).'</small>
+																		<small class="text-muted">Voto Medio: '.round($documentario["mediaVoti"],2).'</small>
 																	</div>
 															'); // Costruisco un riquadro per ogni film (pt.1)
 
 													$query="SELECT G.tipo
 													FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
-													WHERE GV.idVideo=".$film["id"]; // Preparazione query: Categorie film
+													WHERE GV.idVideo=".$documentario["id"]."
+													ORDER BY G.tipo"; // Preparazione query: Categorie documentario
 													if($generi=$conn->query($query)) { // Query effettuata con successo
 														if ($generi->num_rows>0) { // Almeno un risultato
 															echo ('
@@ -1526,7 +1535,7 @@
 															echo ('
 																	</small>
 																</div>
-															'); // Costruisco un riquadro per ogni film (pt.2)
+															'); // Costruisco un riquadro per ogni documentario (pt.2)
 														}
 														$generi->free(); // Dealloco l'oggetto
 													}
@@ -1535,7 +1544,7 @@
 															</div>
 														</div>
 													</div>
-															'); // Costruisco un riquadro per ogni film (pt.3)
+															'); // Costruisco un riquadro per ogni documentario (pt.3)
 												}
 											}
 											else { 
@@ -1543,13 +1552,13 @@
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
 																<div class="card-body">
-																	<p class="card-text">Nessun film trovato</p>
+																	<p class="card-text">Nessun documentario trovato</p>
 																</div>
 															</div>
 														</div>
-													'); // Comunicazione mancanza di film
+													'); // Comunicazione mancanza di documentari
 											}
-											$video->free(); // Dealloco l'oggetto
+											$documentari->free(); // Dealloco l'oggetto
 										}
 										echo "<div class='container'>";
 										if ($pagina!=1) // Non è la prima pagina: Il tasto indietro funzionerà
@@ -1557,7 +1566,7 @@
 										else // E' la prima pagina: Il tasto indietro non funzionerà
 											echo "<input type='button' value='<' disabled />";
 
-										for($i=1;$i<=ceil($nFilm["nFilm"]/$nris);$i++) { // Bottoni pagine
+										for($i=1;$i<=ceil($nDocumentari["nDocumentari"]/$nris);$i++) { // Bottoni pagine
 											echo '<button onclick="passa_a(null,4,'.$i.','.$ordinamento.');"';
 											if($i==$pagina) // Se la pagina è la corrente la evidenzio
 												echo "style='background-color: black; color: white;' disabled>$i";
@@ -1565,7 +1574,7 @@
 												echo ">$i";
 											echo "</button>";
 										}
-										if ($pagina!=ceil($nFilm["nFilm"]/$nris)) // Non è l'ultima pagina : Il tasto avanti funzionerà
+										if ($pagina!=ceil($nDocumentari["nDocumentari"]/$nris)) // Non è l'ultima pagina : Il tasto avanti funzionerà
 												echo "<input type='button' value='>' / onclick='passa_a(null,4,".($pagina+1).",".$ordinamento.");'>";
 											else // E' l'ultima pagina : Il tasto avanti non funzionerà
 												echo "<input type='button' value='>' disabled />";	
@@ -4156,7 +4165,8 @@
 											$query="SELECT password FROM utenti WHERE id=$id AND password='".md5($_POST["oldpw"])."'";
 											if($result=$conn->query($query))
 												if($result->num_rows>0){
-													$query="UPDATE utenti SET password='".md5($_POST["newpw"])."'";
+													$query="UPDATE utenti SET password='".md5($_POST["newpw"])."'
+													WHERE id=$id";
 													if($conn->query($query)) /* Inserimento nel DB riuscito */
 														echo "<script type='text/javascript'>alert('La password è stata modificata con successo!');</script>";
 													else /* Inserimento nel DB NON riuscito */
@@ -4246,9 +4256,9 @@
 							?>
 			
 		</main>
-		<form name="recensioni" id="recensioni" method="post" action="
+		<form name="recensione" id="recensione" method="post" action="
 		<?php
-			echo "index.php?stato=$_GET[stato]&id=$_GET[id]";
+			echo "index.php?stato=".$_GET["stato"]."&id=".$_GET["id"];
 		?>
 		">
 			<input type='hidden' name='rate' id='rate'> <!-- Memorizzazione voto -->
@@ -4256,17 +4266,17 @@
 			<input type='hidden' name='idUtente' id='idUtente'> <!-- Memorizzazione recensione -->
 				
 		</form>
-
+		
 		<form name="curiosita" id="curiosita" method="post" action="
 		<?php
-			echo "index.php?stato=$_GET[stato]&id=$_GET[id]";
+			echo 'index.php?stato='.$_GET["stato"].'&id='.$_GET["id"].'">';
 		?>
-		">
 			<input type='hidden' name='check' id='check'> <!-- Memorizzazione voto -->
 			<input type='hidden' name='cur' id='cur'> <!-- Memorizzazione recensione -->
 			<input type='hidden' name='idCur' id='idCur'> <!-- Memorizzazione recensione -->
 				
-		</form>		<footer class="text-muted">
+		</form>		
+		<footer class="text-muted">
 			<div class="container">
 				<p class="float-right">
 				<a href="#">Back to top</a>
