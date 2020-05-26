@@ -891,7 +891,7 @@
 
 									case 1: /* 
 										******************
-										*** TUTTI FILM ***
+										*** TUTTI I FILM ***
 										******************
 										*/
 										$conn=dbConn(); // Connessione al DB
@@ -939,7 +939,7 @@
 										$valori=["Voto","Nome","Durata","Anno d'uscita", "Nazionalità"]; // Valori dell'ordinamento
 										echo ('
 											<div class="container"> Ordina per: 
-												<select id="ord" onchange="passa_a(null,1,'.$pagina.',ord.value)">
+												<select id="ord" onchange="passa_a(null,1,1,ord.value)">
 											'); // Scelta dell'ordinamento
 													for($i=0;$i<10;$i++) {
 														echo '<option value="'.$i.'"';
@@ -1030,21 +1030,22 @@
 										}
 										echo "<div class='container'>";
 										if ($pagina!=1) // Non è la prima pagina: Il tasto indietro funzionerà
-											echo "<input type='button' value='<' / onclick='passa_a(null,$stato,".($pagina-1).",null)'>";
+											echo "<input type='button' value='<' / onclick='passa_a(null,1,".($pagina-1).",".$ordinamento.");'>";
 										else // E' la prima pagina: Il tasto indietro non funzionerà
-											echo "<input type='button' value='<' disable />";
+											echo "<input type='button' value='<' disabled />";
+
 										for($i=1;$i<=ceil($nFilm["nFilm"]/$nris);$i++) { // Bottoni pagine
-											echo '<button onclick="passa_a(null,'.$stato.','.$i.',null)";';
+											echo '<button onclick="passa_a(null,1,'.$i.','.$ordinamento.');"';
 											if($i==$pagina) // Se la pagina è la corrente la evidenzio
-												echo " style='background-color: black; color: white;'>$i";
+												echo "style='background-color: black; color: white;' disabled>$i";
 											else
 												echo ">$i";
 											echo "</button>";
 										}
 										if ($pagina!=ceil($nFilm["nFilm"]/$nris)) // Non è l'ultima pagina : Il tasto avanti funzionerà
-												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).",null)'>";
+												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).",".$ordinamento.");'>";
 											else // E' l'ultima pagina : Il tasto avanti non funzionerà
-												echo "<input type='button' value='>' disable />";	
+												echo "<input type='button' value='>' disabled />";	
 										echo ('
 											</div>
 											<div class="container">
@@ -1110,7 +1111,7 @@
 											$valori=["Voto","Nome","Numero Stagioni","Numero Episodi", "Anno d'uscita", "Anno di fine", "Nazionalità"]; // Valori dell'ordinamento
 											echo ('
 												<div class="container"> Ordina per: 
-													<select id="ord" onchange="passa_a(null,2,'.$pagina.',ord.value)">
+													<select id="ord" onchange="passa_a(null,2,1,ord.value)">
 												'); // Scelta dell'ordinamento
 											for($i=0;$i<14;$i++) {
 												echo '<option value="'.$i.'"';
@@ -1213,21 +1214,21 @@
 										
 										echo "<div class='container'>";
 										if ($pagina!=1) // Non è la prima pagina: Il tasto indietro funzionerà
-											echo "<input type='button' value='<' / onclick='passa_a(null,$stato,".($pagina-1).",null)'>";
+											echo "<input type='button' value='<' / onclick='passa_a(null,2,".($pagina-1).",$ordinamento)'>";
 										else // E' la prima pagina: Il tasto indietro non funzionerà
-											echo "<input type='button' value='<' disable />";
+											echo "<input type='button' value='<' disabled />";
 										for($i=1;$i<=ceil($nSerie["nSerie"]/$nris);$i++) { // Bottoni pagine
-											echo '<button onclick="passa_a(null,'.$stato.','.$i.',null)";';
+											echo "<button onclick='passa_a(null,2,$i,$ordinamento);'";
 											if($i==$pagina) // Se la pagina è la corrente la evidenzio
-												echo " style='background-color: black; color: white;'>$i";
+												echo " style='background-color: black; color: white;' disabled>$i";
 											else
 												echo ">$i";
 											echo "</button>";
 										}
 										if ($pagina!=ceil($nSerie["nSerie"]/$nris)) // Non è l'ultima' pagina: Il tasto avanti funzionerà
-												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).",null)'>";
+												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).",$ordinamento)'>";
 											else // E' l'ultima' pagina: Il tasto avanti non funzionerà
-												echo "<input type='button' value='>' disable />";	
+												echo "<input type='button' value='>' disabled />";	
 											echo ('
 											</div>
 											<div class="container">
@@ -1270,7 +1271,6 @@
 											$ord.=" DESC";
 
 										$nris=8;  // Riusltati da mostrare per pagina  
-										
 										$query="SELECT S.id, S.nome, COUNT(*) nFilm, V.nazionalita, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine, AVG(RV.voto) mediaVoti
 										FROM saghe S JOIN video V ON S.id=V.idSaga LEFT JOIN recensionivideo RV ON RV.idVideo=V.id
 										GROUP BY S.id
@@ -1289,7 +1289,7 @@
 											$valori=["Nome","Numero Film", "Anno d'uscita", "Anno di fine", "Nazionalità"]; // Valori ordinamento
 											echo ('
 												<div class="container"> Ordina per: 
-													<select id="ord" onchange="passa_a(null,3,'.$pagina.',ord.value)">
+													<select id="ord" onchange="passa_a(null,3,1,ord.value)">
 												'); // Scelta dell'ordinamento
 											for($i=0;$i<10;$i++) {
 												echo '<option value="'.$i.'"';
@@ -1387,21 +1387,21 @@
 										
 										echo "<div class='container'>";
 										if ($pagina!=1) // Non è la prima pagina: Il tasto indietro funzionerà
-											echo "<input type='button' value='<' / onclick='passa_a(null,$stato,".($pagina-1).",null)'>";
+											echo "<input type='button' value='<' / onclick='passa_a(null,$stato,".($pagina-1).",$ordinamento)'>";
 										else // E' la prima pagina: Il tasto indietro non funzionerà
-											echo "<input type='button' value='<' disable />";
+											echo "<input type='button' value='<' disabled />";
 										for($i=1;$i<=ceil($nSaghe["nSaghe"]/$nris);$i++) { // Bottoni pagine
-											echo '<button onclick="passa_a(null,'.$stato.','.$i.',null)";';
+											echo "<button onclick='passa_a(null,$stato,$i,$ordinamento)';";
 											if($i==$pagina) // Se la pagina è la corrente la evidenzio
-												echo " style='background-color: black; color: white;'>$i";
+												echo " style='background-color: black; color: white;' disabled>$i";
 											else
 												echo ">$i";
 											echo "</button>";
 										}
 										if ($pagina!=ceil($nSaghe["nSaghe"]/$nris)) // Non è l'ultima' pagina: Il tasto avanti funzionerà
-												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).",null)'>";
+												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).",$ordinamento)'>";
 											else // E' l'ultima' pagina: Il tasto avanti non funzionerà
-												echo "<input type='button' value='>' disable />";	
+												echo "<input type='button' value='>' disabled />";	
 											echo ('
 											</div>
 											<div class="container">
@@ -1417,11 +1417,166 @@
 										*** TUTTI I DOCUMENTARI ***
 										***************************
 										*/
+										$conn=dbConn(); // Connessione al DB
+										$pagina=$_GET["pagina"]; // Numero pagina corrente 
+										$stato=$_GET["stato"];// Stato della pagina corrente 
+										$ordinamento=intval($_GET["ordinamento"]); // Ordinamento corrente 
+										
+										switch(floor($ordinamento/2)) { // Tipo di ordinamento
+											case 0:
+												$ord="mediaVoti";
+												break;
+											case 1:
+												$ord="V.nome";
+												break;
+											case 2:
+												$ord="V.durata";
+												break;
+											case 3:
+												$ord="V.annoUscita";
+												break;
+											case 4:
+												$ord="V.nazionalita";
+												break;
+										}
+										if($ordinamento%2==1) // Ordinamento Discendente
+											$ord.=" DESC";
+
+										$nris=8; // Risultati da mostrare per pagina
+										$query="SELECT V.id, V.nome, V.durata, V.sinossi, V.annoUscita, V.nazionalita, AVG(RV.voto) mediaVoti
+										FROM recensionivideo RV RIGHT JOIN video V ON V.id=RV.idVideo
+										WHERE V.selettore=3
+										GROUP BY V.id
+										ORDER BY $ord
+										LIMIT $nris
+										OFFSET ".($nris*($pagina-1)); // Preparazione Query: Tutti i film 
+										$nFilm=$conn->query("SELECT COUNT(*) nFilm FROM video WHERE video.selettore=3")->fetch_assoc(); // Numero totale di film 
+
+										echo ('	
+											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
+											<div class="container text-center"> 
+												<h2 class="mt-4 mb-4" >Tutti i Film</h2>
+											</div>
+											'); // Titolo
+
+										$valori=["Voto","Nome","Durata","Anno d'uscita", "Nazionalità"]; // Valori dell'ordinamento
 										echo ('
-											<div class="container"><input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)"/></div>
-											<div class="container">TUTTI I DOCUMENTARI</div>
-											<div class="container"><input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)"/></div>
-											');
+											<div class="container"> Ordina per: 
+												<select id="ord" onchange="passa_a(null,4,1,ord.value)">
+											'); // Scelta dell'ordinamento
+													for($i=0;$i<10;$i++) {
+														echo '<option value="'.$i.'"';
+														if($ordinamento==$i)
+															echo 'selected>';
+														else
+															echo '>';
+														echo $valori[$i/2];
+														if($i%2==1)
+															echo ' DECR';
+														echo '</option>';
+													}
+										echo ('
+												</select>
+											</div>
+										');
+										
+										if ($video=$conn->query($query)) { // Query effettuata con successo 
+											if ($video->num_rows>0) { // Almeno un risultato 
+												while ($film = $video->fetch_assoc()) {
+													echo ('
+														<div class="col-md-3 py2" onclick="passa_a('.$film["id"].',5,null,null)">
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<img src="images/video/'.$film["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$film["nome"].'">
+																	<p class="card-text">'.$film["nome"].'</p>
+																	<p class="card-text-description">'.$film["sinossi"].'</p>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Durata: '.$film["durata"].' minuti</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Anno d\'uscita: '.$film["annoUscita"].'</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Nazionalità: '.$film["nazionalita"].'</small>
+																	</div>
+														');
+													if($film["mediaVoti"]!=null)
+														echo('
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Voto Medio: '.round($film["mediaVoti"],2).'</small>
+																	</div>
+															'); // Costruisco un riquadro per ogni film (pt.1)
+
+													$query="SELECT G.tipo
+													FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
+													WHERE GV.idVideo=".$film["id"]; // Preparazione query: Categorie film
+													if($generi=$conn->query($query)) { // Query effettuata con successo
+														if ($generi->num_rows>0) { // Almeno un risultato
+															echo ('
+																<div class="d-flex flex-row-reverse align-items-center">
+																	<small class="text-muted">Categorie:
+																');
+															$i=0;
+															while ($genere = $generi->fetch_assoc()) {
+																echo $genere["tipo"];
+																if($i<($generi->num_rows-1))
+																	echo ', ';
+																$i++;
+															}
+															echo ('
+																	</small>
+																</div>
+															'); // Costruisco un riquadro per ogni film (pt.2)
+														}
+														$generi->free(); // Dealloco l'oggetto
+													}
+
+													echo ('
+															</div>
+														</div>
+													</div>
+															'); // Costruisco un riquadro per ogni film (pt.3)
+												}
+											}
+											else { 
+												echo ('
+														<div class="col-md-3 ">
+															<div class="card mb-4 shadow-sm">
+																<div class="card-body">
+																	<p class="card-text">Nessun film trovato</p>
+																</div>
+															</div>
+														</div>
+													'); // Comunicazione mancanza di film
+											}
+											$video->free(); // Dealloco l'oggetto
+										}
+										echo "<div class='container'>";
+										if ($pagina!=1) // Non è la prima pagina: Il tasto indietro funzionerà
+											echo "<input type='button' value='<' / onclick='passa_a(null,4,".($pagina-1).",".$ordinamento.");'>";
+										else // E' la prima pagina: Il tasto indietro non funzionerà
+											echo "<input type='button' value='<' disabled />";
+
+										for($i=1;$i<=ceil($nFilm["nFilm"]/$nris);$i++) { // Bottoni pagine
+											echo '<button onclick="passa_a(null,4,'.$i.','.$ordinamento.');"';
+											if($i==$pagina) // Se la pagina è la corrente la evidenzio
+												echo "style='background-color: black; color: white;' disabled>$i";
+											else
+												echo ">$i";
+											echo "</button>";
+										}
+										if ($pagina!=ceil($nFilm["nFilm"]/$nris)) // Non è l'ultima pagina : Il tasto avanti funzionerà
+												echo "<input type='button' value='>' / onclick='passa_a(null,4,".($pagina+1).",".$ordinamento.");'>";
+											else // E' l'ultima pagina : Il tasto avanti non funzionerà
+												echo "<input type='button' value='>' disabled />";	
+										echo ('
+											</div>
+											<div class="container">
+												<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
+											</diV>
+											'); // Bottone per tornare indietro
+
+										$conn->close(); // Chiudo la connessione al DB
 										break;
 									
 									case 5: /* 
@@ -1431,7 +1586,6 @@
 										*/
 										$id=$_GET["id"]; /* idVideo */
 										$conn=dbConn(); // Connessione al DB
-										
 										
 										if(isset($_POST["rate"])&&isset($_SESSION["idUser"])) { /* E' stato dato un voto */
 											$voto=$_POST["rate"];
