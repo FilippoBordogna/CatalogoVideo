@@ -411,7 +411,7 @@
 										$conn=dbConn(); // Connessione al DB
 
 										// MIGLIORI VIDEO
-										$query="SELECT V.id, V.nome, V.durata, V.idSaga, V.numero, V.sinossi, AVG(RV.voto) mediaVoti
+										$query="SELECT V.id, V.nome, V.durata, V.idSaga, V.numero, V.sinossi, V.annoUscita, V.nazionalita, AVG(RV.voto) mediaVoti
 										FROM recensionivideo RV JOIN video V ON V.id=RV.idVideo
 										WHERE RV.idAdmin IS NOT NULL AND V.selettore!=2
 										GROUP BY RV.idVideo
@@ -439,10 +439,43 @@
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Voto Medio: '.round($elemento["mediaVoti"],2).'</small>
 																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Nazionalita: '.$elemento["nazionalita"].'</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Anno d\'uscita: '.$elemento["annoUscita"].'</small>
+																	</div>
+														'); // Costruisco un riquadro per ogni video (pt.1)
+													
+													$query="SELECT G.tipo
+														FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
+														WHERE GV.idVideo=".$elemento["id"]; // Preparazione query: Categorie video
+													if($generi=$conn->query($query)) { // Query effettuata con successo
+														if ($generi->num_rows>0) { // Almeno un risultato
+															echo ('
+																<div class="d-flex flex-row-reverse align-items-center">
+																	<small class="text-muted">Categorie:
+																');
+															$i=0;
+															while ($genere = $generi->fetch_assoc()) {
+																echo $genere["tipo"];
+																if($i<($generi->num_rows-1))
+																	echo ', ';
+																$i++;
+															}
+															echo ('
+																	</small>
+																</div>
+															'); // Costruisco un riquadro per ogni video (pt.2)
+														}
+														$generi->free();
+													}
+
+													echo('
 																</div>
 															</div>
 														</div>
-													'); // Costruisco un riquadro per ogni video 
+													'); // Costruisco un riquadro per ogni video (pt.3)
 												}
 											}
 											else { 
@@ -460,7 +493,7 @@
 										}
 
 										// MIGLIORI FILM
-										$query="SELECT V.id, V.nome, V.durata, V.sinossi, AVG(RV.voto) mediaVoti
+										$query="SELECT V.id, V.nome, V.durata, V.sinossi, V.annoUscita, V.nazionalita, AVG(RV.voto) mediaVoti
 										FROM recensionivideo RV JOIN video V ON V.id=RV.idVideo
 										WHERE RV.idAdmin IS NOT NULL AND V.selettore=1
 										GROUP BY RV.idVideo
@@ -489,10 +522,43 @@
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Voto Medio: '.round($film["mediaVoti"],2).'</small>
 																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Nazionalita: '.$film["nazionalita"].'</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Anno d\'uscita: '.$film["annoUscita"].'</small>
+																	</div>
+														'); // Costruisco un riquadro per ogni film (pt.1)
+													
+													$query="SELECT G.tipo
+													FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
+													WHERE GV.idVideo=".$film["id"]; // Preparazione query: Categorie film
+													if($generi=$conn->query($query)) { // Query effettuata con successo
+														if ($generi->num_rows>0) { // Almeno un risultato
+															echo ('
+																<div class="d-flex flex-row-reverse align-items-center">
+																	<small class="text-muted">Categorie:
+																');
+															$i=0;
+															while ($genere = $generi->fetch_assoc()) {
+																echo $genere["tipo"];
+																if($i<($generi->num_rows-1))
+																	echo ', ';
+																$i++;
+															}
+															echo ('
+																	</small>
+																</div>
+															'); // Costruisco un riquadro per ogni film (pt.2)
+														}
+														$generi->free();
+													}
+
+													echo('	
 																</div>
 															</div>
 														</div>
-													'); // Costruisco un riquadro per ogni film
+														'); // Costruisco un riquadro per ogni film (pt.3)
 												}
 											}
 											else { 
@@ -510,10 +576,10 @@
 										}
 										echo ('	
 														<div class="container" onclick="passa_a(null,1,1,0)"><a href="#">Vedi tutti</a></div>	
-											'); // Link che mostra tutti i film (case 1) */
+											'); // Link che mostra tutti i film (case 1) 
 
 										// MIGLIORI SERIE TV
-										$query="SELECT S.*, AVG(RS.voto) mediaVoti, MAX(V.stagione) nStagioni, COUNT(DISTINCT V.id) nEpisodi
+										$query="SELECT S.*, AVG(RS.voto) mediaVoti, MAX(V.stagione) nStagioni, COUNT(DISTINCT V.id) nEpisodi, V.nazionalita, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine
 										FROM recensioniserie RS JOIN serie S ON S.id=RS.idSerie JOIN video V on V.idserie=S.id
 										WHERE RS.idAdmin IS NOT NULL
 										GROUP BY S.id
@@ -545,10 +611,49 @@
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Voto Medio: '.round($serie["mediaVoti"],2).'</small>
 																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Nazionalita: '.$serie["nazionalita"].'</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+														');
+															if($serie["annoUscita"]!=$serie["annoFine"])
+																echo '	<small class="text-muted">Anni di produzione: '.$serie["annoUscita"].'-'.$serie["annoFine"].'</small>';
+																else
+																echo '	<small class="text-muted">Anno di produzione: '.$serie["annoUscita"].'</small>';
+															echo '</div>';
+														 
+														$query="SELECT DISTINCT G.tipo
+														FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
+														WHERE GV.idVideo IN (
+																			 SELECT V.id
+																			 FROM video V JOIN serie S ON S.id=V.idSerie
+																			 WHERE S.id=".$serie["id"].")"; // Preparazione query: Categorie serie TV
+														if($generi=$conn->query($query)) { // Query effettuata con successo
+															if ($generi->num_rows>0) { // Almeno un risultato
+																echo ('
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Categorie:
+																	'); 
+																$i=0;
+																while ($genere = $generi->fetch_assoc()) {
+																	echo $genere["tipo"];
+																	if($i<($generi->num_rows-1))
+																		echo ', ';
+																	$i++;
+																}
+																echo ('
+																		</small>
+																	</div>
+																'); // Costruisco un riquadro per ogni serie TV (pt.2)
+															}
+															$generi->free();
+														}
+
+												echo ('	
 																</div>
 															</div>
 														</div>
-													'); // Costruisco un riquadro per ogni serie TV
+													'); // Costruisco un riquadro per ogni serie TV (pt.3)
 												}
 											}
 											else { 
@@ -569,7 +674,7 @@
 											'); // Link che mostra tutte le serie (case 2)
 
 										// MIGLIORI SAGHE
-										$query="SELECT AVG (Medie.mediaVoti) media, COUNT(DISTINCT V.id) nFilm, S.id, S.nome
+										$query="SELECT AVG (Medie.mediaVoti) media, COUNT(DISTINCT V.id) nFilm, S.id, S.nome, V.nazionalita, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine
 										FROM (
 												SELECT  AVG(R.voto) mediaVoti, V.*
 												FROM recensionivideo R JOIN video V ON V.id=R.idVideo JOIN saghe S ON S.id=V.idSaga
@@ -603,11 +708,51 @@
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Voto Medio: '.round($saga["media"],2).'</small>
 																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Nazionalità: '.$saga["nazionalita"].'</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+														'); // Costruisco un riquadro per ogni saga (pt.1)
+
+														if($saga["annoUscita"]!=$saga["annoFine"])
+															echo '	<small class="text-muted">Anni di produzione: '.$saga["annoUscita"].'-'.$saga["annoFine"].'</small>';
+															else
+															echo '	<small class="text-muted">Anno di produzione: '.$saga["annoUscita"].'</small>';
+														echo '</div>';
+
+														$query="SELECT DISTINCT G.tipo
+														FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
+														WHERE GV.idVideo IN (
+																			 SELECT V.id
+																			 FROM video V JOIN saghe S ON S.id=V.idSaga
+																			 WHERE S.id=".$saga["id"].")"; // Preparazione query: Categorie saga
+														if($generi=$conn->query($query)) { // Query effettuata con successo
+															if ($generi->num_rows>0) { // Almeno un risultato
+																echo ('
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Categorie:
+																	'); 
+																$i=0;
+																while ($genere = $generi->fetch_assoc()) {
+																	echo $genere["tipo"];
+																	if($i<($generi->num_rows-1))
+																		echo ', ';
+																	$i++;
+																}
+																echo ('
+																		</small>
+																	</div>
+																'); // Costruisco un riquadro per ogni saga (pt.2)
+															}
+															$generi->free();
+														}
+
+														echo ('
 																</div>
 															</div>
 														</div>
 													');
-												} // Costruisco un riquadro per ogni saga TV
+												} // Costruisco un riquadro per ogni saga (pt.3)
 											}
 											else { 
 												echo ('
@@ -624,10 +769,10 @@
 										}
 										echo ('	
 														<div class="container" onclick="passa_a(null,3,1,null,0)"><a href="#">Vedi tutte</a></div>	
-											'); // Link che mostra tutte le saghe (case 3) */
+											'); // Link che mostra tutte le saghe (case 3) 
 
 										// MIGLIORI DOCUMENTARI 
-										$query="SELECT V.id, V.nome, V.durata, V.sinossi, AVG(RV.voto) mediaVoti
+										$query="SELECT V.id, V.nome, V.durata, V.sinossi, V.nazionalita, V.annoUscita, AVG(RV.voto) mediaVoti
 										FROM recensionivideo RV JOIN video V ON V.id=RV.idVideo
 										WHERE RV.idAdmin IS NOT NULL AND V.selettore=3
 										GROUP BY RV.idVideo
@@ -656,10 +801,44 @@
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Voto Medio: '.round($documentario["mediaVoti"],2).'</small>
 																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Nazionalità: '.$documentario["nazionalita"].'</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Anno di produzione: '.$documentario["annoUscita"].'</small>
+																	</div>
+														'); // Costruisco un riquadro per ogni documentario (pt.1)
+														
+														$query="SELECT G.tipo
+														FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
+														WHERE GV.idVideo=".$documentario["id"]; // Preparazione query: Categorie video
+														if($generi=$conn->query($query)) { // Query effettuata con successo
+															if ($generi->num_rows>0) { // Almeno un risultato
+																echo ('
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Categorie:
+																	');
+																$i=0;
+																while ($genere = $generi->fetch_assoc()) {
+																	echo $genere["tipo"];
+																	if($i<($generi->num_rows-1))
+																		echo ', ';
+																	$i++;
+																}
+																echo ('
+																		</small>
+																	</div>
+																'); // Costruisco un riquadro per ogni documentario (pt.2)
+															}
+															$generi->free();
+														}
+
+													echo ('
 																</div>
 															</div>
 														</div>
-													');  // Costruisco un riquadro per ogni documentario
+														
+													');  // Costruisco un riquadro per ogni documentario (pt.3)
 												}
 											}
 											else { 
@@ -771,18 +950,42 @@
 																		<small class="text-muted">Nazionalità: '.$film["nazionalita"].'</small>
 																	</div>
 														');
-														if($film["mediaVoti"]!=null)
-															echo('
+													if($film["mediaVoti"]!=null)
+														echo('
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Voto Medio: '.round($film["mediaVoti"],2).'</small>
 																	</div>
-																');
+															');
 
-														echo ('
+													$query="SELECT G.tipo
+													FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
+													WHERE GV.idVideo=".$film["id"]; // Preparazione query: Categorie film
+													if($generi=$conn->query($query)) { // Query effettuata con successo
+														if ($generi->num_rows>0) { // Almeno un risultato
+															echo ('
+																<div class="d-flex flex-row-reverse align-items-center">
+																	<small class="text-muted">Categorie:
+																');
+															$i=0;
+															while ($genere = $generi->fetch_assoc()) {
+																echo $genere["tipo"];
+																if($i<($generi->num_rows-1))
+																	echo ', ';
+																$i++;
+															}
+															echo ('
+																	</small>
 																</div>
+															'); // Costruisco un riquadro per ogni film (pt.2)
+														}
+														$generi->free();
+													}
+
+													echo ('
 															</div>
 														</div>
-															'); // Costruisco un riquadro per ogni film 
+													</div>
+															'); // Costruisco un riquadro per ogni film
 												}
 											}
 											else { 
@@ -927,14 +1130,44 @@
 																		<small class="text-muted">Voto Medio: '.round($elemento["mediaVoti"],2).'</small>
 																	</div>
 																	');
-															echo ('
+														echo ('
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Nazionalità: '.$elemento["nazionalita"].'</small>
 																	</div>
+															');
+
+															$query="SELECT DISTINCT G.tipo
+															FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
+															WHERE GV.idVideo IN (
+																				 SELECT V.id
+																				 FROM video V JOIN serie S ON S.id=V.idSerie
+																				 WHERE S.id=".$elemento["id"].")"; // Preparazione query: Categorie serie TV
+															if($generi=$conn->query($query)) { // Query effettuata con successo
+																if ($generi->num_rows>0) { // Almeno un risultato
+																	echo ('
+																		<div class="d-flex flex-row-reverse align-items-center">
+																			<small class="text-muted">Categorie:
+																		'); 
+																	$i=0;
+																	while ($genere = $generi->fetch_assoc()) {
+																		echo $genere["tipo"];
+																		if($i<($generi->num_rows-1))
+																			echo ', ';
+																		$i++;
+																	}
+																	echo ('
+																			</small>
+																		</div>
+																	'); // Costruisco un riquadro per ogni serie TV (pt.2)
+																}
+																$generi->free();
+															}
+
+														echo ('
 																</div>
 															</div>
 														</div>
-													'); // Costruisco un riquadro per ogni serie
+														'); // Costruisco un riquadro per ogni serie
 												}
 											}
 											else { 
@@ -1011,9 +1244,8 @@
 
 										$nris=8;  // Riusltati da mostrare per pagina  
 										
-										$query="SELECT S.id, S.nome, COUNT(*) nFilm, V.nazionalita, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine
-										FROM saghe S
-										JOIN video V ON S.id=V.idSaga
+										$query="SELECT S.id, S.nome, COUNT(*) nFilm, V.nazionalita, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine, AVG(RV.voto) mediaVoti
+										FROM saghe S JOIN video V ON S.id=V.idSaga LEFT JOIN recensionivideo RV ON RV.idVideo=V.id
 										GROUP BY S.id
 										LIMIT $nris
 										OFFSET ".($nris*($pagina-1));  // Preparazione Query: Tutte le saghe  
@@ -1069,7 +1301,43 @@
 																echo '	<small class="text-muted">Anni di produzione: '.$saga["annoUscita"].'-'.$saga["annoFine"].'</small>';
 																else
 																echo '	<small class="text-muted">Anno di produzione: '.$saga["annoUscita"].'</small>';
-													echo ('			</div>
+													echo '			</div>';
+
+															if($saga["mediaVoti"]!=null)
+																echo ('
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Voto: '.$saga["mediaVoti"].'</small>
+																	</div>
+																');
+
+													$query="SELECT DISTINCT G.tipo
+														FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
+														WHERE GV.idVideo IN (
+																			 SELECT V.id
+																			 FROM video V JOIN saghe S ON S.id=V.idSaga
+																			 WHERE S.id=".$saga["id"].")"; // Preparazione query: Categorie saga
+														if($generi=$conn->query($query)) { // Query effettuata con successo
+															if ($generi->num_rows>0) { // Almeno un risultato
+																echo ('
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Categorie:
+																	'); 
+																$i=0;
+																while ($genere = $generi->fetch_assoc()) {
+																	echo $genere["tipo"];
+																	if($i<($generi->num_rows-1))
+																		echo ', ';
+																	$i++;
+																}
+																echo ('
+																		</small>
+																	</div>
+																'); // Costruisco un riquadro per ogni saga (pt.2)
+															}
+															$generi->free();
+														}
+
+													echo ('
 																</div>
 															</div>
 														</div>
