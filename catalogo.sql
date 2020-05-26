@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 26, 2020 alle 21:45
+-- Creato il: Mag 26, 2020 alle 21:56
 -- Versione del server: 10.1.31-MariaDB
 -- Versione PHP: 7.2.4
 
@@ -635,7 +635,8 @@ INSERT INTO `persone` (`id`, `nome`, `cognome`) VALUES
 (57, 'Mickey', 'Leon'),
 (58, 'Yehezkel', 'Lazarov'),
 (59, 'Dziga', 'Vertov'),
-(60, 'Mikhail', 'Kaufman');
+(60, 'Mikhail', 'Kaufman'),
+(61, 'Alain', 'Resnais');
 
 -- --------------------------------------------------------
 
@@ -835,6 +836,7 @@ INSERT INTO `registivideo` (`idVideo`, `idPersona`) VALUES
 (25, 41),
 (26, 44),
 (27, 45),
+(28, 61),
 (29, 50),
 (30, 53),
 (31, 56),
@@ -986,10 +988,11 @@ INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `sta
 (25, 'Fuocoammare', 106, NULL, NULL, NULL, NULL, 3, 'Attraverso gli occhi di Samuele, un ragazzino che vive a Lampedusa, viene raccontato il dramma attualissimo dei migranti che tentano una seconda vita attraversando il mare ma che spesso non solo non arrivano a quella tanto anelata seconda vita: addirittura perdono la prima e unica che gli rimane.', 2016, 'ITA'),
 (26, 'Food Inc.', 94, NULL, NULL, NULL, NULL, 3, NULL, 2008, 'USA'),
 (27, 'Shoah', 613, NULL, NULL, NULL, NULL, 3, 'Documentario del tutto privo di immagini di repertorio. Si analizzano le tre tipologie di superstiti dei campi di concentramento: vittime, carnefici e testimoni. Molte le immagini degli ex nazisti, che avevano accettato d’essere soltanto intervistati in audio. Ciò che ne vien fuori è un ritratto terribile.', 1985, 'FRA'),
+(28, 'Notte e nebbia', 32, NULL, NULL, NULL, NULL, 3, 'Suddiviso in quattro sezioni, propone una storia di seduzione dal finale tragico, la vita notturna di Parigi, a partire dalle prime ore della sera fino al mattino seguente, una satira su La Gioconda e un’analisi dei crimini nazisti nei campi di concentramento.', 1960, 'FRA'),
 (29, 'Don’t Look Back', 96, NULL, NULL, NULL, NULL, 3, 'Documentario che segue le tappe della tournée inglese di un giovanissimo Bob Dylan. Il tutto prodotto in presa diretta con una cinepresa portatile. Un film documentario che immortala il clima on the road di quei tempi.', 1967, 'USA'),
 (30, 'La sottile linea blu', 106, NULL, NULL, NULL, NULL, 3, 'Un attacco al sistema giudiziario americano, sfruttando la storia di Randall Adams e David Harris, coinvolti in una sparatoria con dei poliziotti. Uno di questi rimase ucciso e le prove offerte dagli altri agenti, che hanno portato Adams al braccio della morte, per molti sono risultate inconsistenti.', 1988, 'USA'),
 (31, 'Valzer con Bashir', 90, NULL, NULL, NULL, NULL, 3, 'Ripercorre infatti i conflitti che coinvolsero il Libano nei primi anni ottanta, culminando con crudezza e assoluta drammaticità nella rappresentazione del massacro di Sabra e Shatila del 1982.', 2008, 'ISR'),
-(32, 'L’uomo con la macchina da presa', 68, NULL, NULL, NULL, NULL, 0, 'Racconta la giornata di un cineoperatore, dall’alba al tramonto. Questi riprende soprattutto scene di vita quotidiana, girando per le strade di Mosca, mostrando una certa arditezza nella ricerca di inquadrature a sensazione.', 1929, 'URS');
+(32, 'L’uomo con la macchina da presa', 68, NULL, NULL, NULL, NULL, 3, 'Racconta la giornata di un cineoperatore, dall’alba al tramonto. Questi riprende soprattutto scene di vita quotidiana, girando per le strade di Mosca, mostrando una certa arditezza nella ricerca di inquadrature a sensazione.', 1929, 'URS');
 
 --
 -- Indici per le tabelle scaricate
@@ -1170,7 +1173,7 @@ ALTER TABLE `personaggi`
 -- AUTO_INCREMENT per la tabella `persone`
 --
 ALTER TABLE `persone`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=61;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT per la tabella `saghe`
