@@ -71,7 +71,6 @@
 
 		<!-- Bootstrap core CSS -->
 		<link href="assets/dist/css/bootstrap.css" rel="stylesheet">
-		
 
 		<style>
 		.rate {
@@ -182,8 +181,8 @@
 				recensioni.idUtente.value=idUtente;
 				recensioni.submit();
 			}
-			function eliminaC(id) { // Elimina una recensione 
-				curiosita.check.value="ELIMINA";
+			function eliminaC(id,comando="ELIMINA") { // Elimina una recensione 
+				curiosita.check.value=comando;
 				curiosita.idCur.value=id;
 				curiosita.submit();
 			}
@@ -240,10 +239,11 @@
 							$utente=filter_var(trim($_POST["user"]), FILTER_SANITIZE_STRING); // Sanifico la stringa (evito SQL Injection)
 							$password=filter_var(trim($_POST["pass"]), FILTER_SANITIZE_STRING); // Sanifico la stringa (evito SQL Injection)
 							$conn=dbConn(); // Connessione al DB
-							$query="SELECT * FROM utenti WHERE email='".$utente."' AND password='".md5($password)."';"; // Preparazione Query: Controllo Accesso 
+							$query="SELECT * FROM utenti WHERE email='".$utente."' AND password='".md5($password)."';"; // Preparazione Query: Controllo Accesso
 							$risultati=$conn->query($query); // Risultati della query 
 							if (!$risultati->num_rows!=1) { // 1 unico risultato
 								// Prelevo il valore
+								
 								$riga=$risultati->fetch_assoc();
 								$admin=$riga["admin"];
 								$risultati->free(); // Dealloco l'oggetto
@@ -1481,7 +1481,8 @@
 												}
 												else
 												{
-													$query="UPDATE curiositavideo SET idAdmin=$_SESSION[idUser] WHERE id=$_POST[idCur]";
+													$query="UPDATE 
+													video SET idAdmin=$_SESSION[idUser] WHERE id=$_POST[idCur]";
 													//echo $query;
 													if($conn->query($query))
 														echo "<script type='text/javascript'>alert('La curiosita è stata verificata!');</script>";
@@ -2051,7 +2052,7 @@
 																			<small class="text-muted">Verificato da '.$riga["admin"].'</small>
 																		</div>';
 																echo '</div>';
-																		if($_SESSION["idUser"]==$riga["id"]){
+																		if(isset($_SESSION["idUser"])&&$_SESSION["idUser"]==$riga["id"]){
 																			echo' <div class="modal-footer">
 																					<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].')">Elimina</button>';
 																		}
@@ -2063,7 +2064,7 @@
 																		if(isset($_SESSION["admin"])&&$_SESSION["admin"]==1&&$riga["admin"]==null){
 																			echo'	<button type="button" class="btn btn-primary" onclick="verificaC('.$riga["idCur"].')" data-dismiss="modal">Verifica</button>';
 																		}
-																		if($_SESSION["idUser"]==$riga["id"]||(isset($_SESSION["admin"])&&$_SESSION["admin"]==1))
+																		if((isset($_SESSION["idUser"])&&$_SESSION["idUser"]==$riga["id"])||(isset($_SESSION["admin"])&&$_SESSION["admin"]==1))
 																			echo '</div>';
 																	echo '
 															</div>
@@ -3687,7 +3688,7 @@
 													');
 												}
 											}
-												
+											
 											$video->free(); // Dealloco l'oggetto
 										
 										}
@@ -3695,11 +3696,269 @@
 										break;
 									
 									case 12:
+										/*
+										***********************
+										***RECENSIONI UTENTE***
+										***********************
+										*/
+										$conn=dbConn();
+										if(isset($_POST['idCur']))
+											$id=$_POST['idCur'];
+										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { /* E' stato dato un voto */
+											$voto=$_POST["check"];
+												if($voto=="VIDEO") { /* Eliminazione del DB riuscita */
+													$query="DELETE FROM recensionivideo WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
+													//echo $query;
+													if($conn->query($query))
+														echo "<script type='text/javascript'>alert('La recensione è stata eliminata!');</script>";
+													else
+														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+													
+												}
+												else{
+													$query="DELETE FROM recensioniserie WHERE idSerie=$id AND idUtente=$_SESSION[idUser]";
+													//echo $query;
+													if($conn->query($query))
+														echo "<script type='text/javascript'>alert('La recensione è stata eliminata!');</script>";
+													else
+														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+													
+												}
+										}
+					
+										if(isset($_SESSION)){
+											
+											
+											echo ('	
+											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
+											<div class="container text-center"> 
+												<h1 class="mt-4 mb-4" >Tutte le recensioni di '.$_SESSION['user'].'</h1>
+											</div>
+											'); // Titolo
+											$id=$_SESSION["idUser"];
+											$query="SELECT R.voto, R.testo, S.nome as serie, V.nome, U.id, R.idVideo ,U.username, A.username admin
+											FROM recensionivideo R 
+											INNER JOIN utenti U ON U.id=R.idUtente
+											JOIN video V ON V.id=R.idVideo
+											LEFT JOIN utenti A ON A.id=R.idAdmin
+											LEFT JOIN serie S ON S.id=V.idSerie
+											WHERE U.id=$id
+											ORDER BY R.idAdmin DESC,R.idVideo;";
+											$recensioni=$conn->query($query);
+											$vuoto=0;
+											if($recensioni->num_rows==0){
+												$vuoto++;
+											}		
+											else{
+												while($riga = $recensioni->fetch_assoc()){
+													echo 	
+														'<div class="col-md-3 py2 mb-2">
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<h6 class="mt-1 ml-2">'.$riga["nome"];
+																	if($riga['serie']!=null)
+																		echo " ($riga[serie]) ";
+																	echo ' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>';
+																	if($riga["testo"]!=null)
+																		echo '<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																	if($riga["admin"]!=null)
+																	echo '
+																		<div class="d-flex justify-content-end bd-highlight mb-3">
+																			<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																		</div>';
+																echo '</div>';
+																echo'
+																	<div class="modal-footer">
+																		<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga['idVideo'].',\'VIDEO\')">Elimina</button>
+																	</div>';
+																	echo '
+															</div>
+														</div>';
+												}
+											}
+											
+											$query="SELECT R.voto, R.testo, S.nome, U.id, R.idSerie ,U.username, A.username admin
+											FROM recensioniserie R 
+											INNER JOIN utenti U ON U.id=R.idUtente
+											JOIN serie S ON S.id=R.idSerie
+											LEFT JOIN utenti A ON A.id=R.idAdmin
+											WHERE U.id=$id
+											ORDER BY R.idAdmin DESC,R.idSerie;";
+											$recensioni=$conn->query($query);
+											if($recensioni->num_rows==0){
+												$vuoto++;
+											}		
+											else{
+												while($riga = $recensioni->fetch_assoc()){
+													echo 	
+														'<div class="col-md-3 py2 mb-2">
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<h6 class="mt-1 ml-2">'.$riga["nome"].' · '.$riga["voto"].'/10<label style="color:#ffc700">★</label></h6>';
+																	if($riga["testo"]!=null)
+																		echo '<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																	if($riga["admin"]!=null)
+																	echo '
+																		<div class="d-flex justify-content-end bd-highlight mb-3">
+																			<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																		</div>';
+																echo '</div>';
+																echo'
+																	<div class="modal-footer">
+																		<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga['idSerie'].',\'SERIE\')">Elimina</button>
+																	</div>';
+																	echo '
+															</div>
+														</div>';
+												}
+											}
+											if($vuoto==2){
+												echo 	
+													'<div class="col-md-3 py2">
+														<div class="card h-100 mb-4 shadow-sm">
+															<div class="card-body">
+																<p class="card-text" style="text-align:center !important">Non è presente ancora nessuna recensione</p>
+															</div>
+														</div>
+													</div>';
+											}
+										}
 										
-										echo ("A");
+										
+										$conn->close();
 										break;
 									case 13:
+										/*
+										**********************
+										***CURIOSITÀ UTENTE***
+										**********************
+										*/
+										$conn=dbConn();
+										if(isset($_POST['idCur']))
+											$id=$_POST['idCur'];
+										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { /* E' stato dato un voto */
+											$voto=$_POST["check"];
+												if($voto=="VIDEO") { /* Eliminazione del DB riuscita */
+													$query="DELETE FROM curiositavideo WHERE id=$id";
+													//echo $query;
+													if($conn->query($query))
+														echo "<script type='text/javascript'>alert('La curiosità è stata eliminata!');</script>";
+													else
+														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+												}
+												else{
+													$query="DELETE FROM curiositaserie WHERE id=$id";
+													//echo $query;
+													if($conn->query($query))
+														echo "<script type='text/javascript'>alert('La curiosità è stata eliminata!');</script>";
+													else
+														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
+												}
+										}
+					
+										if(isset($_SESSION)){
+											
+											
+											echo ('	
+											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
+											<div class="container text-center"> 
+												<h1 class="mt-4 mb-4" >Tutte le curiosità di '.$_SESSION['user'].'</h1>
+											</div>
+											'); // Titolo
+											$id=$_SESSION["idUser"];
+											$query="SELECT C.id as idCur, C.testo, S.nome serie, V.nome, U.id, C.idVideo ,U.username, A.username admin
+											FROM curiositavideo C 
+											INNER JOIN utenti U ON U.id=C.idUtente
+											JOIN video V ON V.id=C.idVideo
+											LEFT JOIN utenti A ON A.id=C.idAdmin
+											LEFT JOIN serie S ON S.id=V.idSerie
+											WHERE U.id=$id
+											ORDER BY C.idVideo, C.idAdmin DESC;";
+											$recensioni=$conn->query($query);
+											$vuoto=0;
+											if($recensioni->num_rows==0){
+												$vuoto++;
+											}		
+											else{
+												while($riga = $recensioni->fetch_assoc()){
+													echo 	
+														'<div class="col-md-3 py2 mb-2">
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<h6 class="mt-1 ml-2">'.$riga["username"];
+																	if($riga['serie']!=null)
+																		echo " ($riga[serie]) ";
+																	echo '</h6>';
+																	echo '
+																		<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																	if($riga["admin"]!=null)
+																	echo '
+																		<div class="d-flex justify-content-end bd-highlight mb-3">
+																			<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																		</div>';
+																echo '</div>';
+																		echo' <div class="modal-footer">
+																			<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].',\'VIDEO\')">Elimina</button>';
+																		echo '</div>';
+																	echo '
+															</div>
+														</div>';
+												}
+											}
+											
+											
+											$id=$_SESSION["idUser"];
+											$query="SELECT C.id as idCur, C.testo, S.nome, U.id, C.idSerie ,U.username, A.username admin
+											FROM curiositaserie C 
+											INNER JOIN utenti U ON U.id=C.idUtente
+											JOIN serie S ON S.id=C.idSerie
+											LEFT JOIN utenti A ON A.id=C.idAdmin
+											WHERE U.id=$id
+											ORDER BY C.idSerie, C.idAdmin DESC;";
+											$recensioni=$conn->query($query);
+											if($recensioni->num_rows==0){
+												$vuoto++;
+											}		
+											else{
+												while($riga = $recensioni->fetch_assoc()){
+													echo 	
+														'<div class="col-md-3 py2 mb-2">
+															<div class="card h-100 mb-4 shadow-sm">
+																<div class="card-body">
+																	<h6 class="mt-1 ml-2">'.$riga["username"];
+																	echo '</h6>';
+																	echo '
+																		<p class="card-text" style="text-align:center !important">'.$riga["testo"].'</p>';
+																	if($riga["admin"]!=null)
+																	echo '
+																		<div class="d-flex justify-content-end bd-highlight mb-3">
+																			<small class="text-muted">Verificato da '.$riga["admin"].'</small>
+																		</div>';
+																echo '</div>';
+																		echo' <div class="modal-footer">
+																			<button type="button"  class="btn btn-secondary" onclick="eliminaC('.$riga["idCur"].',\'SERIE\')">Elimina</button>';
+																		echo '</div>';
+																	echo '
+															</div>
+														</div>';
+												}
+											}
+											if($vuoto==2){
+												echo 	
+													'<div class="col-md-3 py2">
+														<div class="card h-100 mb-4 shadow-sm">
+															<div class="card-body">
+																<p class="card-text" style="text-align:center !important">Non è presente ancora nessuna recensione</p>
+															</div>
+														</div>
+													</div>';
+											}
+												
+											
+										}
 										
+										
+										$conn->close();
 										
 										break;
 									case 14:
