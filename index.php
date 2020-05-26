@@ -2,7 +2,9 @@
 	/* 
 		DA FARE:
 		- Effettuare funzioni tendina una volta loggato
-		- Aggiungere ordinamenti diversi sui dati (nazionalita, anno uscita, voto)
+		- Effettuare controlli su $_GET (es. pagina)
+		- Case 4 (Tutti i documentari)
+		- Aggiungere ordinamenti diversi sui dati nel Case 4 (nazionalita, anno uscita, voto)
 		- Ultimi accessi (ultimo) per controllo
 		- Rifare lo schema ER/logico in base alle modifiche (PIPPO)
 
@@ -151,10 +153,11 @@
 				f.submit();
 			}
 			
-			function passa_a(id,stato,pagina) { // Modifica lo stato (e quindi la pagina), l'identificativo e il numero di pagina
+			function passa_a(id,stato,pagina,ordinamento) { // Modifica lo stato (e quindi la pagina), l'identificativo e il numero di pagina
 				f.id.value=id;
 				f.stato.value=stato;
 				f.pagina.value=pagina;
+				f.ordinamento.value=ordinamento;
 				f.submit();
 			}
 			
@@ -195,26 +198,26 @@
 				curiosita.idCur.value=id;
 				curiosita.submit();
 			}
-			function controllo(){
-				if(registrazione.pass1.value!=registrazione.pass2.value){
+			function controllo() { // Controlli sulla registrazione utente
+				if(registrazione.pass1.value!=registrazione.pass2.value) { // Le 2 nuove password non coincidono
 					document.getElementById('avviso1').style.visibility="visible";
 					return false;
 				}
 				else
-					if(registrazione.pass1.value==""||registrazione.newUser.value==""||registrazione.newEmail.value==""){
+					if(registrazione.pass1.value==""||registrazione.newUser.value==""||registrazione.newEmail.value=="") { // Campi vuoti
 						document.getElementById('avviso1').style.visibility="hidden";
 						document.getElementById('avviso2').style.visibility="visible";
 						return false;
 					}
-					else{
+					else{ // Tutto OK
 						registrazione.submit();
 						return true;
 					}
 			}
-			function check() {
-				if(changepw.newpw.value==changepw.newpwc.value)
+			function check() { // Controlli sulla modifica della password
+				if(changepw.newpw.value==changepw.newpwc.value) // Tutto OK
 					return true;
-				else{
+				else { // Le 2 password non coincidono
 					document.getElementById('avviso').style.visibility="visible";
 					return false;
 				}
@@ -225,7 +228,7 @@
 		<header>
 		  	<div class="navbar navbar-dark bg-dark shadow-sm"> <!-- Base della Navbar-->
 		 		<div class="container d-flex justify-content-between"> <!-- Contenitore delle scorciatoie -->
-			  		<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,0,null)"> <!-- Scorciatoia Homepage -->
+			  		<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,0,null,null)"> <!-- Scorciatoia Homepage -->
 						<strong>Homepage</strong>
 					</a>
 					
@@ -339,9 +342,9 @@
 										'.$_SESSION["user"].'
 									</button>
 									<div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-										<button class="dropdown-item" type="button" onclick="passa_a(null,14,null)">Visualizza Profilo</button>
-										<button class="dropdown-item" type="button" onclick="passa_a(null,12,null)">Visualizza Recensioni</button>
-										<button class="dropdown-item" type="button" onclick="passa_a(null,13,null)">Visualizza Curiosità</button>
+										<button class="dropdown-item" type="button" onclick="passa_a(null,14,null,null)">Visualizza Profilo</button>
+										<button class="dropdown-item" type="button" onclick="passa_a(null,12,null,null)">Visualizza Recensioni</button>
+										<button class="dropdown-item" type="button" onclick="passa_a(null,13,null,null)">Visualizza Curiosità</button>
 										<button class="dropdown-item" type="button" onclick="logout()">Logout</button>
 									</div>
 								</div>
@@ -363,26 +366,31 @@
 						</div>
 					</div>
 				</div>
-				
 			</form>
-			<form name='f' id='f' method='get'> <!-- Form stato, id, pagina, logout (facoltativo) -->
+
+			<form name='f' id='f' method='get'> <!-- Form stato, id, pagina, ordinamento, logout (facoltativo) -->
 				<input type='hidden' name='stato' id='stato'> <!-- Identificativo della pagina da caricare -->
 				<div class="album py-5 bg-light">
 					<div class="container">
 						<div class="row">
 							<?php
 								echo "<input type='hidden' name='id' id='id'"; // Identificativo dell'oggetto a cui si fa riferimento
-								if(isset($_GET["id"])&&!empty($_GET["id"])){ // Id conosciuto
-									 echo "value='$_GET[id]'";
-								}
+								if(isset($_GET["id"])&&!empty($_GET["id"])) // Id conosciuto
+									 echo "value='".$_GET["id"]."'";
 								echo ">";
 
 								echo "<input type='hidden' name='pagina' id='pagina'"; // Numero di pagina 
-								if(isset($_GET["pagina"])&&!empty($_GET["pagina"])) { // Pagina conosciuta
-									 echo "value='$_GET[pagina]'>";
-								}
+								if(isset($_GET["pagina"])&&!empty($_GET["pagina"])) // Pagina conosciuta
+									 echo "value='".$_GET["pagina"]."'>";
 								else
 									echo "value='1'>";
+
+								echo "<input type='hidden' name='ordinamento' id='ordinamento'"; // Tipo di ordinamento 
+								if(isset($_GET["ordinamento"])&&!empty($_GET["ordinamento"])) { // Ordinamento definito
+									echo "value='".$_GET["ordinamento"]."'>";
+								}
+								else
+									echo "value='0'>";
 
 								if(isset($_GET["stato"])&&!empty($_GET["stato"])) { // Stato conosciuto
 									$stato=$_GET["stato"];
@@ -419,7 +427,7 @@
 											if ($video->num_rows>0) { // Almeno un risultato
 												while ($elemento = $video->fetch_assoc()) { 
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null)">
+														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null)">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/video/'.$elemento["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
@@ -469,7 +477,7 @@
 											if ($video->num_rows>0) { // Almeno un risultato 
 												while ($film = $video->fetch_assoc()) { 
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$film["id"].',5,null)">
+														<div class="col-md-3 py2" onclick="passa_a('.$film["id"].',5,null,null)">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/video/'.$film["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$film["nome"].'">
@@ -501,7 +509,7 @@
 											$video->free();	// Dealloco l'oggetto
 										}
 										echo ('	
-														<div class="container" onclick="passa_a(null,1,1)"><a href="#">Vedi tutti</a></div>	
+														<div class="container" onclick="passa_a(null,1,1,0)"><a href="#">Vedi tutti</a></div>	
 											'); // Link che mostra tutti i film (case 1) */
 
 										// MIGLIORI SERIE TV
@@ -522,7 +530,7 @@
 											if ($video->num_rows>0) { // Almeno un risultato 
 												while ($serie = $video->fetch_assoc()) { 
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$serie["id"].',6,null)">
+														<div class="col-md-3 py2" onclick="passa_a('.$serie["id"].',6,null,null)">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/serie/'.$serie["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/serie/default.jpg\';" alt="Locandina di '.$serie["nome"].'">
@@ -557,7 +565,7 @@
 											$video->free(); // Dealloco l'oggetto
 										}
 										echo ('	
-														<div class="container" onclick="passa_a(null,2,1)"><a href="#">Vedi tutte</a></div>	
+														<div class="container" onclick="passa_a(null,2,1,null)"><a href="#">Vedi tutte</a></div>	
 											'); // Link che mostra tutte le serie (case 2)
 
 										// MIGLIORI SAGHE
@@ -584,7 +592,7 @@
 											if ($saghe->num_rows>0) { // Almeno un risultato 
 												while ($saga = $saghe->fetch_assoc()) {  
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$saga["id"].',7,null)">
+														<div class="col-md-3 py2" onclick="passa_a('.$saga["id"].',7,null,null)">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/saghe/'.$saga["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/saghe/default.jpg\';" alt="Locandina di '.$saga["nome"].'">
@@ -615,7 +623,7 @@
 											$saghe->free(); // Dealloco l'oggetto
 										}
 										echo ('	
-														<div class="container" onclick="passa_a(null,3,1)"><a href="#">Vedi tutte</a></div>	
+														<div class="container" onclick="passa_a(null,3,1,null,0)"><a href="#">Vedi tutte</a></div>	
 											'); // Link che mostra tutte le saghe (case 3) */
 
 										// MIGLIORI DOCUMENTARI 
@@ -636,7 +644,7 @@
 											if ($video->num_rows>0) { // Almeno un risultato
 												while ($documentario = $video->fetch_assoc()) {
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$documentario["id"].',5,null)">
+														<div class="col-md-3 py2" onclick="passa_a('.$documentario["id"].',5,null,null)">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/video/'.$documentario["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$documentario["nome"].'">
@@ -668,7 +676,7 @@
 											$video->free(); // Dealloco l'oggetto
 										}
 										echo ('	
-														<div class="container" onclick="passa_a(null,4,1)"><a href="#">Vedi tutti</a></div>	
+														<div class="container" onclick="passa_a(null,4,1,0)"><a href="#">Vedi tutti</a></div>	
 											'); // Link che mostra tutte i documentari
 
 										$conn->close(); // Chiudo la connessione al DB
@@ -681,30 +689,73 @@
 										******************
 										*/
 										$conn=dbConn(); // Connessione al DB
-										$pagina=$_GET["pagina"]; /* Numero pagina corrente */
-										$stato=$_GET["stato"];/* Stato della pagina corrente */
-										$nris=8; /* Riusltati da mostrare per pagina */
-										$query="SELECT V.id, V.nome, V.durata, V.sinossi, AVG(RV.voto) mediaVoti
+										$pagina=$_GET["pagina"]; // Numero pagina corrente 
+										$stato=$_GET["stato"];// Stato della pagina corrente 
+										$ordinamento=intval($_GET["ordinamento"]); // Ordinamento corrente 
+										
+										switch(floor($ordinamento/2)) { // Tipo di ordinamento
+											case 0:
+												$ord="mediaVoti";
+												break;
+											case 1:
+												$ord="V.nome";
+												break;
+											case 2:
+												$ord="V.durata";
+												break;
+											case 3:
+												$ord="V.annoUscita";
+												break;
+											case 4:
+												$ord="V.nazionalita";
+												break;
+										}
+										if($ordinamento%2==1) // Ordinamento Discendente
+											$ord.=" DESC";
+
+										$nris=8; // Risultati da mostrare per pagina
+										$query="SELECT V.id, V.nome, V.durata, V.sinossi, V.annoUscita, V.nazionalita, AVG(RV.voto) mediaVoti
 										FROM recensionivideo RV RIGHT JOIN video V ON V.id=RV.idVideo
 										WHERE V.selettore=1
 										GROUP BY V.id
-										ORDER BY mediaVoti DESC
+										ORDER BY $ord
 										LIMIT $nris
-										OFFSET ".($nris*($pagina-1)); /* Preparazione Query: Tutti i film (ordinati per voto) */
-										$nFilm=$conn->query("SELECT COUNT(*) nFilm FROM video WHERE video.selettore=1")->fetch_assoc(); /* Numero totale di film */
+										OFFSET ".($nris*($pagina-1)); // Preparazione Query: Tutti i film 
+										$nFilm=$conn->query("SELECT COUNT(*) nFilm FROM video WHERE video.selettore=1")->fetch_assoc(); // Numero totale di film 
 
 										echo ('	
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 											<div class="container text-center"> 
 												<h2 class="mt-4 mb-4" >Tutti i Film</h2>
 											</div>
-											');
+											'); // Titolo
 
-										if ($video=$conn->query($query)) { /* Query effettuata con successo */
-											if ($video->num_rows>0) { /* Almeno un risultato */
-												while ($film = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni film */
+										$valori=["Voto","Nome","Durata","Anno d'uscita", "Nazionalità"]; // Valori dell'ordinamento
+										echo ('
+											<div class="container"> Ordina per: 
+												<select id="ord" onchange="passa_a(null,1,'.$pagina.',ord.value)">
+											'); // Scelta dell'ordinamento
+													for($i=0;$i<10;$i++) {
+														echo '<option value="'.$i.'"';
+														if($ordinamento==$i)
+															echo 'selected>';
+														else
+															echo '>';
+														echo $valori[$i/2];
+														if($i%2==1)
+															echo ' DECR';
+														echo '</option>';
+													}
+										echo ('
+												</select>
+											</div>
+										');
+										
+										if ($video=$conn->query($query)) { // Query effettuata con successo //
+											if ($video->num_rows>0) { // Almeno un risultato //
+												while ($film = $video->fetch_assoc()) {
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$film["id"].',5,null)">
+														<div class="col-md-3 py2" onclick="passa_a('.$film["id"].',5,null,null)">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/video/'.$film["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$film["nome"].'">
@@ -712,6 +763,12 @@
 																	<p class="card-text-description">'.$film["sinossi"].'</p>
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Durata: '.$film["durata"].' minuti</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Anno d\'uscita: '.$film["annoUscita"].'</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Nazionalità: '.$film["nazionalita"].'</small>
 																	</div>
 														');
 														if($film["mediaVoti"]!=null)
@@ -725,10 +782,10 @@
 																</div>
 															</div>
 														</div>
-															');
+															'); // Costruisco un riquadro per ogni film 
 												}
 											}
-											else { /* Comunicazione mancanza di film */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -737,33 +794,33 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di film
 											}
 											$video->free(); // Dealloco l'oggetto
 										}
 										echo "<div class='container'>";
-										if ($pagina!=1)
-											echo "<input type='button' value='<' / onclick='passa_a(null,$stato,".($pagina-1).")'>";
-										else
+										if ($pagina!=1) // Non è la prima pagina: Il tasto indietro funzionerà
+											echo "<input type='button' value='<' / onclick='passa_a(null,$stato,".($pagina-1).",null)'>";
+										else // E' la prima pagina: Il tasto indietro non funzionerà
 											echo "<input type='button' value='<' disable />";
-										for($i=1;$i<=ceil($nFilm["nFilm"]/$nris);$i++) {
-											echo '<button onclick="passa_a(null,'.$stato.','.$i.')";';
-											if($i==$pagina)
+										for($i=1;$i<=ceil($nFilm["nFilm"]/$nris);$i++) { // Bottoni pagine
+											echo '<button onclick="passa_a(null,'.$stato.','.$i.',null)";';
+											if($i==$pagina) // Se la pagina è la corrente la evidenzio
 												echo " style='background-color: black; color: white;'>$i";
 											else
 												echo ">$i";
 											echo "</button>";
 										}
-										if ($pagina!=ceil($nFilm["nFilm"]/$nris))
-												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).")'>";
-											else
+										if ($pagina!=ceil($nFilm["nFilm"]/$nris)) // Non è l'ultima pagina : Il tasto avanti funzionerà
+												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).",null)'>";
+											else // E' l'ultima pagina : Il tasto avanti non funzionerà
 												echo "<input type='button' value='>' disable />";	
 										echo ('
 											</div>
 											<div class="container">
 												<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 											</diV>
-											');
+											'); // Bottone per tornare indietro
 
 										$conn->close(); // Chiudo la connessione al DB
 										break;
@@ -775,51 +832,112 @@
 										*/
 
 										$conn=dbConn(); // Connessione al DB
-										$pagina=$_GET["pagina"]; /* Numero pagina corrente */
-										$stato=$_GET["stato"];/* Stato della pagina corrente */
-										$nris=8; /* Riusltati da mostrare per pagina */
-										$query="SELECT *
-										FROM serie
+										$pagina=$_GET["pagina"]; // Numero pagina corrente 
+										$stato=$_GET["stato"];// Stato della pagina corrente
+										$ordinamento=intval($_GET["ordinamento"]); // Ordinamento corrente
+										
+										switch(floor($ordinamento/2)) { // Tipo di ordinamento
+											case 0:
+												$ord="mediaVoti";
+												break;
+											case 1:
+												$ord="S.nome";
+												break;
+											case 2:
+												$ord="nStagioni";
+												break;
+											case 3:
+												$ord="nEpisodi";
+												break;
+											case 4:
+												$ord="annoUscita";
+												break;
+											case 5:
+												$ord="annoFine";
+												break;
+											case 6:
+												$ord="V.nazionalita";
+												break;
+										}
+										if($ordinamento%2==1) // Ordinamento decrescente
+											$ord.=" DESC";
+
+										$nris=8; // Risultati da mostrare per pagina
+										$query="SELECT S.*, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine, COUNT(V.id) nEpisodi, COUNT(V.stagione) nStagioni, AVG(RS.voto) mediaVoti, V.nazionalita
+										FROM serie S INNER JOIN video V ON V.idSerie=S.id LEFT JOIN recensioniserie RS ON RS.idSerie=S.id
+										GROUP BY S.id
+										ORDER BY $ord
 										LIMIT $nris
-										OFFSET ".($nris*($pagina-1)); /* Preparazione Query: Tutte le serie */
-										$nSerie=$conn->query("SELECT COUNT(DISTINCT S.id) nSerie FROM serie S JOIN video V ON V.idSerie=S.id")->fetch_assoc(); /* Numero totale di film */
+										OFFSET ".($nris*($pagina-1)); // Preparazione Query: Tutte le serie 
+										$nSerie=$conn->query("SELECT COUNT(DISTINCT id) nSerie FROM serie S")->fetch_assoc(); // Numero totale delle serie
 										echo ('	
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 											<div class="container text-center"> 
-												<h2 class="mt-4 mb-4" >Serie piu\' recenti</h2>
+												<h2 class="mt-4 mb-4" >Tutte le Serie</h2>
 											</div>
+											'); // Titolo
+
+											$valori=["Voto","Nome","Numero Stagioni","Numero Episodi", "Anno d'uscita", "Anno di fine", "Nazionalità"]; // Valori dell'ordinamento
+											echo ('
+												<div class="container"> Ordina per: 
+													<select id="ord" onchange="passa_a(null,2,'.$pagina.',ord.value)">
+												'); // Scelta dell'ordinamento
+											for($i=0;$i<14;$i++) {
+												echo '<option value="'.$i.'"';
+												if($ordinamento==$i)
+													echo 'selected>';
+												else
+													echo '>';
+												echo $valori[$i/2];
+												if($i%2==1)
+													echo ' DECR';
+												echo '</option>';
+											}
+											echo ('
+													</select>
+												</div>
 											');
-										if ($serie=$conn->query($query)) { /* Query effettuata con successo */
-											if ($serie->num_rows>0) { /* Almeno un risultato */
-												while ($elemento = $serie->fetch_assoc()) { /* Costruisco un riquadro per ogni serie */
+
+										if ($serie=$conn->query($query)) { // Query effettuata con successo
+											if ($serie->num_rows>0) { // Almeno un risultato
+												while ($elemento = $serie->fetch_assoc()) { 
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',6,null)" >
+														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',6,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/serie/'.$elemento["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/serie/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
 																	<p class="card-text">'.$elemento["nome"].'</p>
 																	<p class="card-text-description">'.$elemento["sinossi"].'</p>
-														');
-														$query="SELECT COUNT(S.id) nepisodi
-														FROM serie S JOIN video V ON S.id=V.idSerie 
-														WHERE V.idSerie=".$elemento["id"]; /* Preparazione Query: Numero episodi della serie */
-														if ($risultato=$conn->query($query)) { /* Query effettuata con successo */
-															if ($risultato->num_rows==1) { /* Almeno un risultato */
-																$nepisodi = $risultato->fetch_assoc();
-													echo ('			
 																	<div class="d-flex flex-row-reverse align-items-center">
-																		<small class="text-muted">Episodi: '.$nepisodi["nepisodi"].'</small>
+																		<small class="text-muted">Stagioni: '.$elemento["nStagioni"].'</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Episodi: '.$elemento["nEpisodi"].'</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+													');
+																	if($elemento["annoUscita"]!=$elemento["annoFine"])
+																	echo '	<small class="text-muted">Anni di produzione: '.$elemento["annoUscita"].'-'.$elemento["annoFine"].'</small>';
+																	else
+																	echo '	<small class="text-muted">Anno di produzione: '.$elemento["annoUscita"].'</small>';
+																	if($elemento["mediaVoti"]!=null)
+																	echo('
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Voto Medio: '.round($elemento["mediaVoti"],2).'</small>
+																	</div>
+																	');
+															echo ('
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Nazionalità: '.$elemento["nazionalita"].'</small>
 																	</div>
 																</div>
 															</div>
 														</div>
-														');
-															}
-														}
-														$risultato->free(); // Dealloco l'oggetto
+													'); // Costruisco un riquadro per ogni serie
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -828,27 +946,27 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi
 											}
 											$serie->free();	// Dealloco l'oggetto
 										}
 										
 										echo "<div class='container'>";
-										if ($pagina!=1)
-											echo "<input type='button' value='<' / onclick='passa_a(null,$stato,".($pagina-1).")'>";
-										else
+										if ($pagina!=1) // Non è la prima pagina: Il tasto indietro funzionerà
+											echo "<input type='button' value='<' / onclick='passa_a(null,$stato,".($pagina-1).",null)'>";
+										else // E' la prima pagina: Il tasto indietro non funzionerà
 											echo "<input type='button' value='<' disable />";
-										for($i=1;$i<=ceil($nSerie["nSerie"]/$nris);$i++) {
-											echo '<button onclick="passa_a(null,'.$stato.','.$i.')";';
-											if($i==$pagina)
+										for($i=1;$i<=ceil($nSerie["nSerie"]/$nris);$i++) { // Bottoni pagine
+											echo '<button onclick="passa_a(null,'.$stato.','.$i.',null)";';
+											if($i==$pagina) // Se la pagina è la corrente la evidenzio
 												echo " style='background-color: black; color: white;'>$i";
 											else
 												echo ">$i";
 											echo "</button>";
 										}
-										if ($pagina!=ceil($nSerie["nSerie"]/$nris))
-												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).")'>";
-											else
+										if ($pagina!=ceil($nSerie["nSerie"]/$nris)) // Non è l'ultima' pagina: Il tasto avanti funzionerà
+												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).",null)'>";
+											else // E' l'ultima' pagina: Il tasto avanti non funzionerà
 												echo "<input type='button' value='>' disable />";	
 											echo ('
 											</div>
@@ -865,32 +983,76 @@
 										*** TUTTE LE SAGHE ***
 										**********************
 										*/
+
 										$conn=dbConn(); // Connessione al DB
-										$pagina=$_GET["pagina"]; /* Numero pagina corrente */
-										$stato=$_GET["stato"];/* Stato della pagina corrente */
-										$nris=8; /* Riusltati da mostrare per pagina */
+										$pagina=$_GET["pagina"];  // Numero pagina corrente  
+										$stato=$_GET["stato"]; // Stato della pagina corrente  
+										$ordinamento=intval($_GET["ordinamento"]);  // Ordinamento corrente  
 										
-										$query="SELECT S.id, S.nome, COUNT(*) nFilm
+										switch(floor($ordinamento/2)) { // Tipo d'ordinamento
+											case 0:
+												$ord="S.nome";
+												break;
+											case 1:
+												$ord="nFilm";
+												break;
+											case 2:
+												$ord="annoUscita";
+												break;
+											case 3:
+												$ord="annoFine";
+												break;
+											case 4:
+												$ord="V.nazionalita";
+												break;
+										}
+										if($ordinamento%2==1) // Ordinamento discendente
+											$ord.=" DESC";
+
+										$nris=8;  // Riusltati da mostrare per pagina  
+										
+										$query="SELECT S.id, S.nome, COUNT(*) nFilm, V.nazionalita, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine
 										FROM saghe S
 										JOIN video V ON S.id=V.idSaga
 										GROUP BY S.id
 										LIMIT $nris
-										OFFSET ".($nris*($pagina-1)); /* Preparazione Query: Tutte le saghe */
+										OFFSET ".($nris*($pagina-1));  // Preparazione Query: Tutte le saghe  
 										
-										$nSaghe=$conn->query("SELECT COUNT(DISTINCT S.id) nSaghe FROM saghe S JOIN video V ON S.id=V.idSaga")->fetch_assoc(); /* Numero totale di saghe */ 										
+										$nSaghe=$conn->query("SELECT COUNT(DISTINCT S.id) nSaghe FROM saghe S JOIN video V ON S.id=V.idSaga")->fetch_assoc();  // Numero totale di saghe   										
 										
 										echo ('
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 											<div class="container text-center"> 
-												<h2 class="mt-4 mb-4" >Tutte le saghe</h2>
+												<h2 class="mt-4 mb-4" >Tutte le Saghe</h2>
 											</div>
-											');
+											'); // Titolo
 
-										if ($saghe=$conn->query($query)) { /* Query effettuata con successo */
-											if ($saghe->num_rows>0) { /* Almeno un risultato */
-												while ($saga = $saghe->fetch_assoc()) { /* Costruisco un riquadro per ogni film */
+											$valori=["Nome","Numero Film", "Anno d'uscita", "Anno di fine", "Nazionalità"]; // Valori ordinamento
+											echo ('
+												<div class="container"> Ordina per: 
+													<select id="ord" onchange="passa_a(null,3,'.$pagina.',ord.value)">
+												'); // Scelta dell'ordinamento
+											for($i=0;$i<10;$i++) {
+												echo '<option value="'.$i.'"';
+												if($ordinamento==$i)
+													echo 'selected>';
+												else
+													echo '>';
+												echo $valori[$i/2];
+												if($i%2==1)
+													echo ' DECR';
+												echo '</option>';
+											}
+											echo ('
+													</select>
+												</div>
+											');
+										
+										if ($saghe=$conn->query($query)) {  // Query effettuata con successo  
+											if ($saghe->num_rows>0) {  // Almeno un risultato  
+												while ($saga = $saghe->fetch_assoc()) {  
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$saga["id"].',7,null)">
+														<div class="col-md-3 py2" onclick="passa_a('.$saga["id"].',7,null,null)">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/saghe/'.$saga["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/saghe/default.jpg\';" alt="Locandina di '.$saga["nome"].'">
@@ -898,13 +1060,23 @@
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Film: '.$saga["nFilm"].'</small>
 																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+																		<small class="text-muted">Nazionalità: '.$saga["nazionalita"].'</small>
+																	</div>
+																	<div class="d-flex flex-row-reverse align-items-center">
+														');
+															if($saga["annoUscita"]!=$saga["annoFine"])
+																echo '	<small class="text-muted">Anni di produzione: '.$saga["annoUscita"].'-'.$saga["annoFine"].'</small>';
+																else
+																echo '	<small class="text-muted">Anno di produzione: '.$saga["annoUscita"].'</small>';
+													echo ('			</div>
 																</div>
 															</div>
 														</div>
-														');
+														'); // Costruisco un riquadro per ogni film 
 												}
 											}
-											else { /* Comunicazione mancanza di film */
+											else {  
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -913,27 +1085,27 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di film  
 											}
 											$saghe->free();	// Dealloco l'oggetto
 										}
 										
 										echo "<div class='container'>";
-										if ($pagina!=1)
-											echo "<input type='button' value='<' / onclick='passa_a(null,$stato,".($pagina-1).")'>";
-										else
+										if ($pagina!=1) // Non è la prima pagina: Il tasto indietro funzionerà
+											echo "<input type='button' value='<' / onclick='passa_a(null,$stato,".($pagina-1).",null)'>";
+										else // E' la prima pagina: Il tasto indietro non funzionerà
 											echo "<input type='button' value='<' disable />";
-										for($i=1;$i<=ceil($nSaghe["nSaghe"]/$nris);$i++) {
-											echo '<button onclick="passa_a(null,'.$stato.','.$i.')";';
-											if($i==$pagina)
+										for($i=1;$i<=ceil($nSaghe["nSaghe"]/$nris);$i++) { // Bottoni pagine
+											echo '<button onclick="passa_a(null,'.$stato.','.$i.',null)";';
+											if($i==$pagina) // Se la pagina è la corrente la evidenzio
 												echo " style='background-color: black; color: white;'>$i";
 											else
 												echo ">$i";
 											echo "</button>";
 										}
-										if ($pagina!=ceil($nSaghe["nSaghe"]/$nris))
-												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).")'>";
-											else
+										if ($pagina!=ceil($nSaghe["nSaghe"]/$nris)) // Non è l'ultima' pagina: Il tasto avanti funzionerà
+												echo "<input type='button' value='>' / onclick='passa_a(null,$stato,".($pagina+1).",null)'>";
+											else // E' l'ultima' pagina: Il tasto avanti non funzionerà
 												echo "<input type='button' value='>' disable />";	
 											echo ('
 											</div>
@@ -1076,13 +1248,13 @@
 										if($video["idSerie"]!=null)
 											echo ('
 												<div class="container text-left">
-													<p class="card-text" onclick="passa_a('.$video["idSerie"].',6,null);"><strong>Serie: </strong><a href="#"> '.$video["nomeSe"].' ('.$video["stagione"].'X'.$video["numero"].')</a></p>
+													<p class="card-text" onclick="passa_a('.$video["idSerie"].',6,null,null);"><strong>Serie: </strong><a href="#"> '.$video["nomeSe"].' ('.$video["stagione"].'X'.$video["numero"].')</a></p>
 												</div>
 											');
 										else if($video["idSaga"]!=null)
 											echo ('
 													<div class="container text-left">
-														<p class="card-text" onclick="passa_a('.$video["idSaga"].',7,null);"><strong>Saga: </strong><a href="#"> '.$video["nomeSa"].' ('.$video["numero"].'° film)</a></p>
+														<p class="card-text" onclick="passa_a('.$video["idSaga"].',7,null,null);"><strong>Saga: </strong><a href="#"> '.$video["nomeSa"].' ('.$video["numero"].'° film)</a></p>
 													</div>
 												');
 										
@@ -1099,7 +1271,7 @@
 											if ($attori->num_rows>0) {
 												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$attore["idPersona"].',8,null);" >
+														<div class="col-md-3 py2" onclick="passa_a('.$attore["idPersona"].',8,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/persone/'.$attore["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$attore["nome"].' '.$attore["cognome"].'">
@@ -1143,7 +1315,7 @@
 											if ($registi->num_rows>0) {
 												while ($regista = $registi->fetch_assoc()) { /* Costruisco un riquadro per ogni regista */
 													echo ('
-															<div class="col-md-3 py2" onclick="passa_a('.$regista["idPersona"].',8,null)" >
+															<div class="col-md-3 py2" onclick="passa_a('.$regista["idPersona"].',8,null,null)" >
 																<div class="card h-100 mb-4 shadow-sm">
 																	<div class="card-body">
 																		<img src="images/persone/'.$regista["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$regista["nome"].' '.$regista["cognome"].'">
@@ -1182,7 +1354,7 @@
 											if ($produttori->num_rows>0) {
 												while ($produttore = $produttori->fetch_assoc()) { /* Costruisco un riquadro per ogni produttore */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$produttore["idPersona"].',8,null)" >
+														<div class="col-md-3 py2" onclick="passa_a('.$produttore["idPersona"].',8,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/persone/'.$produttore["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$produttore["nome"].' '.$produttore["cognome"].'">
@@ -1221,7 +1393,7 @@
 											if ($personaggi->num_rows>0) {
 												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
 													echo ('
-														<div class="col-md-3 mb-4 py2" onclick="passa_a('.$personaggio["id"].',9,null)" >
+														<div class="col-md-3 mb-4 py2" onclick="passa_a('.$personaggio["id"].',9,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/personaggi/'.$personaggio["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$personaggio["nome"].'">
@@ -1812,7 +1984,7 @@
 														<p class="card-text" style="text-align:center !important">'.$serie["sinossi"].'</p>
 													</div>
 													<div class="container text-left">
-														<p class="card-text mt-4" onclick="passa_a('.$serie["id"].',11,1);"><strong>Stagioni: </strong><a href="#">Visualizza tutti gli episodi</a></p>
+														<p class="card-text mt-4" onclick="passa_a('.$serie["id"].',11,1,null);"><strong>Stagioni: </strong><a href="#">Visualizza tutti gli episodi</a></p>
 													</div>
 												</div>
 												</div>
@@ -1835,7 +2007,7 @@
 											if ($attori->num_rows>0) {
 												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null);" >
+														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/persone/'.$attore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$attore["nome"].' '.$attore["cognome"].'">
@@ -1881,7 +2053,7 @@
 											if ($registi->num_rows>0) {
 												while ($regista = $registi->fetch_assoc()) { /* Costruisco un riquadro per ogni regista */
 													echo ('
-															<div class="col-md-3 py2" onclick="passa_a('.$regista["id"].',8,null)" >
+															<div class="col-md-3 py2" onclick="passa_a('.$regista["id"].',8,null,null)" >
 																<div class="card h-100 mb-4 shadow-sm">
 																	<div class="card-body">
 																		<img src="images/persone/'.$regista["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$regista["nome"].' '.$regista["cognome"].'">
@@ -1922,7 +2094,7 @@
 											if ($produttori->num_rows>0) {
 												while ($produttore = $produttori->fetch_assoc()) { /* Costruisco un riquadro per ogni produttore */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$produttore["id"].',8,null)" >
+														<div class="col-md-3 py2" onclick="passa_a('.$produttore["id"].',8,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/persone/'.$produttore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$produttore["nome"].' '.$produttore["cognome"].'">
@@ -1963,7 +2135,7 @@
 											if ($personaggi->num_rows>0) {
 												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
 													echo ('
-														<div class="col-md-3 mb-4 py2" onclick="passa_a('.$personaggio["id"].',9,null)" >
+														<div class="col-md-3 mb-4 py2" onclick="passa_a('.$personaggio["id"].',9,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/personaggi/'.$personaggio["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$personaggio["nome"].'">
@@ -2506,7 +2678,7 @@
 
 												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
 													echo ('
-															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null);" >
+															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
 																	<div class="card-body">
 																		<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
@@ -2539,7 +2711,7 @@
 											if ($attori->num_rows>0) {
 												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null);" >
+														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/persone/'.$attore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$attore["nome"].' '.$attore["cognome"].'">
@@ -2585,7 +2757,7 @@
 											if ($registi->num_rows>0) {
 												while ($regista = $registi->fetch_assoc()) { /* Costruisco un riquadro per ogni regista */
 													echo ('
-															<div class="col-md-3 py2" onclick="passa_a('.$regista["id"].',8,null)" >
+															<div class="col-md-3 py2" onclick="passa_a('.$regista["id"].',8,null,null)" >
 																<div class="card h-100 mb-4 shadow-sm">
 																	<div class="card-body">
 																		<img src="images/persone/'.$regista["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$regista["nome"].' '.$regista["cognome"].'">
@@ -2626,7 +2798,7 @@
 											if ($produttori->num_rows>0) {
 												while ($produttore = $produttori->fetch_assoc()) { /* Costruisco un riquadro per ogni produttore */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$produttore["id"].',8,null)" >
+														<div class="col-md-3 py2" onclick="passa_a('.$produttore["id"].',8,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/persone/'.$produttore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$produttore["nome"].' '.$produttore["cognome"].'">
@@ -2667,7 +2839,7 @@
 											if ($personaggi->num_rows>0) {
 												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
 													echo ('
-														<div class="col-md-3 mb-4 py2" onclick="passa_a('.$personaggio["id"].',9,null)" >
+														<div class="col-md-3 mb-4 py2" onclick="passa_a('.$personaggio["id"].',9,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/personaggi/'.$personaggio["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$personaggio["nome"].'">
@@ -2728,7 +2900,7 @@
 
 												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
 													echo ('
-															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null);" >
+															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
 																	<div class="card-body">
 																		<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
@@ -2760,7 +2932,7 @@
 												
 												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
 													echo ('
-															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null);" >
+															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
 																	<div class="card-body">
 																		<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
@@ -2791,7 +2963,7 @@
 												
 												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
 													echo ('
-															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null);" >
+															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
 																	<div class="card-body">
 																		<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
@@ -2822,7 +2994,7 @@
 												
 												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$personaggio["id"].',9,null)" >
+														<div class="col-md-3 py2" onclick="passa_a('.$personaggio["id"].',9,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/personaggi/'.$personaggio["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$personaggio["nome"].'">
@@ -2878,7 +3050,7 @@
 											if ($attori->num_rows>0) {
 												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null);" >
+														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/persone/'.$attore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$attore["nome"].' '.$attore["cognome"].'">
@@ -2916,7 +3088,7 @@
 											if ($video->num_rows>0) { /* Almeno un risultato */
 												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,,null)" >
+														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/video/'.$elemento["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
@@ -2970,7 +3142,7 @@
 											if ($risultati->num_rows>0) {
 												while ($elemento = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni film */
 													echo ('
-															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null);" >
+															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
 																	<div class="card-body">
 																		<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
@@ -3017,7 +3189,7 @@
 											if ($serie->num_rows>0) { /* Almeno un risultato */
 												while ($elemento = $serie->fetch_assoc()) { /* Costruisco un riquadro per ogni serie */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',6,null)" >
+														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',6,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/serie/'.$elemento["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/serie/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
@@ -3071,7 +3243,7 @@
 											if ($saghe->num_rows>0) { /* Almeno un risultato */
 												while ($saga = $saghe->fetch_assoc()) { /* Costruisco un riquadro per ogni saga TV */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$saga["id"].',6,null)">
+														<div class="col-md-3 py2" onclick="passa_a('.$saga["id"].',6,null,null)">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/saghe/'.$saga["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/saghe/default.jpg\';" alt="Locandina di '.$saga["nome"].'">
@@ -3109,7 +3281,7 @@
 											if ($attori->num_rows>0) {
 												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null);" >
+														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/persone/'.$attore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$attore["nome"].' '.$attore["cognome"].'">
@@ -3148,7 +3320,7 @@
 												
 												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$personaggio["id"].',9,null)" >
+														<div class="col-md-3 py2" onclick="passa_a('.$personaggio["id"].',9,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/personaggi/'.$personaggio["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$personaggio["nome"].'">
@@ -3211,7 +3383,7 @@
 											$stagioni->free(); // Dealloco l'oggetto
 										}
 
-										echo '<div class="container"> <select id="sel" onchange="passa_a('.$id.',11,sel.value)">';
+										echo '<div class="container"> <select id="sel" onchange="passa_a('.$id.',11,sel.value,null)">';
 										for($i=1;$i<=$nStag;$i++) {
 											echo '<option value="'.$i.'"';
 											if($i==$pagina)
@@ -3229,7 +3401,7 @@
 											if ($video->num_rows>0) {
 												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null);" >
+														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/video/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
