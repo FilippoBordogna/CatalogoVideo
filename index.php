@@ -32,6 +32,11 @@
 	if(!isset($_SESSION["login"]) || $_SESSION["login"]!=1) // Mancata presenza di dati integri per login 
 		session_unset();
 	if(isset($_GET["stato"])&&$_GET["stato"]=="logout") { // Operazione di logout 
+		if(isset($_SESSION['idUser'])){
+			$conn=dbConn();
+			$query="UPDATE accessi SET durata=current_timestamp()-dataOra WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra DESC LIMIT 1";
+			$risultato=$conn->query($query);
+		}
 		session_unset();
 		session_destroy();
 		session_start(); // Chiudo e riapro la sessione
@@ -39,7 +44,8 @@
 			$_GET["stato"]=$_GET["logout"];
 			if($_GET["stato"]<=14 && $_GET["stato"]>=12)
 			$_GET["stato"]=0;
-		}	
+		}
+		
 	}
 	
 	function dbConn() { // Connessione al DB 
@@ -252,6 +258,18 @@
 								$_SESSION["idUser"]=$riga["id"];
 								$_SESSION["admin"]=$riga["admin"];
 								$_SESSION["login"]=1;
+								$query="SELECT COUNT(*) n FROM accessi WHERE idUtente=$_SESSION[idUser]";
+								$nAcc=$conn->query($query); // Risultati della query 
+								if ($nAcc->num_rows>0) { // 1 unico risultato
+									// Prelevo il valore
+									$riga=$nAcc->fetch_assoc();
+									if($riga['n']==10){
+										$query="DELETE FROM accessi WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra LIMIT 1";
+										$risultati=$conn->query($query); // Risultati della query 	
+									}
+									$query="INSERT INTO accessi (indirizzoIP,durata,idUtente) VALUES ('$_SERVER[REMOTE_ADDR]',1440,$_SESSION[idUser])";
+									$risultati=$conn->query($query); // Risultati della query 	
+								}
 							}
 							else // Piu' di un utente con la stessa login (ERRORE) 
 								$login=0; // Annullo l'operazione di login 
@@ -3991,42 +4009,68 @@
 											'); // Titolo
 										if(isset($_SESSION["idUser"])){
 											$id=$_SESSION["idUser"];
-											$query="SELECT * FROM utenti WHERE id=$id";
+											$query="SELECT indirizzoIP, dataOra, durata FROM accessi WHERE idUtente=$id ORDER BY dataOra";
 											if($result=$conn->query($query))
 												if($result->num_rows>0){
-													$utente=$result->fetch_assoc();
-													
-													echo '
-															<h3><strong>Username: </strong>'.$utente["username"].'</h3>
-															<h3><strong>Email: </strong>'.$utente["email"].'</h3>
-													';
-													if($utente["admin"]==1)
-														echo '<h3>Sei un <strong>AMMINISTRATORE</strong></h3>';
-													echo'
-															<form name="changepw" id="changepw" method="post" onsubmit="return check()" action="index.php?stato='.$_GET['stato'].'">
-																<div class="form-group row">
-																	<label for="inputPassword" class="col-sm-2 col-form-label">Vecchia password</label>
-																	<div class="col-sm-10">
-																	  <input type="password" class="form-control" id="oldpw" name="oldpw" placeholder="Vecchia password" required>
+													echo "
+														<h3><strong>Ultimi accessi</h3>
+														<table style='text-align:center;' class='mb-4' width='100%'>
+															  <tr>
+																<th>Indirizzo IP</th>
+																<th>Data e ora accesso</th>
+																<th>durata sessione</th>
+															  </tr>";
+															  $i=1;
+													while($accesso=$result->fetch_assoc()){
+														echo"
+																  <tr>
+																	<td>$accesso[indirizzoIP]</td>
+																	<td>$accesso[dataOra]</td>";
+														if($i!=$result->num_rows)			
+															echo"   <td>$accesso[durata]</td>";
+														else
+															echo"   <td>In corso</td>";
+														echo"		  </tr>";
+														$i++;
+																
+													}
+													$query="SELECT username, email, admin FROM utenti WHERE id=$id";
+													if($result=$conn->query($query))
+														if($result->num_rows>0){
+														$utente=$result->fetch_assoc();
+														
+														echo '	</table>
+																<h3><strong>Username: </strong>'.$utente["username"].'</h3>
+																<h3><strong>Email: </strong>'.$utente["email"].'</h3>
+														';
+														if($utente["admin"]==1)
+															echo '<h3>Sei un <strong>AMMINISTRATORE</strong></h3>';
+														echo'
+																<form name="changepw" id="changepw" method="post" onsubmit="return check()" action="index.php?stato='.$_GET['stato'].'">
+																	<div class="form-group row">
+																		<label for="inputPassword" class="col-sm-2 col-form-label">Vecchia password</label>
+																		<div class="col-sm-10">
+																		  <input type="password" class="form-control" id="oldpw" name="oldpw" placeholder="Vecchia password" required>
+																		</div>
 																	</div>
-																</div>
-																<div class="form-group row">
-																	<label for="inputPassword" class="col-sm-2 col-form-label">Nuova password</label>
-																	<div class="col-sm-10">
-																	  <input type="password" class="form-control" id="newpw" name="newpw" placeholder="Nuova password" required>
+																	<div class="form-group row">
+																		<label for="inputPassword" class="col-sm-2 col-form-label">Nuova password</label>
+																		<div class="col-sm-10">
+																		  <input type="password" class="form-control" id="newpw" name="newpw" placeholder="Nuova password" required>
+																		</div>
 																	</div>
-																</div>
-																<div class="form-group row">
-																	<label for="inputPassword" class="col-sm-2 col-form-label">Conferma password</label>
-																	<div class="col-sm-10">
-																	  <input type="password" class="form-control" id="newpwc" name="newpwc" placeholder="Conferma password" required>
+																	<div class="form-group row">
+																		<label for="inputPassword" class="col-sm-2 col-form-label">Conferma password</label>
+																		<div class="col-sm-10">
+																		  <input type="password" class="form-control" id="newpwc" name="newpwc" placeholder="Conferma password" required>
+																		</div>
 																	</div>
-																</div>
-																<p style="color:red; visibility:hidden" id="avviso" name="avviso" class="ml-2">Le due password devono coincidere</p>
+																	<p style="color:red; visibility:hidden" id="avviso" name="avviso" class="ml-2">Le due password devono coincidere</p>
 
-																<button type="submit" class="btn btn-primary ml-2 mt-2">Cambia password</button>
-		
-													';
+																	<button type="submit" class="btn btn-primary ml-2 mt-2">Cambia password</button>
+			
+														';
+													}
 														$result->free(); // Dealloco l'oggetto
 												}
 										}	
