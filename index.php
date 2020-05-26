@@ -469,7 +469,7 @@
 																</div>
 															'); // Costruisco un riquadro per ogni video (pt.2)
 														}
-														$generi->free();
+														$generi->free(); // Dealloco l'oggetto
 													}
 
 													echo('
@@ -552,7 +552,7 @@
 																</div>
 															'); // Costruisco un riquadro per ogni film (pt.2)
 														}
-														$generi->free();
+														$generi->free(); // Dealloco l'oggetto
 													}
 
 													echo('	
@@ -647,7 +647,7 @@
 																	</div>
 																'); // Costruisco un riquadro per ogni serie TV (pt.2)
 															}
-															$generi->free();
+															$generi->free(); // Dealloco l'oggetto
 														}
 
 												echo ('	
@@ -745,7 +745,7 @@
 																	</div>
 																'); // Costruisco un riquadro per ogni saga (pt.2)
 															}
-															$generi->free();
+															$generi->free(); // Dealloco l'oggetto
 														}
 
 														echo ('
@@ -831,7 +831,7 @@
 																	</div>
 																'); // Costruisco un riquadro per ogni documentario (pt.2)
 															}
-															$generi->free();
+															$generi->free(); // Dealloco l'oggetto
 														}
 
 													echo ('
@@ -979,7 +979,7 @@
 																</div>
 															'); // Costruisco un riquadro per ogni film (pt.2)
 														}
-														$generi->free();
+														$generi->free(); // Dealloco l'oggetto
 													}
 
 													echo ('
@@ -1161,7 +1161,7 @@
 																		</div>
 																	'); // Costruisco un riquadro per ogni serie TV (pt.2)
 																}
-																$generi->free();
+																$generi->free(); // Dealloco l'oggetto
 															}
 
 														echo ('
@@ -1335,7 +1335,7 @@
 																	</div>
 																'); // Costruisco un riquadro per ogni saga (pt.2)
 															}
-															$generi->free();
+															$generi->free(); // Dealloco l'oggetto
 														}
 
 													echo ('
@@ -3248,7 +3248,7 @@
 											}																				
 											$video->free(); // Dealloco l'oggetto
 										}
-										//-------------------------------------------------
+										
 										$query="SELECT Pggi.* 
 										FROM interpretazioni I JOIN persone Pers ON Pers.id=I.idAttore JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
 										WHERE Pers.id=$id"; /* Preparazione Query: Personaggi interpretati */
@@ -3768,7 +3768,7 @@
 																<button type="submit" class="btn btn-primary ml-2 mt-2">Cambia password</button>
 		
 													';
-														$result->free();
+														$result->free(); // Dealloco l'oggetto
 												}
 										}	
 										echo '</div>';
