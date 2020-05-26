@@ -34,7 +34,15 @@
 	if(isset($_GET["stato"])&&$_GET["stato"]=="logout") { // Operazione di logout 
 		if(isset($_SESSION['idUser'])){
 			$conn=dbConn();
-			$query="UPDATE accessi SET durata=current_timestamp()-dataOra WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra DESC LIMIT 1";
+			
+			$query="SELECT current_timestamp()-dataOra durata FROM accessi WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra DESC LIMIT 1";
+			$risultato=$conn->query($query);
+			$tempo=$risultato->fetch_assoc();
+			echo $tempo['durata'];
+			if($tempo['durata']>1440)
+				$query="UPDATE accessi SET durata=1440 WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra DESC LIMIT 1";
+			else
+				$query="UPDATE accessi SET durata=current_timestamp()-dataOra WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra DESC LIMIT 1";
 			$risultato=$conn->query($query);
 		}
 		session_unset();
