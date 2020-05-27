@@ -189,7 +189,7 @@
 				f.submit();
 			}
 			
-			function recensione(id) { // Controlli sulla recensione ed effettivo inserimento 
+			function recens(id) { // Controlli sulla recensione ed effettivo inserimento 
 				if(f.rate.value==0)
 					alert("Errore! Devi inserire un voto per lasciare una recensione");
 				else{
@@ -206,9 +206,9 @@
 				}
 			}
 			function elimina(id,idUtente) { // Elimina una recensione 
-				recensioni.rate.value="ELIMINA";
-				recensioni.idUtente.value=idUtente;
-				recensioni.submit();
+				recensione.rate.value="ELIMINA";
+				recensione.idUtente.value=idUtente;
+				recensione.submit();
 			}
 			function eliminaC(id,comando="ELIMINA") { // Elimina una recensione 
 				curiosita.check.value=comando;
@@ -216,9 +216,9 @@
 				curiosita.submit();
 			}
 			function verifica(idUtente){ // Verifica della recensione da parte dell'admin 
-				recensioni.rate.value="VERIFICA";
-				recensioni.idUtente.value=idUtente;
-				recensioni.submit();
+				recensione.rate.value="VERIFICA";
+				recensione.idUtente.value=idUtente;
+				recensione.submit();
 			}
 			
 			function verificaC(id){ // Verifica della recensione da parte dell'admin 
@@ -1717,7 +1717,7 @@
 												else
 												{
 													$query="UPDATE 
-													video SET idAdmin=$_SESSION[idUser] WHERE id=$_POST[idCur]";
+													curiositavideo SET idAdmin=$_SESSION[idUser] WHERE id=$_POST[idCur]";
 													//echo $query;
 													if($conn->query($query))
 														echo "<script type='text/javascript'>alert('La curiosita è stata verificata!');</script>";
@@ -1977,7 +1977,7 @@
 															  
 															  <div class="modal-footer">
 																<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-																<button type="button" onclick="recensione('.$id.')" class="btn btn-primary">Salva recensione</button>
+																<button type="button" onclick="recens('.$id.')" class="btn btn-primary">Salva recensione</button>
 															  </div>
 															</div>
 														  </div>
@@ -2071,7 +2071,7 @@
 																<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
 																<button type="button"  class="btn btn-primary" data-toggle="modal" data-target="#conferma">Elimina recensione</button>
 																
-																<button type="button" onclick="recensione('.$id.')" class="btn btn-primary">Modifica recensione</button>
+																<button type="button" onclick="recens('.$id.')" class="btn btn-primary">Modifica recensione</button>
 															  </div>
 															</div>
 														  </div>
@@ -2142,7 +2142,7 @@
 																		echo'
 																			<div class="modal-footer">
 																				<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>
-																				<button type="button" class="btn btn-primary" onclick="verifica('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																				<button type="button" class="btn btn-primary" onclick="verifica('.$riga["id"].')" data-dismiss="modal">Verifica</button>
 																			</div>';
 																echo '
 														</div>
@@ -2189,7 +2189,7 @@
 																		echo'
 																			<div class="modal-footer">
 																				<button type="button"  class="btn btn-secondary" onclick="elimina('.$id.','.$riga["id"].')" data-dismiss="modal">Elimina</button>
-																				<button type="button" class="btn btn-primary" onclick="verifica('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																				<button type="button" class="btn btn-primary" onclick="verifica('.$riga["id"].')" data-dismiss="modal">Verifica</button>
 																			</div>';
 																echo '
 																	</div>';
@@ -2726,7 +2726,7 @@
 															  
 															  <div class="modal-footer">
 																<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
-																<button type="button" onclick="recensione('.$id.')" class="btn btn-primary">Salva recensione</button>
+																<button type="button" onclick="recens('.$id.')" class="btn btn-primary">Salva recensione</button>
 															  </div>
 															</div>
 														  </div>
@@ -2820,7 +2820,7 @@
 																<button type="button" class="btn btn-secondary" data-dismiss="modal">Annulla</button>
 																<button type="button"  class="btn btn-primary" data-toggle="modal" data-target="#conferma">Elimina recensione</button>
 																
-																<button type="button" onclick="recensione('.$id.')" class="btn btn-primary">Modifica recensione</button>
+																<button type="button" onclick="recens('.$id.')" class="btn btn-primary">Modifica recensione</button>
 															  </div>
 															</div>
 														  </div>
@@ -2892,7 +2892,7 @@
 																			echo'
 																				<div class="modal-footer">
 																					<button type="button"  class="btn btn-secondary" data-toggle="modal" data-target="#conferma">Elimina</button>
-																					<button type="button" class="btn btn-primary" onclick="verifica('.$id.','.$riga["id"].')" data-dismiss="modal">Verifica</button>
+																					<button type="button" class="btn btn-primary" onclick="verifica('.$riga["id"].')" data-dismiss="modal">Verifica</button>
 																				</div>';
 																	echo '
 															</div>
@@ -4371,7 +4371,7 @@
 											if ($risultati->num_rows>0) { // Almeno un risultato 
 												while ($video = $risultati->fetch_assoc()) {
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$video["id"].',5,null,null,,null,null)">
+														<div class="col-md-3 py2" onclick="passa_a('.$video["id"].',5,null,null,null,null)">
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/video/'.$video["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$video["nome"].'">
@@ -4636,15 +4636,16 @@
 									echo "<h1><strong>404. PAGE NOT FOUND</strong></h1>";
 									break;
 								}
-		 
+								if($stato!=14)
+									echo "</form>";
 							?>
 			
 		</main>
+
 		<form name="recensione" id="recensione" method="post" action="
 		<?php
-			echo "index.php?stato=".$_GET["stato"]."&id=".$_GET["id"];
+			echo 'index.php?stato='.$_GET["stato"].'&id='.$_GET["id"].'">';
 		?>
-		">
 			<input type='hidden' name='rate' id='rate'> <!-- Memorizzazione voto -->
 			<input type='hidden' name='rec' id='rec'> <!-- Memorizzazione recensione -->
 			<input type='hidden' name='idUtente' id='idUtente'> <!-- Memorizzazione recensione -->
@@ -4659,7 +4660,8 @@
 			<input type='hidden' name='cur' id='cur'> <!-- Memorizzazione recensione -->
 			<input type='hidden' name='idCur' id='idCur'> <!-- Memorizzazione recensione -->
 				
-		</form>		
+		</form>	
+		
 		<footer class="text-muted">
 			<div class="container">
 				<p class="float-right">
