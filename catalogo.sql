@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 26, 2020 alle 21:56
+-- Creato il: Mag 27, 2020 alle 05:04
 -- Versione del server: 10.1.31-MariaDB
 -- Versione PHP: 7.2.4
 
@@ -43,6 +43,24 @@ CREATE TABLE `accessi` (
 --   `idUtente`
 --       `utenti` -> `id`
 --
+
+--
+-- Dump dei dati per la tabella `accessi`
+--
+
+INSERT INTO `accessi` (`id`, `indirizzoIP`, `dataOra`, `durata`, `idUtente`) VALUES
+(1, '::1', '2020-05-26 22:20:11', 83, 3),
+(2, '::1', '2020-05-26 22:29:23', 906, 4),
+(3, '::1', '2020-05-26 22:31:15', 107, 3),
+(4, '::1', '2020-05-26 22:32:50', 24, 1),
+(5, '::1', '2020-05-26 22:34:27', 14, 5),
+(6, '::1', '2020-05-26 22:35:09', 63, 6),
+(7, '::1', '2020-05-26 22:36:04', 82, 7),
+(8, '::1', '2020-05-26 22:37:16', 99, 7),
+(9, '::1', '2020-05-26 22:37:49', 28, 4),
+(10, '::1', '2020-05-26 22:38:03', 3, 3),
+(11, '::1', '2020-05-26 22:41:50', 293, 1),
+(12, '::1', '2020-05-26 22:41:51', 1440, 1);
 
 -- --------------------------------------------------------
 
@@ -230,13 +248,6 @@ CREATE TABLE `curiositaserie` (
 --   `idAdmin`
 --       `utenti` -> `id`
 --
-
---
--- Dump dei dati per la tabella `curiositaserie`
---
-
-INSERT INTO `curiositaserie` (`id`, `idSerie`, `idUtente`, `idAdmin`, `testo`) VALUES
-(1, 1, 4, NULL, 'Prova\r\n');
 
 -- --------------------------------------------------------
 
@@ -464,7 +475,17 @@ INSERT INTO `generivideo` (`id`, `idVideo`, `idGenere`) VALUES
 (250, 31, 26),
 (251, 31, 1),
 (252, 31, 15),
-(253, 31, 9);
+(253, 31, 9),
+(254, 23, 8),
+(255, 24, 8),
+(256, 25, 8),
+(257, 26, 8),
+(258, 27, 8),
+(259, 28, 8),
+(260, 29, 8),
+(261, 30, 8),
+(262, 31, 8),
+(263, 32, 8);
 
 -- --------------------------------------------------------
 
@@ -772,7 +793,8 @@ INSERT INTO `recensionivideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`
 (15, 4, 9, 'Non vedo l\'ora di vedere altri episodi. Questa serie promette bene', 6),
 (16, 1, 10, 'Proprio bella questa serie. Il professore e Tokyo sono fantastici', NULL),
 (17, 4, 8, 'Quanto è affascinante il personaggio di Harold Finch: genio nascosto', 5),
-(18, 7, 7, 'Molto difficile capire tutti gli stravolgimenti se non si è davvero attenti', 3);
+(18, 7, 7, 'Molto difficile capire tutti gli stravolgimenti se non si è davvero attenti', 3),
+(23, 7, 7, 'Molto bello peccato per la voce di PIF: orribile. Rovina tutto', 5);
 
 -- --------------------------------------------------------
 
@@ -919,12 +941,12 @@ CREATE TABLE `utenti` (
 --
 
 INSERT INTO `utenti` (`id`, `username`, `email`, `password`, `admin`) VALUES
-(1, 'username', 'email@email.com', '21232f297a57a5a743894a0e4a801fc3', 0),
+(1, 'username', 'email@email.com', '5f4dcc3b5aa765d61d8327deb882cf99', 0),
 (3, 'grande capo', 'admin@admin.it', '21232f297a57a5a743894a0e4a801fc3', 1),
-(4, 'utente banana', 'user@user.it', '21232f297a57a5a743894a0e4a801fc3', 0),
-(5, 'barcigabri', 'barcigabri@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 1),
-(6, 'pippobordo99', 'bordognapippo99@gmail.com', '21232f297a57a5a743894a0e4a801fc3', 1),
-(7, 'paperino', 'donald@duck.com', '21232f297a57a5a743894a0e4a801fc3', 0);
+(4, 'utente banana', 'user@user.it', 'ee11cbb19052e40b07aac0ca060c23ee', 0),
+(5, 'barcigabri', 'barcigabri@gmail.com', '0c8d209966c8154c43ef97bb1ba5e5e0', 1),
+(6, 'pippobordo99', 'bordognapippo99@gmail.com', '0c88028bf3aa6a6a143ed846f2be1ea4', 1),
+(7, 'paperino', 'donald@duck.com', 'b54b45b19ca1f1ddc424e6b878a53f2d', 0);
 
 -- --------------------------------------------------------
 
@@ -979,10 +1001,10 @@ INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `sta
 (16, 'Una voce dal passato', 44, NULL, 2, 2, 1, 2, 'Dopo aver salvato un uomo di nome Bill da alcuni sicari assoldati da sua moglie, Reese pedina Finch per scoprire più informazioni sul suo conto, quando quest\'ultimo chiama l\'ex agente per assegnarli a un\'altra missione.', 2011, 'USA'),
 (17, 'Il piano di emergenza', 42, NULL, 2, 1, 2, 2, 'Reese riceve una serie di parole apparentemente casuali dalla Macchina, che l\'ha contattato tramite un telefono pubblico. Dopo aver assegnato alla Carter il compito di indagare più approfonditamente sulla morte di Alicia Corwin, uccisa da Root durante il rapimento di Finch, egli capisce che le parole identificano tre differenti libri nella biblioteca di Finch.', 2012, 'USA'),
 (18, 'Cattivi geni', 42, NULL, 2, 2, 2, 2, 'Reese e Carter partono per il Texas sulle tracce di Hanna Frey, una ragazzina scomparsa molti anni prima. Nel frattempo, Root tiene prigionieri Finch e Weeks e tortura ed interroga quest’ultimo per sapere la posizione della Macchina, accusandolo di essere un \"codice malevolo\".', 2012, 'USA'),
-(19, 'Hunger Games', 143, 3, NULL, 1, NULL, 2, 'Ogni anno, come punizione per aver scatenato la ribellione anni prima, in ogni distretto vengono scelti un ragazzo e una ragazza di età compresa tra i dodici e i diciotto anni per partecipare agli Hunger Games, un evento nel quale i partecipanti devono combattere in un luogo detto \"arena\", che viene controllata dagli Strateghi per mezzo di computer molto sofisticati, finché uno solo rimane vivo', 2012, 'USA'),
-(20, 'Hunger Games: La ragazza di fuoco', 146, 3, NULL, 2, NULL, 2, 'Katniss Everdeen ritorna a casa in seguito alla vittoria ottenuta nell\'ultima edizione degli Hunger Games insieme al suo compagno Peeta Mellark. Ora i due alloggiano al Villaggio dei Vincitori, presente in ogni distretto, assieme al loro mentore Haymitch Abernathy.\r\n\r\nPer i due giovani è giunto il momento di partire per il Tour della Vittoria, un viaggio attraverso i distretti per ricordare coloro che sono morti nei giochi.', 2013, 'USA'),
-(21, 'Hunger Games: Il canto della rivolta - Parte 1', 123, 3, NULL, 3, NULL, 2, 'Katniss Everdeen si trova nel Distretto 13 in stato confusionale, dopo aver distrutto l\'arena dei settantacinquesimi Hunger Games. Appena la ragazza inizia a riprendersi viene nominata da Plutarch Heavensbee e dalla presidentessa Alma Coin come immagine simbolo della ribellione, ma la ragazza, ormai nota a tutti come la \"ghiandaia imitatrice\", inizialmente rifiuta l\'offerta poiché ancora molto turbata.', 2014, 'USA'),
-(22, 'Hunger Games: Il canto della rivolta parte 2', 137, 3, NULL, 4, NULL, 2, 'La nazione di Panem è in guerra. Tutti i distretti sono ormai uniti nella rivolta contro Capitol City, guidata da Katniss Everdeen, che continua a vestire i panni della ghiandaia imitatrice e quindi a impersonare il simbolo della rivoluzione stessa. Nel frattempo Peeta è ancora sotto shock a causa del depistaggio cerebrale causatogli dal Presidente Snow mentre era prigioniero a Capitol City e i suoi sentimenti di odio verso Katniss sono ancora presenti, benché lentamente comincino a svanire.', 2015, 'USA'),
+(19, 'Hunger Games', 143, 3, NULL, 1, NULL, 1, 'Ogni anno, come punizione per aver scatenato la ribellione anni prima, in ogni distretto vengono scelti un ragazzo e una ragazza di età compresa tra i dodici e i diciotto anni per partecipare agli Hunger Games, un evento nel quale i partecipanti devono combattere in un luogo detto \"arena\", che viene controllata dagli Strateghi per mezzo di computer molto sofisticati, finché uno solo rimane vivo', 2012, 'USA'),
+(20, 'Hunger Games: La ragazza di fuoco', 146, 3, NULL, 2, NULL, 1, 'Katniss Everdeen ritorna a casa in seguito alla vittoria ottenuta nell\'ultima edizione degli Hunger Games insieme al suo compagno Peeta Mellark. Ora i due alloggiano al Villaggio dei Vincitori, presente in ogni distretto, assieme al loro mentore Haymitch Abernathy.\r\n\r\nPer i due giovani è giunto il momento di partire per il Tour della Vittoria, un viaggio attraverso i distretti per ricordare coloro che sono morti nei giochi.', 2013, 'USA'),
+(21, 'Hunger Games: Il canto della rivolta - Parte 1', 123, 3, NULL, 3, NULL, 1, 'Katniss Everdeen si trova nel Distretto 13 in stato confusionale, dopo aver distrutto l\'arena dei settantacinquesimi Hunger Games. Appena la ragazza inizia a riprendersi viene nominata da Plutarch Heavensbee e dalla presidentessa Alma Coin come immagine simbolo della ribellione, ma la ragazza, ormai nota a tutti come la \"ghiandaia imitatrice\", inizialmente rifiuta l\'offerta poiché ancora molto turbata.', 2014, 'USA'),
+(22, 'Hunger Games: Il canto della rivolta parte 2', 137, 3, NULL, 4, NULL, 1, 'La nazione di Panem è in guerra. Tutti i distretti sono ormai uniti nella rivolta contro Capitol City, guidata da Katniss Everdeen, che continua a vestire i panni della ghiandaia imitatrice e quindi a impersonare il simbolo della rivoluzione stessa. Nel frattempo Peeta è ancora sotto shock a causa del depistaggio cerebrale causatogli dal Presidente Snow mentre era prigioniero a Capitol City e i suoi sentimenti di odio verso Katniss sono ancora presenti, benché lentamente comincino a svanire.', 2015, 'USA'),
 (23, 'La marcia dei pinguini', 85, NULL, NULL, NULL, NULL, 3, 'Il documentario francese che ha commosso tutto il mondo parla della lotta per la sopravvivenza del pinguino imperatore.\r\nUn documentario toccante che racconta come l’amore per i propri piccoli non sia un affare solo umano: guardando questo film capirete quanto umano sia il sentimento che i pinguini nutrono per la loro prole.', 2005, 'FRA'),
 (24, 'Fahrenheit 9/11', 122, NULL, NULL, NULL, NULL, 3, 'gioiellino che scardina le falsità e le bugie raccontate da George W. Bush e dalla sua Amministrazione.', 2004, 'USA'),
 (25, 'Fuocoammare', 106, NULL, NULL, NULL, NULL, 3, 'Attraverso gli occhi di Samuele, un ragazzino che vive a Lampedusa, viene raccontato il dramma attualissimo dei migranti che tentano una seconda vita attraversando il mare ma che spesso non solo non arrivano a quella tanto anelata seconda vita: addirittura perdono la prima e unica che gli rimane.', 2016, 'ITA'),
@@ -1137,7 +1159,7 @@ ALTER TABLE `video`
 -- AUTO_INCREMENT per la tabella `accessi`
 --
 ALTER TABLE `accessi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT per la tabella `curiositaserie`
@@ -1149,7 +1171,7 @@ ALTER TABLE `curiositaserie`
 -- AUTO_INCREMENT per la tabella `curiositavideo`
 --
 ALTER TABLE `curiositavideo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT per la tabella `generi`
@@ -1161,7 +1183,7 @@ ALTER TABLE `generi`
 -- AUTO_INCREMENT per la tabella `generivideo`
 --
 ALTER TABLE `generivideo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=254;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=269;
 
 --
 -- AUTO_INCREMENT per la tabella `personaggi`
