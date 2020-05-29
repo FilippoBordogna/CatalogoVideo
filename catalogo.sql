@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 4.8.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 27, 2020 alle 09:45
--- Versione del server: 10.4.11-MariaDB
--- Versione PHP: 7.4.5
+-- Creato il: Mag 29, 2020 alle 21:52
+-- Versione del server: 10.1.31-MariaDB
+-- Versione PHP: 7.2.4
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -26,14 +27,22 @@ SET time_zone = "+00:00";
 --
 -- Struttura della tabella `accessi`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `accessi` (
   `id` int(11) NOT NULL,
   `indirizzoIP` varchar(18) NOT NULL,
-  `dataOra` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `dataOra` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   `durata` int(11) DEFAULT NULL,
   `idUtente` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `accessi`:
+--   `idUtente`
+--       `utenti` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `accessi`
@@ -61,11 +70,21 @@ INSERT INTO `accessi` (`id`, `indirizzoIP`, `dataOra`, `durata`, `idUtente`) VAL
 --
 -- Struttura della tabella `attorivideo`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `attorivideo` (
   `idVideo` int(11) NOT NULL,
   `idPersona` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- RELAZIONI PER TABELLA `attorivideo`:
+--   `idPersona`
+--       `persone` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `attorivideo`
@@ -138,11 +157,21 @@ INSERT INTO `attorivideo` (`idVideo`, `idPersona`) VALUES
 --
 -- Struttura della tabella `comparizioni`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `comparizioni` (
   `idPersonaggio` int(11) NOT NULL,
   `idVideo` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `comparizioni`:
+--   `idPersonaggio`
+--       `personaggi` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `comparizioni`
@@ -202,6 +231,8 @@ INSERT INTO `comparizioni` (`idPersonaggio`, `idVideo`) VALUES
 --
 -- Struttura della tabella `curiositaserie`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `curiositaserie` (
   `id` int(11) NOT NULL,
@@ -211,10 +242,22 @@ CREATE TABLE `curiositaserie` (
   `testo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- RELAZIONI PER TABELLA `curiositaserie`:
+--   `idSerie`
+--       `serie` -> `id`
+--   `idUtente`
+--       `utenti` -> `id`
+--   `idAdmin`
+--       `utenti` -> `id`
+--
+
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `curiositavideo`
+--
+-- Creazione: Mag 29, 2020 alle 19:11
 --
 
 CREATE TABLE `curiositavideo` (
@@ -224,6 +267,16 @@ CREATE TABLE `curiositavideo` (
   `idAdmin` int(11) DEFAULT NULL,
   `testo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `curiositavideo`:
+--   `idVideo`
+--       `video` -> `id`
+--   `idUtente`
+--       `utenti` -> `id`
+--   `idAdmin`
+--       `utenti` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `curiositavideo`
@@ -241,17 +294,23 @@ INSERT INTO `curiositavideo` (`id`, `idVideo`, `idUtente`, `idAdmin`, `testo`) V
 --
 -- Struttura della tabella `generi`
 --
+-- Creazione: Mag 29, 2020 alle 19:22
+--
 
 CREATE TABLE `generi` (
   `id` int(11) NOT NULL,
-  `Tipo` varchar(50) NOT NULL
+  `tipo` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- RELAZIONI PER TABELLA `generi`:
+--
 
 --
 -- Dump dei dati per la tabella `generi`
 --
 
-INSERT INTO `generi` (`id`, `Tipo`) VALUES
+INSERT INTO `generi` (`id`, `tipo`) VALUES
 (1, 'Animazone'),
 (2, 'Avventura'),
 (3, 'Azione'),
@@ -286,12 +345,24 @@ INSERT INTO `generi` (`id`, `Tipo`) VALUES
 --
 -- Struttura della tabella `generivideo`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `generivideo` (
   `id` int(11) NOT NULL,
   `idVideo` int(11) NOT NULL,
   `idGenere` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- RELAZIONI PER TABELLA `generivideo`:
+--   `idVideo`
+--       `video` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--   `idGenere`
+--       `generi` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `generivideo`
@@ -427,11 +498,21 @@ INSERT INTO `generivideo` (`id`, `idVideo`, `idGenere`) VALUES
 --
 -- Struttura della tabella `interpretazioni`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `interpretazioni` (
   `idAttore` int(11) NOT NULL,
   `idPersonaggio` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `interpretazioni`:
+--   `idAttore`
+--       `persone` -> `id`
+--   `idPersonaggio`
+--       `personaggi` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `interpretazioni`
@@ -463,11 +544,17 @@ INSERT INTO `interpretazioni` (`idAttore`, `idPersonaggio`) VALUES
 --
 -- Struttura della tabella `personaggi`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `personaggi` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `personaggi`:
+--
 
 --
 -- Dump dei dati per la tabella `personaggi`
@@ -498,12 +585,18 @@ INSERT INTO `personaggi` (`id`, `nome`) VALUES
 --
 -- Struttura della tabella `persone`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `persone` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL,
   `cognome` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `persone`:
+--
 
 --
 -- Dump dei dati per la tabella `persone`
@@ -577,11 +670,23 @@ INSERT INTO `persone` (`id`, `nome`, `cognome`) VALUES
 --
 -- Struttura della tabella `produttorivideo`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `produttorivideo` (
   `idVideo` int(11) NOT NULL,
   `idPersona` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- RELAZIONI PER TABELLA `produttorivideo`:
+--   `idPersona`
+--       `persone` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `produttorivideo`
@@ -616,6 +721,8 @@ INSERT INTO `produttorivideo` (`idVideo`, `idPersona`) VALUES
 --
 -- Struttura della tabella `recensioniserie`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `recensioniserie` (
   `idSerie` int(11) NOT NULL,
@@ -624,6 +731,16 @@ CREATE TABLE `recensioniserie` (
   `testo` varchar(255) DEFAULT NULL,
   `idAdmin` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `recensioniserie`:
+--   `idSerie`
+--       `serie` -> `id`
+--   `idUtente`
+--       `utenti` -> `id`
+--   `idAdmin`
+--       `utenti` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `recensioniserie`
@@ -641,6 +758,8 @@ INSERT INTO `recensioniserie` (`idSerie`, `idUtente`, `voto`, `testo`, `idAdmin`
 --
 -- Struttura della tabella `recensionivideo`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `recensionivideo` (
   `idVideo` int(11) NOT NULL,
@@ -649,6 +768,16 @@ CREATE TABLE `recensionivideo` (
   `testo` varchar(255) DEFAULT NULL,
   `idAdmin` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `recensionivideo`:
+--   `idVideo`
+--       `video` -> `id`
+--   `idUtente`
+--       `utenti` -> `id`
+--   `idAdmin`
+--       `utenti` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `recensionivideo`
@@ -681,11 +810,21 @@ INSERT INTO `recensionivideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`
 --
 -- Struttura della tabella `registivideo`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `registivideo` (
   `idVideo` int(11) NOT NULL,
   `idPersona` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+
+--
+-- RELAZIONI PER TABELLA `registivideo`:
+--   `idPersona`
+--       `persone` -> `id`
+--   `idVideo`
+--       `video` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `registivideo`
@@ -739,11 +878,17 @@ INSERT INTO `registivideo` (`idVideo`, `idPersona`) VALUES
 --
 -- Struttura della tabella `saghe`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `saghe` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `saghe`:
+--
 
 --
 -- Dump dei dati per la tabella `saghe`
@@ -759,12 +904,18 @@ INSERT INTO `saghe` (`id`, `nome`) VALUES
 --
 -- Struttura della tabella `serie`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `serie` (
   `id` int(11) NOT NULL,
   `nome` varchar(50) NOT NULL,
   `sinossi` varchar(500) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `serie`:
+--
 
 --
 -- Dump dei dati per la tabella `serie`
@@ -779,6 +930,8 @@ INSERT INTO `serie` (`id`, `nome`, `sinossi`) VALUES
 --
 -- Struttura della tabella `utenti`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `utenti` (
   `id` int(11) NOT NULL,
@@ -787,6 +940,10 @@ CREATE TABLE `utenti` (
   `password` varchar(32) NOT NULL,
   `admin` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `utenti`:
+--
 
 --
 -- Dump dei dati per la tabella `utenti`
@@ -805,6 +962,8 @@ INSERT INTO `utenti` (`id`, `username`, `email`, `password`, `admin`) VALUES
 --
 -- Struttura della tabella `video`
 --
+-- Creazione: Mag 29, 2020 alle 19:11
+--
 
 CREATE TABLE `video` (
   `id` int(11) NOT NULL,
@@ -819,6 +978,14 @@ CREATE TABLE `video` (
   `annoUscita` year(4) NOT NULL,
   `nazionalita` varchar(3) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- RELAZIONI PER TABELLA `video`:
+--   `idSaga`
+--       `saghe` -> `id`
+--   `idSerie`
+--       `serie` -> `id`
+--
 
 --
 -- Dump dei dati per la tabella `video`
@@ -906,7 +1073,7 @@ ALTER TABLE `curiositavideo`
 --
 ALTER TABLE `generi`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `Tipo` (`Tipo`);
+  ADD UNIQUE KEY `Tipo` (`tipo`);
 
 --
 -- Indici per le tabelle `generivideo`
