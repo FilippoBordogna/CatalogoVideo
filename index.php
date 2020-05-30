@@ -266,11 +266,11 @@
 						<div class="dropdown-menu">
 						<?php
 							$conn=dbConn();	
-							$query="SELECT DISTINCT G.Tipo,G.id FROM generivideo GV JOIN generi G ON G.id=GV.idGenere"; // Preparazione Query: Categorie presenti nel DB
+							$query="SELECT DISTINCT G.tipo,G.id FROM generivideo GV JOIN generi G ON G.id=GV.idGenere"; // Preparazione Query: Categorie presenti nel DB
 							if ($categorie=$conn->query($query)) // Query effettuata con successo
 								if ($categorie->num_rows>0)// Almeno un risultato
 									while ($categoria = $categorie->fetch_assoc())
-										echo ' <div class="container-cat" onclick="passa_a('.$categoria["id"].',15,1,0,1,0);">'.$categoria["Tipo"].'</div>';
+										echo ' <div class="container-cat" onclick="passa_a('.$categoria["id"].',15,1,0,1,0);">'.$categoria["tipo"].'</div>';
 								$categorie->free();
 							$conn->close();									
 						?>
@@ -1765,7 +1765,7 @@
 										
 										$query="SELECT AV.idPersona, Per.nome, Per.cognome, Pggi.nome nomeP 
 										FROM attorivideo AV JOIN video V ON AV.idVideo=V.id JOIN persone Per ON Per.id=AV.idPersona 
-										LEFT JOIN interpretazioni I ON I.idAttore=Per.id LEFT JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										LEFT JOIN interpretazioni I ON I.idPersona=Per.id LEFT JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
 										WHERE V.id=$id"; /* Preparazione Query: Attori Film */
 
 										if ($attori=$conn->query($query)) { /* Risultati della query */
@@ -2498,7 +2498,7 @@
 											');
 										
 										$query="SELECT Pers.*,Pggi.nome nomeP 
-										FROM attorivideo AV JOIN interpretazioni I ON I.idAttore=AV.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										FROM attorivideo AV JOIN interpretazioni I ON I.idPersona=AV.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
 										JOIN persone Pers ON Pers.id=AV.idPersona 
 										WHERE AV.idVideo IN 
 														(SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id)  
@@ -3203,7 +3203,7 @@
 										}
 										
 										$query="SELECT Pers.*,Pggi.nome nomeP 
-										FROM attorivideo AV JOIN interpretazioni I ON I.idAttore=AV.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										FROM attorivideo AV JOIN interpretazioni I ON I.idPersona=AV.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
 										JOIN persone Pers ON Pers.id=AV.idPersona 
 										WHERE AV.idVideo IN 
 														(SELECT V.id FROM video V JOIN saghe S ON V.idSaga=S.id WHERE S.id=$id)  
@@ -3487,7 +3487,7 @@
 										}
 										
 										$query="SELECT Pggi.* 
-										FROM interpretazioni I JOIN persone Pers ON Pers.id=I.idAttore JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
+										FROM interpretazioni I JOIN persone Pers ON Pers.id=I.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
 										WHERE Pers.id=$id"; /* Preparazione Query: Personaggi interpretati */
 
 										if ($personaggi=$conn->query($query)) { /* Risultati della query */
@@ -3544,7 +3544,7 @@
 											');
 										
 										$query="SELECT Pers.* 
-										FROM interpretazioni I JOIN persone Pers ON Pers.id=I.idAttore JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio
+										FROM interpretazioni I JOIN persone Pers ON Pers.id=I.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio
 										WHERE Pggi.id=$id"; /* Preparazione Query: Attori che hanno interpretato il personaggio */
 
 										if ($attori=$conn->query($query)) { /* Risultati della query */
