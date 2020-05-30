@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Mag 29, 2020 alle 21:52
+-- Creato il: Mag 30, 2020 alle 23:39
 -- Versione del server: 10.1.31-MariaDB
 -- Versione PHP: 7.2.4
 
@@ -498,17 +498,17 @@ INSERT INTO `generivideo` (`id`, `idVideo`, `idGenere`) VALUES
 --
 -- Struttura della tabella `interpretazioni`
 --
--- Creazione: Mag 29, 2020 alle 19:11
+-- Creazione: Mag 30, 2020 alle 21:37
 --
 
 CREATE TABLE `interpretazioni` (
-  `idAttore` int(11) NOT NULL,
+  `idPersona` int(11) NOT NULL,
   `idPersonaggio` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- RELAZIONI PER TABELLA `interpretazioni`:
---   `idAttore`
+--   `idPersona`
 --       `persone` -> `id`
 --   `idPersonaggio`
 --       `personaggi` -> `id`
@@ -518,7 +518,7 @@ CREATE TABLE `interpretazioni` (
 -- Dump dei dati per la tabella `interpretazioni`
 --
 
-INSERT INTO `interpretazioni` (`idAttore`, `idPersonaggio`) VALUES
+INSERT INTO `interpretazioni` (`idPersona`, `idPersonaggio`) VALUES
 (1, 1),
 (2, 2),
 (3, 3),
@@ -1087,7 +1087,7 @@ ALTER TABLE `generivideo`
 -- Indici per le tabelle `interpretazioni`
 --
 ALTER TABLE `interpretazioni`
-  ADD PRIMARY KEY (`idAttore`,`idPersonaggio`),
+  ADD PRIMARY KEY (`idPersona`,`idPersonaggio`),
   ADD KEY `idPersonaggio` (`idPersonaggio`);
 
 --
@@ -1174,13 +1174,13 @@ ALTER TABLE `accessi`
 -- AUTO_INCREMENT per la tabella `curiositaserie`
 --
 ALTER TABLE `curiositaserie`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT per la tabella `curiositavideo`
 --
 ALTER TABLE `curiositavideo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT per la tabella `generi`
@@ -1192,7 +1192,7 @@ ALTER TABLE `generi`
 -- AUTO_INCREMENT per la tabella `generivideo`
 --
 ALTER TABLE `generivideo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=269;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=264;
 
 --
 -- AUTO_INCREMENT per la tabella `personaggi`
@@ -1228,7 +1228,7 @@ ALTER TABLE `utenti`
 -- AUTO_INCREMENT per la tabella `video`
 --
 ALTER TABLE `video`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
 
 --
 -- Limiti per le tabelle scaricate
@@ -1282,7 +1282,7 @@ ALTER TABLE `generivideo`
 -- Limiti per la tabella `interpretazioni`
 --
 ALTER TABLE `interpretazioni`
-  ADD CONSTRAINT `interpretazioni_ibfk_1` FOREIGN KEY (`idAttore`) REFERENCES `persone` (`id`),
+  ADD CONSTRAINT `interpretazioni_ibfk_1` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
   ADD CONSTRAINT `interpretazioni_ibfk_2` FOREIGN KEY (`idPersonaggio`) REFERENCES `personaggi` (`id`);
 
 --
