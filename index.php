@@ -323,7 +323,7 @@
 							$password=filter_var(trim($_POST["pass1"]), FILTER_SANITIZE_STRING); // Sanifico la stringa (evito SQL Injection)
 							$conn=dbConn(); // Connessione al DB
 							$query="INSERT INTO utenti (username,email,password,admin)
-							VALUES ('$user','$email','$password',0)";
+							VALUES ('$user','$email','".md5($password)."',0)";
 							if($conn->query($query)) /* Inserimento nel DB riuscito */
 								echo "<script type='text/javascript'>alert('L\'utente è stato inserito!');</script>";
 							else /* Inserimento nel DB NON riuscito */
