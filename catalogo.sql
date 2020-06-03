@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Creato il: Giu 02, 2020 alle 17:33
+-- Creato il: Giu 03, 2020 alle 23:26
 -- Versione del server: 10.1.31-MariaDB
 -- Versione PHP: 7.2.4
 
@@ -295,7 +295,7 @@ INSERT INTO `curiositavideo` (`id`, `idVideo`, `idUtente`, `idAdmin`, `testo`) V
 --
 -- Struttura della tabella `generi`
 --
--- Creazione: Mag 29, 2020 alle 19:22
+-- Creazione: Giu 03, 2020 alle 21:09
 --
 
 CREATE TABLE `generi` (
@@ -346,7 +346,7 @@ INSERT INTO `generi` (`id`, `tipo`) VALUES
 --
 -- Struttura della tabella `generivideo`
 --
--- Creazione: Mag 29, 2020 alle 19:11
+-- Creazione: Giu 03, 2020 alle 21:09
 --
 
 CREATE TABLE `generivideo` (
@@ -370,128 +370,128 @@ CREATE TABLE `generivideo` (
 --
 
 INSERT INTO `generivideo` (`id`, `idVideo`, `idGenere`) VALUES
-(1, 1, 3),
-(2, 2, 3),
-(3, 3, 3),
-(4, 4, 3),
-(5, 5, 3),
-(6, 6, 3),
-(7, 7, 3),
-(8, 8, 3),
-(9, 9, 3),
-(10, 10, 3),
-(11, 1, 15),
-(12, 2, 15),
-(13, 3, 15),
-(14, 4, 15),
-(15, 5, 15),
-(16, 6, 15),
-(17, 7, 15),
-(18, 8, 15),
-(19, 9, 15),
-(20, 10, 15),
-(21, 1, 11),
-(22, 2, 11),
-(23, 3, 11),
-(24, 4, 11),
-(25, 5, 11),
-(26, 6, 11),
-(27, 7, 11),
-(28, 8, 11),
-(29, 9, 11),
-(30, 10, 11),
 (31, 1, 2),
-(32, 2, 2),
-(33, 3, 2),
-(34, 4, 2),
-(35, 5, 2),
-(36, 6, 2),
-(37, 7, 2),
-(38, 8, 2),
-(39, 9, 2),
-(40, 10, 2),
+(1, 1, 3),
+(21, 1, 11),
+(11, 1, 15),
 (41, 1, 27),
+(32, 2, 2),
+(2, 2, 3),
+(22, 2, 11),
+(12, 2, 15),
 (42, 2, 27),
+(33, 3, 2),
+(3, 3, 3),
+(23, 3, 11),
+(13, 3, 15),
 (43, 3, 27),
+(34, 4, 2),
+(4, 4, 3),
+(24, 4, 11),
+(14, 4, 15),
 (44, 4, 27),
+(35, 5, 2),
+(5, 5, 3),
+(25, 5, 11),
+(15, 5, 15),
 (45, 5, 27),
+(36, 6, 2),
+(6, 6, 3),
+(26, 6, 11),
+(16, 6, 15),
 (46, 6, 27),
+(37, 7, 2),
+(7, 7, 3),
+(27, 7, 11),
+(17, 7, 15),
 (47, 7, 27),
+(38, 8, 2),
+(8, 8, 3),
+(28, 8, 11),
+(18, 8, 15),
 (48, 8, 27),
+(39, 9, 2),
+(9, 9, 3),
+(29, 9, 11),
+(19, 9, 15),
 (49, 9, 27),
+(40, 10, 2),
+(10, 10, 3),
+(30, 10, 11),
+(20, 10, 15),
 (50, 10, 27),
 (64, 11, 13),
-(65, 12, 13),
-(66, 13, 13),
-(67, 14, 13),
 (68, 11, 27),
+(65, 12, 13),
 (69, 12, 27),
+(66, 13, 13),
 (70, 13, 27),
+(67, 14, 13),
 (71, 14, 27),
-(79, 15, 3),
-(80, 16, 3),
-(81, 17, 3),
-(82, 18, 3),
-(83, 15, 27),
-(84, 16, 27),
-(85, 17, 27),
-(86, 18, 27),
-(87, 15, 13),
-(88, 16, 13),
-(89, 17, 13),
-(90, 18, 13),
-(91, 15, 9),
-(92, 16, 9),
-(93, 17, 9),
-(94, 18, 9),
-(95, 15, 11),
-(96, 16, 11),
-(97, 17, 11),
-(98, 18, 11),
 (99, 15, 2),
-(100, 16, 2),
-(101, 17, 2),
-(102, 18, 2),
+(79, 15, 3),
+(91, 15, 9),
+(95, 15, 11),
+(87, 15, 13),
 (103, 15, 21),
+(83, 15, 27),
+(100, 16, 2),
+(80, 16, 3),
+(92, 16, 9),
+(96, 16, 11),
+(88, 16, 13),
 (104, 16, 21),
+(84, 16, 27),
+(101, 17, 2),
+(81, 17, 3),
+(93, 17, 9),
+(97, 17, 11),
+(89, 17, 13),
 (105, 17, 21),
+(85, 17, 27),
+(102, 18, 2),
+(82, 18, 3),
+(94, 18, 9),
+(98, 18, 11),
+(90, 18, 13),
 (106, 18, 21),
+(86, 18, 27),
 (110, 19, 2),
-(111, 20, 2),
-(112, 21, 2),
-(113, 22, 2),
-(114, 19, 11),
-(115, 20, 11),
-(116, 21, 11),
-(117, 22, 11),
 (118, 19, 3),
-(119, 20, 3),
-(120, 21, 3),
-(121, 22, 3),
+(114, 19, 11),
 (122, 19, 27),
+(111, 20, 2),
+(119, 20, 3),
+(115, 20, 11),
 (123, 20, 27),
+(112, 21, 2),
+(120, 21, 3),
+(116, 21, 11),
 (124, 21, 27),
+(113, 22, 2),
+(121, 22, 3),
+(117, 22, 11),
 (125, 22, 27),
-(126, 24, 15),
-(127, 27, 26),
-(128, 27, 15),
-(129, 27, 9),
-(130, 29, 18),
-(131, 30, 9),
-(132, 30, 13),
-(133, 31, 26),
-(134, 31, 1),
-(135, 31, 15),
-(136, 31, 9),
 (137, 23, 8),
 (138, 24, 8),
+(126, 24, 15),
 (139, 25, 8),
 (140, 26, 8),
 (141, 27, 8),
+(129, 27, 9),
+(128, 27, 15),
+(127, 27, 26),
 (142, 28, 8),
 (143, 29, 8),
+(130, 29, 18),
 (144, 30, 8),
+(131, 30, 9),
+(132, 30, 13),
+(134, 31, 1),
 (145, 31, 8),
+(136, 31, 9),
+(135, 31, 15),
+(133, 31, 26),
 (146, 32, 8);
 
 -- --------------------------------------------------------
@@ -545,7 +545,7 @@ INSERT INTO `interpretazioni` (`idPersona`, `idPersonaggio`) VALUES
 --
 -- Struttura della tabella `personaggi`
 --
--- Creazione: Mag 29, 2020 alle 19:11
+-- Creazione: Giu 03, 2020 alle 21:12
 --
 
 CREATE TABLE `personaggi` (
@@ -562,31 +562,31 @@ CREATE TABLE `personaggi` (
 --
 
 INSERT INTO `personaggi` (`id`, `nome`) VALUES
-(1, 'Iron Man'),
-(2, 'Captain America'),
-(3, 'Hulk'),
-(4, 'Thor'),
-(5, 'Vedova Nera'),
-(6, 'Occhio di falco'),
-(7, 'Star-Lord'),
-(8, 'Happy Hogan'),
-(9, 'Doctor Strange'),
 (10, 'Ant-Man'),
-(11, 'Il professore'),
-(12, 'Tokyo'),
-(13, 'John Reese'),
-(14, 'Harold Finch'),
-(15, 'Peeta Mellark'),
-(16, 'Katniss Everdeen'),
 (17, 'Boaz Rein-Buskila'),
-(18, 'Carmi Cna\'an');
+(2, 'Captain America'),
+(18, 'Carmi Cna\'an'),
+(9, 'Doctor Strange'),
+(8, 'Happy Hogan'),
+(14, 'Harold Finch'),
+(3, 'Hulk'),
+(11, 'Il professore'),
+(1, 'Iron Man'),
+(13, 'John Reese'),
+(16, 'Katniss Everdeen'),
+(6, 'Occhio di falco'),
+(15, 'Peeta Mellark'),
+(7, 'Star-Lord'),
+(4, 'Thor'),
+(12, 'Tokyo'),
+(5, 'Vedova Nera');
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `persone`
 --
--- Creazione: Mag 29, 2020 alle 19:11
+-- Creazione: Giu 03, 2020 alle 21:13
 --
 
 CREATE TABLE `persone` (
@@ -604,67 +604,67 @@ CREATE TABLE `persone` (
 --
 
 INSERT INTO `persone` (`id`, `nome`, `cognome`) VALUES
-(1, 'Robert', 'Downey Jr.'),
-(2, 'Chris', 'Evans'),
-(3, 'Mark', 'Ruffalo'),
-(4, 'Chris', 'Hemsworth'),
-(5, 'Scarlett', 'Johansson'),
-(6, 'Jeremy', 'Renner'),
-(7, 'Chris', 'Pratt'),
-(8, 'Benedict', 'Cumberbatch'),
-(9, 'Tom', 'Holland'),
-(10, 'Jon', 'Favreau'),
-(11, 'Edward', 'Norton'),
-(12, 'Paul', 'Rudd'),
-(13, 'Louis', 'Leterrier'),
-(14, 'Kenneth', 'Branagh'),
-(15, 'Joe', 'Johnston'),
-(16, 'Joss', 'Whedon'),
-(17, 'Shane', 'Black'),
-(18, 'Alan', 'Taylor'),
-(19, 'Anthony', 'Russo'),
-(20, 'Joe', 'Russo'),
-(21, 'James', 'Gunn'),
-(22, 'Alvaro', 'Morte'),
-(23, 'Ursula', 'Corbero'),
 (24, ' Alex ', 'Rodrigo'),
+(61, 'Alain', 'Resnais'),
+(18, 'Alan', 'Taylor'),
 (25, 'Alejandro', 'Bazzano'),
-(26, 'Michael', 'Emerson'),
-(27, 'Jim', 'Caviezel'),
-(28, 'Jonathan', 'Nolan'),
-(29, 'Greg', 'Plageman'),
-(30, 'Josh', 'Hutcherson'),
-(31, 'Jennifer', 'Lawrence'),
-(32, 'Gary', 'Ross'),
-(33, 'Francis', 'Lawrence'),
-(34, 'Nina', 'Jacobson'),
-(35, 'Jon', 'Kilik'),
-(36, 'Luc', 'Jacquet'),
-(37, 'Michael', 'Moore'),
-(38, 'Donald', 'Rumsfeld'),
-(39, 'George W.', 'Bush'),
-(40, 'Ben', 'Affleck'),
-(41, 'Gianfranco', 'Rosi'),
-(42, 'Pietro', 'Bartolo'),
-(43, 'Samuel', 'Pucillo'),
-(44, 'Robert', 'Kenner'),
-(45, 'Claude', 'Lanzmann'),
-(46, 'Szymon', 'Srebrnik'),
-(47, '‎Alain', ' Resnais'),
-(48, 'Miyuki', 'Kuwano'),
-(49, 'Kei', 'Sato'),
-(50, 'D.A.', 'Pennebaker'),
-(51, 'Bob', 'Dylan'),
-(52, 'Joan', 'Baez'),
-(53, 'Errol', 'Morris'),
-(54, 'Randall Dale', 'Adams'),
-(55, 'Gus', 'Rose'),
+(22, 'Alvaro', 'Morte'),
+(19, 'Anthony', 'Russo'),
 (56, 'Ari', 'Folman'),
-(57, 'Mickey', 'Leon'),
-(58, 'Yehezkel', 'Lazarov'),
+(40, 'Ben', 'Affleck'),
+(8, 'Benedict', 'Cumberbatch'),
+(51, 'Bob', 'Dylan'),
+(2, 'Chris', 'Evans'),
+(4, 'Chris', 'Hemsworth'),
+(7, 'Chris', 'Pratt'),
+(45, 'Claude', 'Lanzmann'),
+(50, 'D.A.', 'Pennebaker'),
+(38, 'Donald', 'Rumsfeld'),
 (59, 'Dziga', 'Vertov'),
+(11, 'Edward', 'Norton'),
+(53, 'Errol', 'Morris'),
+(33, 'Francis', 'Lawrence'),
+(32, 'Gary', 'Ross'),
+(39, 'George W.', 'Bush'),
+(41, 'Gianfranco', 'Rosi'),
+(29, 'Greg', 'Plageman'),
+(55, 'Gus', 'Rose'),
+(21, 'James', 'Gunn'),
+(31, 'Jennifer', 'Lawrence'),
+(6, 'Jeremy', 'Renner'),
+(27, 'Jim', 'Caviezel'),
+(52, 'Joan', 'Baez'),
+(15, 'Joe', 'Johnston'),
+(20, 'Joe', 'Russo'),
+(10, 'Jon', 'Favreau'),
+(35, 'Jon', 'Kilik'),
+(28, 'Jonathan', 'Nolan'),
+(30, 'Josh', 'Hutcherson'),
+(16, 'Joss', 'Whedon'),
+(49, 'Kei', 'Sato'),
+(14, 'Kenneth', 'Branagh'),
+(13, 'Louis', 'Leterrier'),
+(36, 'Luc', 'Jacquet'),
+(3, 'Mark', 'Ruffalo'),
+(26, 'Michael', 'Emerson'),
+(37, 'Michael', 'Moore'),
+(57, 'Mickey', 'Leon'),
 (60, 'Mikhail', 'Kaufman'),
-(61, 'Alain', 'Resnais');
+(48, 'Miyuki', 'Kuwano'),
+(34, 'Nina', 'Jacobson'),
+(12, 'Paul', 'Rudd'),
+(42, 'Pietro', 'Bartolo'),
+(54, 'Randall Dale', 'Adams'),
+(1, 'Robert', 'Downey Jr.'),
+(44, 'Robert', 'Kenner'),
+(43, 'Samuel', 'Pucillo'),
+(5, 'Scarlett', 'Johansson'),
+(17, 'Shane', 'Black'),
+(46, 'Szymon', 'Srebrnik'),
+(9, 'Tom', 'Holland'),
+(23, 'Ursula', 'Corbero'),
+(58, 'Yehezkel', 'Lazarov'),
+(47, '‎Alain', ' Resnais');
 
 -- --------------------------------------------------------
 
@@ -879,7 +879,7 @@ INSERT INTO `registivideo` (`idVideo`, `idPersona`) VALUES
 --
 -- Struttura della tabella `saghe`
 --
--- Creazione: Mag 29, 2020 alle 19:11
+-- Creazione: Giu 03, 2020 alle 21:17
 --
 
 CREATE TABLE `saghe` (
@@ -896,16 +896,16 @@ CREATE TABLE `saghe` (
 --
 
 INSERT INTO `saghe` (`id`, `nome`) VALUES
+(3, 'Hunger Games'),
 (1, 'Marvel Cinematic Universe'),
-(2, 'The Wizarding World'),
-(3, 'Hunger Games');
+(2, 'The Wizarding World');
 
 -- --------------------------------------------------------
 
 --
 -- Struttura della tabella `serie`
 --
--- Creazione: Mag 29, 2020 alle 19:11
+-- Creazione: Giu 03, 2020 alle 21:21
 --
 
 CREATE TABLE `serie` (
@@ -964,7 +964,7 @@ INSERT INTO `utenti` (`id`, `username`, `email`, `password`, `admin`) VALUES
 --
 -- Struttura della tabella `video`
 --
--- Creazione: Mag 29, 2020 alle 19:11
+-- Creazione: Giu 03, 2020 alle 21:25
 --
 
 CREATE TABLE `video` (
@@ -1075,13 +1075,15 @@ ALTER TABLE `curiositavideo`
 --
 ALTER TABLE `generi`
   ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `Tipo` (`tipo`);
+  ADD UNIQUE KEY `Tipo` (`tipo`),
+  ADD UNIQUE KEY `tipo_2` (`tipo`);
 
 --
 -- Indici per le tabelle `generivideo`
 --
 ALTER TABLE `generivideo`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idVideo_2` (`idVideo`,`idGenere`),
   ADD KEY `idVideo` (`idVideo`),
   ADD KEY `idCategoria` (`idGenere`);
 
@@ -1096,13 +1098,15 @@ ALTER TABLE `interpretazioni`
 -- Indici per le tabelle `personaggi`
 --
 ALTER TABLE `personaggi`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nome` (`nome`);
 
 --
 -- Indici per le tabelle `persone`
 --
 ALTER TABLE `persone`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nome` (`nome`,`cognome`);
 
 --
 -- Indici per le tabelle `produttorivideo`
@@ -1138,7 +1142,8 @@ ALTER TABLE `registivideo`
 -- Indici per le tabelle `saghe`
 --
 ALTER TABLE `saghe`
-  ADD PRIMARY KEY (`id`);
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `nome` (`nome`);
 
 --
 -- Indici per le tabelle `serie`
@@ -1159,6 +1164,8 @@ ALTER TABLE `utenti`
 --
 ALTER TABLE `video`
   ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `idSerie_2` (`idSerie`,`numero`,`stagione`),
+  ADD UNIQUE KEY `idSaga_2` (`idSaga`,`numero`),
   ADD KEY `idSaga` (`idSaga`),
   ADD KEY `idSerie` (`idSerie`);
 
@@ -1170,13 +1177,13 @@ ALTER TABLE `video`
 -- AUTO_INCREMENT per la tabella `accessi`
 --
 ALTER TABLE `accessi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 
 --
 -- AUTO_INCREMENT per la tabella `curiositaserie`
 --
 ALTER TABLE `curiositaserie`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT per la tabella `curiositavideo`
@@ -1194,31 +1201,31 @@ ALTER TABLE `generi`
 -- AUTO_INCREMENT per la tabella `generivideo`
 --
 ALTER TABLE `generivideo`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=264;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=148;
 
 --
 -- AUTO_INCREMENT per la tabella `personaggi`
 --
 ALTER TABLE `personaggi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT per la tabella `persone`
 --
 ALTER TABLE `persone`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=63;
 
 --
 -- AUTO_INCREMENT per la tabella `saghe`
 --
 ALTER TABLE `saghe`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT per la tabella `serie`
 --
 ALTER TABLE `serie`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT per la tabella `utenti`
@@ -1230,7 +1237,7 @@ ALTER TABLE `utenti`
 -- AUTO_INCREMENT per la tabella `video`
 --
 ALTER TABLE `video`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- Limiti per le tabelle scaricate
