@@ -4339,10 +4339,10 @@
 										// FILM E DOCUMENTARI
 										switch(floor($ordinamento/2)) { // Tipo di ordinamento
 											case 0:
-												$ord="mediaVoti, V.id";
+												$ord="V.nome"; 
 												break;
 											case 1:
-												$ord="V.nome";
+												$ord="mediaVoti";
 												break;
 											case 2:
 												$ord="V.durata";
@@ -4356,6 +4356,8 @@
 										}
 										if($ordinamento%2==1) // Ordinamento Discendente
 											$ord.=" DESC";
+										if(floor($ordinamento/2)==1)
+											$ord.=", V.id DESC";
 
 										$nris=8; // Risultati da mostrare per pagina
 										$query="SELECT V.id, V.nome, V.durata, V.sinossi, V.annoUscita, V.nazionalita, AVG(RV.voto) mediaVoti 
@@ -4376,7 +4378,7 @@
 											</div>
 											'); // Titolo
 
-										$valori=["Voto","Nome","Durata","Anno d'uscita", "Nazionalità"]; // Valori dell'ordinamento
+										$valori=["Nome","Voto","Durata","Anno d'uscita", "Nazionalità"]; // Valori dell'ordinamento
 										echo ('
 											<div class="container"> Ordina per: 
 												<select id="ord" onchange="passa_a('.$id.',15,1,ord.value,'.$pagina2.','.$ordinamento2.')">
@@ -4492,10 +4494,10 @@
 										// SERIE TV
 										switch(floor($ordinamento2/2)) { // Tipo di ordinamento
 											case 0:
-												$ord2="mediaVoti, S.id";
+												$ord2="S.nome";
 												break;
 											case 1:
-												$ord2="S.nome";
+												$ord2="mediaVoti, S.id";
 												break;
 											case 2:
 												$ord2="nStagioni";
@@ -4515,6 +4517,8 @@
 										}
 										if($ordinamento2%2==1) // Ordinamento decrescente
 											$ord2.=" DESC";
+										if(floor($ordinamento/2)==1)
+											$ord2.=", S.id DESC";
 
 										$query="SELECT S.*, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine, COUNT(DISTINCT V.id) nEpisodi, COUNT(DISTINCT V.stagione) nStagioni, AVG(RS.voto) mediaVoti, V.nazionalita
 										FROM serie S INNER JOIN video V ON V.idSerie=S.id LEFT JOIN recensioniserie RS ON RS.idSerie=S.id
@@ -4530,7 +4534,7 @@
 											</div>
 											'); // Titolo
 
-											$valori=["Voto","Nome","Numero Stagioni","Numero Episodi", "Anno d'uscita", "Anno di fine", "Nazionalità"]; // Valori dell'ordinamento
+											$valori=["Nome","Voto","Numero Stagioni","Numero Episodi", "Anno d'uscita", "Anno di fine", "Nazionalità"]; // Valori dell'ordinamento
 											echo ('
 												<div class="container"> Ordina per: 
 													<select id="ord2" onchange="passa_a('.$id.',15,'.$pagina.','.$ordinamento.',1,ord2.value)">
