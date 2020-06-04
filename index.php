@@ -28,6 +28,8 @@
 	*/
 
 	// Controllo Sessioni
+	ini_set("session.gc_maxlifetime","1440");
+	ini_set("session.cookie_lifetime","1440");
 	session_start();
 	if(!isset($_SESSION["login"]) || $_SESSION["login"]!=1) // Mancata presenza di dati integri per login 
 		session_unset();
@@ -48,12 +50,25 @@
 		session_unset();
 		session_destroy();
 		session_start(); // Chiudo e riapro la sessione
-		if(isset($_GET["logout"])) {
+		
+		$redirect="Location:index.php?"; //reindirizzamento per logout e per evitare problemi di refresh
+		if(isset($_GET["logout"])&&isset($_GET["id"])) {
 			$_GET["stato"]=$_GET["logout"];
 			if($_GET["stato"]<=14 && $_GET["stato"]>=12)
-			$_GET["stato"]=0;
+				$_GET["stato"]=0;
+			$redirect.="stato=$_GET[stato]&id=$_GET[id]";
+			if(isset($_GET["pagina"]))
+				$redirect.="&pagina=$_GET[pagina]";
+			if(isset($_GET["ordinamento"]))
+				$redirect.="&ordinamento=$_GET[ordinamento]";
+			if(isset($_GET["pagina2"]))
+				$redirect.="&pagina2=$_GET[pagina2]";
+			if(isset($_GET["ordinamento2"]))
+				$redirect.="&ordinamento2=$_GET[ordinamento2]";
+			
 		}
-		
+		header($redirect);
+		exit();
 	}
 	
 	function dbConn() { // Connessione al DB 
@@ -256,7 +271,7 @@
 		<header>
 		  	<div class="navbar navbar-dark bg-dark shadow-sm"> <!-- Base della Navbar-->
 		 		<div class="container d-flex justify-content-between"> <!-- Contenitore delle scorciatoie -->
-			  		<a href="#" class="navbar-brand d-flex align-items-center" onclick="passa_a(null,0,null,null,null,null)"> <!-- Scorciatoia Homepage -->
+			  		<a href="index.php" class="navbar-brand d-flex align-items-center" > <!-- Scorciatoia Homepage -->
 						<strong>Homepage</strong>
 					</a>
 					<div class="dropdown"> <!-- Elenco categorie -->
@@ -489,7 +504,6 @@
 										GROUP BY RV.idVideo
 										ORDER BY mediaVoti DESC
 										LIMIT 8"; // Preparazione Query: Migliori video (base voto) 
-										
 										echo ('	
 											<div class="container text-center"> 
 												<h2 class="mt-4 mb-4" >Migliori Video</h2>
@@ -1727,7 +1741,7 @@
 											}
 										}
 										
-										$query="SELECT V.id,V.nome,V.durata,V.idSaga,v.idSerie,V.numero,V.stagione,V.sinossi,Se.nome nomeSe,Sa.nome nomeSa 
+										$query="SELECT V.id,V.nome,V.durata,V.idSaga,V.idSerie,V.numero,V.stagione,V.sinossi,Se.nome nomeSe,Sa.nome nomeSa 
 										FROM video V LEFT JOIN serie Se ON V.idSerie=Se.id LEFT JOIN saghe Sa ON Sa.id=V.idSaga 
 										WHERE V.id=$id;"; /* Preparazione Query: Dettagli video */
 										$risultati=$conn->query($query);
@@ -1887,7 +1901,7 @@
 										}
 
 										$query="SELECT P.* 
-										FROM video V JOIN comparizioni C ON V.id=c.idVideo JOIN personaggi P ON P.id=C.idPersonaggio 
+										FROM video V JOIN comparizioni C ON V.id=C.idVideo JOIN personaggi P ON P.id=C.idPersonaggio 
 										WHERE V.id=$id"; /* Preparazione Query: Personaggi Film */
 
 										if ($personaggi=$conn->query($query)) { /* Risultati della query */
@@ -1921,11 +1935,12 @@
 														</div>
 													');
 											}
-										}
 										$personaggi->free(); // Dealloco l'oggetto
+										}
+										
 										
 										if($_SESSION["login"]==1){
-											$query="SELECT voto, testo, username FROM recensionivideo LEFT JOIN Utenti ON idAdmin=id WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
+											$query="SELECT voto, testo, username FROM recensionivideo LEFT JOIN utenti ON idAdmin=id WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
 											$recensione=$conn->query($query);
 											if($recensione->num_rows==0){
 												echo('
@@ -2232,10 +2247,10 @@
 															</button>
 														  </div>
 														  
-														  <div class="modal-body" style="margin:0 auto;">
-																<div class="form-group">
+														  <div class="modal-body">
+															<div class="form-group">
 																<textarea id="textcur" name="textcur" class="form-control" rows="5" maxlength="255" placeholder="Scrivi la tua curiosità"></textarea>
-																</div>
+															</div>
 														  </div>
 														  
 														  <div class="modal-footer">
@@ -2254,7 +2269,7 @@
 														<h2 class="mt-4 mb-4" >Curiosità degli utenti</h2>
 													</div>
 												');
-										$query="SELECT c.id idCur, C.testo,U.username, U.id, A.username admin
+										$query="SELECT C.id idCur, C.testo,U.username, U.id, A.username admin
 										FROM curiositavideo C 
 										INNER JOIN utenti U ON U.id=C.idUtente
 										LEFT JOIN utenti A ON A.id=C.idAdmin
@@ -2674,7 +2689,7 @@
 										*/
 										
 										if($_SESSION["login"]==1){
-											$query="SELECT voto, testo, username FROM recensioniserie LEFT JOIN Utenti ON idAdmin=id WHERE idSerie=$id AND idUtente=$_SESSION[idUser]";
+											$query="SELECT voto, testo, username FROM recensioniserie LEFT JOIN utenti ON idAdmin=id WHERE idSerie=$id AND idUtente=$_SESSION[idUser]";
 											$recensione=$conn->query($query);
 											if($recensione->num_rows==0){
 												echo('
@@ -2980,7 +2995,7 @@
 															</button>
 														  </div>
 														  
-														  <div class="modal-body" style="margin:0 auto;">
+														  <div class="modal-body">
 																<div class="form-group">
 																<textarea id="textcur" name="textcur" class="form-control" rows="5" maxlength="255" placeholder="Scrivi la tua curiosità"></textarea>
 																</div>
@@ -3002,7 +3017,7 @@
 														<h2 class="mt-4 mb-4" >Curiosità degli utenti</h2>
 													</div>
 												');
-										$query="SELECT c.id idCur, C.testo,U.username, U.id, A.username admin
+										$query="SELECT C.id idCur, C.testo,U.username, U.id, A.username admin
 										FROM curiositaserie C 
 										INNER JOIN utenti U ON U.id=C.idUtente
 										LEFT JOIN utenti A ON A.id=C.idAdmin
@@ -3583,7 +3598,7 @@
 										}
 
 										$query="SELECT V.id, V.nome, V.durata, V.sinossi
-										FROM comparizioni C JOIN video V ON V.id=c.idVideo
+										FROM comparizioni C JOIN video V ON V.id=C.idVideo
 										WHERE C.idPersonaggio=$id"; /* Preparazione Query: Video in cui compare il personaggio */
 										if ($video=$conn->query($query)) { /* Query effettuata con successo */
 											echo ('	
