@@ -272,7 +272,7 @@
 		  	<div class="navbar navbar-dark bg-dark shadow-sm"> <!-- Base della Navbar-->
 		 		<div class="container d-flex justify-content-between"> <!-- Contenitore delle scorciatoie -->
 			  		<a href="index.php" class="navbar-brand d-flex align-items-center" > <!-- Scorciatoia Homepage -->
-						<strong>Homepage</strong>
+						<i class="fa fa-home"></i>
 					</a>
 					<div class="dropdown"> <!-- Elenco categorie -->
 						<button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenu2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
