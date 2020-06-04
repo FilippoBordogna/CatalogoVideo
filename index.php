@@ -73,9 +73,12 @@
 	
 	function dbConn() { // Connessione al DB 
 		$host = ""; // Host Server MySQL 
-		$user = "root"; // User Server MySQL 
+		//$user = "root"; // User Server MySQL XAMPP
+		$user = ""; // User Server MySQL Altervista
 		$pwd = ""; // Password Server MySQL 
-		$dbname = "catalogo"; // Nome DB MySQL 
+		//$dbname = "catalogo"; // Nome DB MySQL XAMPP
+		//$dbname = "my_gabrielebarcella"; // Nome DB MySQL Altervista Barcella 
+		$dbname = "my_bordognafilippo"; // Nome DB MySQL ALtervista Bordogna
 		$conn = new mysqli ( $host , $user , $pwd , $dbname ); // Inizializzazione Connesione DB 
 		if ($conn->connect_errno) { //
 			printf("Errore nella connessione al DB:</br>", $conn->connect_error); // Stampa eventuali errori 
@@ -668,7 +671,7 @@
 											'); // Link che mostra tutti i film (case 1) 
 
 										// MIGLIORI SERIE TV
-										$query="SELECT S.*, AVG(RS.voto) mediaVoti, MAX(V.stagione) nStagioni, COUNT(DISTINCT V.id) nEpisodi, V.nazionalita, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine
+										$query="SELECT S.*, AVG(RS.voto) mediaVoti, COUNT(DISTINCT V.stagione) nStagioni, COUNT(DISTINCT V.id) nEpisodi, V.nazionalita, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine
 										FROM recensioniserie RS JOIN serie S ON S.id=RS.idSerie JOIN video V on V.idserie=S.id
 										WHERE RS.idAdmin IS NOT NULL
 										GROUP BY S.id
@@ -966,10 +969,10 @@
 										
 										switch(floor($ordinamento/2)) { // Tipo di ordinamento
 											case 0:
-												$ord="mediaVoti";
+												$ord="V.nome";
 												break;
 											case 1:
-												$ord="V.nome";
+												$ord="mediaVoti";
 												break;
 											case 2:
 												$ord="V.durata";
@@ -983,6 +986,8 @@
 										}
 										if($ordinamento%2==1) // Ordinamento Discendente
 											$ord.=" DESC";
+										if(floor($ordinamento/2)==1)
+											$ord.=", V.id DESC";
 
 										$nris=8; // Risultati da mostrare per pagina
 										$query="SELECT V.id, V.nome, V.durata, V.sinossi, V.annoUscita, V.nazionalita, AVG(RV.voto) mediaVoti
@@ -997,11 +1002,11 @@
 										echo ('	
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 											<div class="container text-center"> 
-												<h2 class="mt-4 mb-4" >Tutti i Film</h2>
+												<h2 class="mt-4 mb-4" >Tutti i Film </h2>
 											</div>
 											'); // Titolo
 
-										$valori=["Voto","Nome","Durata","Anno d'uscita", "Nazionalità"]; // Valori dell'ordinamento
+										$valori=["Nome","Voto","Durata","Anno d'uscita", "Nazionalità"]; // Valori dell'ordinamento
 										echo ('
 											<div class="container"> Ordina per: 
 												<select id="ord" onchange="passa_a(null,1,1,ord.value,null,null)">
@@ -1135,10 +1140,10 @@
 										
 										switch(floor($ordinamento/2)) { // Tipo di ordinamento
 											case 0:
-												$ord="mediaVoti";
+												$ord="S.nome";
 												break;
 											case 1:
-												$ord="S.nome";
+												$ord="mediaVoti";
 												break;
 											case 2:
 												$ord="nStagioni";
@@ -1158,9 +1163,11 @@
 										}
 										if($ordinamento%2==1) // Ordinamento decrescente
 											$ord.=" DESC";
+										if(floor($ordinamento/2)==1)
+										$ord.=", S.id DESC";
 
 										$nris=8; // Risultati da mostrare per pagina
-										$query="SELECT S.*, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine, COUNT(V.id) nEpisodi, COUNT(V.stagione) nStagioni, AVG(RS.voto) mediaVoti, V.nazionalita
+										$query="SELECT S.*, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine, COUNT(DISTINCT V.id) nEpisodi, COUNT(DISTINCT V.stagione) nStagioni, AVG(RS.voto) mediaVoti, V.nazionalita
 										FROM serie S INNER JOIN video V ON V.idSerie=S.id LEFT JOIN recensioniserie RS ON RS.idSerie=S.id
 										GROUP BY S.id
 										ORDER BY $ord
@@ -1174,7 +1181,7 @@
 											</div>
 											'); // Titolo
 
-											$valori=["Voto","Nome","Numero Stagioni","Numero Episodi", "Anno d'uscita", "Anno di fine", "Nazionalità"]; // Valori dell'ordinamento
+											$valori=["Nome","Voto","Numero Stagioni","Numero Episodi", "Anno d'uscita", "Anno di fine", "Nazionalità"]; // Valori dell'ordinamento
 											echo ('
 												<div class="container"> Ordina per: 
 													<select id="ord" onchange="passa_a(null,2,1,ord.value,null,null)">
@@ -1322,25 +1329,31 @@
 												$ord="S.nome";
 												break;
 											case 1:
-												$ord="nFilm";
+												$ord="mediaVoti";
 												break;
 											case 2:
-												$ord="annoUscita";
+												$ord="nFilm";
 												break;
 											case 3:
-												$ord="annoFine";
+												$ord="annoUscita";
 												break;
 											case 4:
+												$ord="annoFine";
+												break;
+											case 5:
 												$ord="V.nazionalita";
 												break;
 										}
 										if($ordinamento%2==1) // Ordinamento discendente
 											$ord.=" DESC";
+										if(floor($ordinamento/2)==1)
+											$ord.=", S.id DESC";
 
 										$nris=8;  // Riusltati da mostrare per pagina  
-										$query="SELECT S.id, S.nome, COUNT(*) nFilm, V.nazionalita, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine, AVG(RV.voto) mediaVoti
+										$query="SELECT S.id, S.nome, COUNT(DISTINCT V.id) nFilm, V.nazionalita, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine, AVG(RV.voto) mediaVoti
 										FROM saghe S JOIN video V ON S.id=V.idSaga LEFT JOIN recensionivideo RV ON RV.idVideo=V.id
 										GROUP BY S.id
+										ORDER BY $ord
 										LIMIT $nris
 										OFFSET ".($nris*($pagina-1));  // Preparazione Query: Tutte le saghe  
 										
@@ -1353,12 +1366,12 @@
 											</div>
 											'); // Titolo
 
-											$valori=["Nome","Numero Film", "Anno d'uscita", "Anno di fine", "Nazionalità"]; // Valori ordinamento
+											$valori=["Nome", "Voto", "Numero Film", "Anno d'uscita", "Anno di fine", "Nazionalità"]; // Valori ordinamento
 											echo ('
 												<div class="container"> Ordina per: 
 													<select id="ord" onchange="passa_a(null,3,1,ord.value,null,null)">
 												'); // Scelta dell'ordinamento
-											for($i=0;$i<10;$i++) {
+											for($i=0;$i<12;$i++) {
 												echo '<option value="'.$i.'"';
 												if($ordinamento==$i)
 													echo 'selected>';
@@ -1400,7 +1413,7 @@
 															if($saga["mediaVoti"]!=null)
 																echo ('
 																	<div class="d-flex flex-row-reverse align-items-center">
-																		<small class="text-muted">Voto: '.$saga["mediaVoti"].'</small>
+																		<small class="text-muted">Voto: '.round($saga["mediaVoti"],2).'</small>
 																	</div>
 																'); // Costruisco un riquadro per ogni saga (pt.1)
 
@@ -1492,10 +1505,10 @@
 										
 										switch(floor($ordinamento/2)) { // Tipo di ordinamento
 											case 0:
-												$ord="mediaVoti";
+												$ord="V.nome"; 
 												break;
 											case 1:
-												$ord="V.nome";
+												$ord="mediaVoti";
 												break;
 											case 2:
 												$ord="V.durata";
@@ -1509,6 +1522,8 @@
 										}
 										if($ordinamento%2==1) // Ordinamento Discendente
 											$ord.=" DESC";
+										if(floor($ordinamento/2)==1)
+											$ord.=", V.id DESC";
 
 										$nris=8; // Risultati da mostrare per pagina
 										$query="SELECT V.id, V.nome, V.durata, V.sinossi, V.annoUscita, V.nazionalita, AVG(RV.voto) mediaVoti
@@ -1527,7 +1542,7 @@
 											</div>
 											'); // Titolo
 
-										$valori=["Voto","Nome","Durata","Anno d'uscita", "Nazionalità"]; // Valori dell'ordinamento
+										$valori=["Nome","Voto","Durata","Anno d'uscita", "Nazionalità"]; // Valori dell'ordinamento
 										echo ('
 											<div class="container"> Ordina per: 
 												<select id="ord" onchange="passa_a(null,4,1,ord.value,null,null)">
@@ -3161,7 +3176,7 @@
 										$id=$_GET["id"]; /* idPersona */
 										$conn=dbConn(); // Connessione al DB
 										
-										$query="SELECT S.id,S.nome,count(*) nFilm FROM saghe S 
+										$query="SELECT S.id,S.nome,COUNT(*) nFilm FROM saghe S 
 										JOIN video V ON V.idSaga=S.id
                                         WHERE S.id=$id
 										GROUP BY S.id"; /* Preparazione Query: Dettagli Serie */
@@ -3717,7 +3732,7 @@
 																	<p class="card-text">'.$elemento["nome"].'</p>
 																	<p class="card-text-description">'.$elemento["sinossi"].'</p>
 														');
-														$query="SELECT COUNT(S.id) nepisodi
+														$query="SELECT COUNT(S.id) nEpisodi
 														FROM serie S JOIN video V ON S.id=V.idSerie 
 														WHERE V.idSerie=1"; /* Preparazione Query: Numero episodi della serie */
 														if ($risultato=$conn->query($query)) { /* Query effettuata con successo */
@@ -3725,7 +3740,7 @@
 																$nepisodi = $risultato->fetch_assoc();
 													echo ('			
 																	<div class="d-flex flex-row-reverse align-items-center">
-																		<small class="text-muted">Episodi: '.$nepisodi["nepisodi"].'</small>
+																		<small class="text-muted">Episodi: '.$nepisodi["nEpisodi"].'</small>
 																	</div>
 																</div>
 															</div>
@@ -4324,7 +4339,7 @@
 										// FILM E DOCUMENTARI
 										switch(floor($ordinamento/2)) { // Tipo di ordinamento
 											case 0:
-												$ord="mediaVoti";
+												$ord="mediaVoti, V.id";
 												break;
 											case 1:
 												$ord="V.nome";
@@ -4477,7 +4492,7 @@
 										// SERIE TV
 										switch(floor($ordinamento2/2)) { // Tipo di ordinamento
 											case 0:
-												$ord2="mediaVoti";
+												$ord2="mediaVoti, S.id";
 												break;
 											case 1:
 												$ord2="S.nome";
@@ -4501,7 +4516,7 @@
 										if($ordinamento2%2==1) // Ordinamento decrescente
 											$ord2.=" DESC";
 
-										$query="SELECT S.*, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine, COUNT(V.id) nEpisodi, COUNT(V.stagione) nStagioni, AVG(RS.voto) mediaVoti, V.nazionalita
+										$query="SELECT S.*, MIN(V.annoUscita) annoUscita, MAX(V.annoUscita) annoFine, COUNT(DISTINCT V.id) nEpisodi, COUNT(DISTINCT V.stagione) nStagioni, AVG(RS.voto) mediaVoti, V.nazionalita
 										FROM serie S INNER JOIN video V ON V.idSerie=S.id LEFT JOIN recensioniserie RS ON RS.idSerie=S.id
 										WHERE V.id IN (SELECT idVideo FROM generivideo WHERE idGenere=$id)
 										GROUP BY S.id
