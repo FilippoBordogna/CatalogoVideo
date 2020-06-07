@@ -800,7 +800,13 @@ INSERT INTO `generivideo` (`id`, `idVideo`, `idGenere`) VALUES
 (136, 31, 9),
 (135, 31, 15),
 (133, 31, 26),
-(146, 32, 8);
+(146, 32, 8),
+(147, 34, 7),
+(148, 34, 9),
+(149, 33, 27), 
+(150, 33, 3),
+(151, 33, 2),
+(152, 33, 11);
 
 --
 -- Dump dei dati per la tabella `interpretazioni`
