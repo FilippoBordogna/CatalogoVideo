@@ -245,8 +245,7 @@ CREATE TABLE IF NOT EXISTS `generi` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tipo` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `Tipo` (`tipo`),
-  UNIQUE KEY `tipo_2` (`tipo`)
+  UNIQUE KEY `Tipo` (`tipo`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf16 AUTO_INCREMENT=29;
 
 --
