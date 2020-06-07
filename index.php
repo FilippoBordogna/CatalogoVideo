@@ -73,12 +73,12 @@
 	
 	function dbConn() { // Connessione al DB 
 		$host = ""; // Host Server MySQL 
-		//$user = "root"; // User Server MySQL XAMPP
-		$user = ""; // User Server MySQL Altervista
+		$user = "root"; // User Server MySQL XAMPP
+		//$user = ""; // User Server MySQL Altervista
 		$pwd = ""; // Password Server MySQL 
-		//$dbname = "catalogo"; // Nome DB MySQL XAMPP
+		$dbname = "catalogo"; // Nome DB MySQL XAMPP
 		//$dbname = "my_gabrielebarcella"; // Nome DB MySQL Altervista Barcella 
-		$dbname = "my_bordognafilippo"; // Nome DB MySQL ALtervista Bordogna
+		//$dbname = "my_bordognafilippo"; // Nome DB MySQL ALtervista Bordogna
 		$conn = new mysqli ( $host , $user , $pwd , $dbname ); // Inizializzazione Connesione DB 
 		if ($conn->connect_errno) { //
 			printf("Errore nella connessione al DB:</br>", $conn->connect_error); // Stampa eventuali errori 
@@ -1795,7 +1795,8 @@
 										$query="SELECT AV.idPersona, Per.nome, Per.cognome, Pggi.nome nomeP 
 										FROM attorivideo AV JOIN video V ON AV.idVideo=V.id JOIN persone Per ON Per.id=AV.idPersona 
 										LEFT JOIN interpretazioni I ON I.idPersona=Per.id LEFT JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
-										WHERE V.id=$id"; /* Preparazione Query: Attori Film */
+										LEFT JOIN comparizioni C ON C.idVideo=V.id AND Pggi.id=C.idPersonaggio
+										WHERE V.id=$id AND (Pggi.id IN (SELECT idPersonaggio FROM comparizioni WHERE idVideo = $id) OR Pggi.nome is null)"; /* Preparazione Query: Attori Film */
 
 										if ($attori=$conn->query($query)) { /* Risultati della query */
 											echo ('

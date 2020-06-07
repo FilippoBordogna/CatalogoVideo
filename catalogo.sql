@@ -7,17 +7,6 @@
 -- Versione del server: 5.6.33-log
 -- PHP Version: 5.3.10
 
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8 */;
-
 -- *****************************************	
 -- ***** INIZIO CREAZIONE DEL DATABASE *****
 -- *****************************************
@@ -25,20 +14,15 @@ SET time_zone = "+00:00";
 --
 -- Database: `my_bordognafilippo` (ALTERVISTA)
 --
-CREATE DATABASE IF NOT EXISTS `my_bordognafilippo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `my_bordognafilippo`;
+/*CREATE DATABASE IF NOT EXISTS `my_bordognafilippo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `my_bordognafilippo`;*/
 
 --
 -- Database: `catalogo` (XAMPP)
 --
-/*CREATE DATABASE IF NOT EXISTS `catalogo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `catalogo`*/
+CREATE DATABASE IF NOT EXISTS `catalogo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `catalogo`
 
---
--- Database: `my_gabrielebarcella` (ALTERVISTA)
---
-/*CREATE DATABASE IF NOT EXISTS `my_gabrielebarcella` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `my_gabrielebarcella`;*/
 
 -- ***************************************	
 -- ***** FINE CREAZIONE DEL DATABASE *****
@@ -52,7 +36,6 @@ USE `my_gabrielebarcella`;*/
 --
 -- Struttura della tabella `utenti`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `utenti` (
@@ -62,14 +45,13 @@ CREATE TABLE IF NOT EXISTS `utenti` (
   `password` varchar(32) NOT NULL,
   `admin` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `username` (`username`),
-  UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=9;
+  UNIQUE (`username`),
+  UNIQUE (`email`)
+);
 
 --
 -- Struttura della tabella `accessi`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `accessi` (
@@ -79,41 +61,36 @@ CREATE TABLE IF NOT EXISTS `accessi` (
   `durata` int(11) DEFAULT NULL,
   `idUtente` int(11) NOT NULL,
   PRIMARY KEY (`id`),
-  FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
-  KEY `idUtente` (`idUtente`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=28;
+  FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`)
+);
 
 --
 -- Struttura della tabella `persone`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `persone` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(50) NOT NULL,
   `cognome` varchar(50) NOT NULL,
-  PRIMARY KEY (`id`),
-  UNIQUE KEY `nome` (`nome`,`cognome`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=63;
+  PRIMARY KEY (`id`)
+);
 
 --
 -- Struttura della tabella `saghe`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `saghe` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `nome` (`nome`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=5;
+  UNIQUE (`nome`)
+);
 
 --
 -- Struttura della tabella `serie`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `serie` (
@@ -121,12 +98,11 @@ CREATE TABLE IF NOT EXISTS `serie` (
   `nome` varchar(50) NOT NULL,
   `sinossi` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=4;
+);
 
 --
 -- Struttura della tabella `video`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `video` (
@@ -142,61 +118,53 @@ CREATE TABLE IF NOT EXISTS `video` (
   `annoUscita` year(4) NOT NULL,
   `nazionalita` varchar(3) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `idSerie_2` (`idSerie`,`numero`,`stagione`),
-  UNIQUE KEY `idSaga_2` (`idSaga`,`numero`),
-  CONSTRAINT `FK_VideoSaga` FOREIGN KEY (`idSaga`) REFERENCES `saghe` (`id`),
-  CONSTRAINT `FK_VideoSerie` FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`),  
-  KEY `idSaga` (`idSaga`),
-  KEY `idSerie` (`idSerie`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=34;
+  UNIQUE (`idSerie`,`numero`,`stagione`),
+  UNIQUE (`idSaga`,`numero`),
+  FOREIGN KEY (`idSaga`) REFERENCES `saghe` (`id`),
+  FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`)
+);
 
 --
 -- Struttura della tabella `attorivideo`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `attorivideo` (
   `idVideo` int(11) NOT NULL,
   `idPersona` int(11) NOT NULL,
   PRIMARY KEY (`idVideo`,`idPersona`),
-  CONSTRAINT `FK_PersonaAttoreVideo` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
-  CONSTRAINT `FK_VideoAttoreVideo` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
-  KEY `idPersona` (`idPersona`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+  FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
+  FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`)
+);
 
 --
 -- Struttura della tabella `personaggi`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `personaggi` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `nome` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `nome` (`nome`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=21;
+  UNIQUE (`nome`)
+);
 
 --
 -- Struttura della tabella `comparizioni`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `comparizioni` (
   `idPersonaggio` int(11) NOT NULL,
   `idVideo` int(11) NOT NULL,
   PRIMARY KEY (`idPersonaggio`,`idVideo`),
-  CONSTRAINT `FK_PersonaggioComparizione` FOREIGN KEY (`idPersonaggio`) REFERENCES `personaggi` (`id`),
-  CONSTRAINT `FK_VideoComparizione` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
-  KEY `idVideo` (`idVideo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  FOREIGN KEY (`idPersonaggio`) REFERENCES `personaggi` (`id`),
+  FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`)
+);
 
 --
 -- Struttura della tabella `curiositaserie`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `curiositaserie` (
@@ -206,18 +174,14 @@ CREATE TABLE IF NOT EXISTS `curiositaserie` (
   `idAdmin` int(11) DEFAULT NULL,
   `testo` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_SerieCuriositaSerie` FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`),
-  CONSTRAINT `FK_UtenteCuriositaSerie` FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
-  CONSTRAINT `FK_AdminCuriositaSerie` FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`),
-  KEY `idSerie` (`idSerie`),
-  KEY `idUtente` (`idUtente`),
-  KEY `idAdmin` (`idAdmin`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=2;
+  FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`),
+  FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
+  FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`)
+);
 
 --
 -- Struttura della tabella `curiositavideo`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `curiositavideo` (
@@ -227,31 +191,26 @@ CREATE TABLE IF NOT EXISTS `curiositavideo` (
   `idAdmin` int(11) DEFAULT NULL,
   `testo` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
-  CONSTRAINT `FK_VideoCuriositaVideo` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
-  CONSTRAINT `FK_UtenteCuriositaVideo` FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
-  CONSTRAINT `FK_AdminCuriositaVideo` FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`),
-  KEY `idVideo` (`idVideo`),
-  KEY `idUtente` (`idUtente`),
-  KEY `idAdmin` (`idAdmin`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8mb4 AUTO_INCREMENT=10;
+  FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
+  FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
+  FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`)
+);
 
 --
 -- Struttura della tabella `generi`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `generi` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `tipo` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `Tipo` (`tipo`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf16 AUTO_INCREMENT=29;
+  UNIQUE (`tipo`)
+);
 
 --
 -- Struttura della tabella `generivideo`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `generivideo` (
@@ -260,46 +219,39 @@ CREATE TABLE IF NOT EXISTS `generivideo` (
   `idGenere` int(11) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idVideo_2` (`idVideo`,`idGenere`),
-  CONSTRAINT `FK_GenereVideoVideo` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
-  CONSTRAINT `FK_GenereVideoGenere` FOREIGN KEY (`idGenere`) REFERENCES `generi` (`id`),
-  KEY `idVideo` (`idVideo`),
-  KEY `idCategoria` (`idGenere`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf16 AUTO_INCREMENT=148;
+  FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
+  FOREIGN KEY (`idGenere`) REFERENCES `generi` (`id`)
+);
 
 --
 -- Struttura della tabella `interpretazioni`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `interpretazioni` (
   `idPersona` int(11) NOT NULL,
   `idPersonaggio` int(11) NOT NULL,
   PRIMARY KEY (`idPersona`,`idPersonaggio`),
-  CONSTRAINT `FK_InterpretazionePersona` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
-  CONSTRAINT `FK_InterpretazionePersonaggio` FOREIGN KEY (`idPersonaggio`) REFERENCES `personaggi` (`id`),
-  KEY `idPersonaggio` (`idPersonaggio`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
+  FOREIGN KEY (`idPersonaggio`) REFERENCES `personaggi` (`id`)
+);
 
 --
 -- Struttura della tabella `produttorivideo`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `produttorivideo` (
   `idVideo` int(11) NOT NULL,
   `idPersona` int(11) NOT NULL,
   PRIMARY KEY (`idVideo`,`idPersona`),
-  CONSTRAINT `FK_ProduttoreVideoPersona` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
-  CONSTRAINT `FK_ProduttoreVideoVideo` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
-  KEY `idProduttore` (`idPersona`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+  FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
+  FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`)
+) ;
 
 --
 -- Struttura della tabella `recensioniserie`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `recensioniserie` (
@@ -309,17 +261,14 @@ CREATE TABLE IF NOT EXISTS `recensioniserie` (
   `testo` varchar(255) DEFAULT NULL,
   `idAdmin` int(11) DEFAULT NULL,
   PRIMARY KEY (`idSerie`,`idUtente`),
-  CONSTRAINT `FK_RecensioneSerieSerie` FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`),
-  CONSTRAINT `FK_RecensioneSerieUtente` FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
-  CONSTRAINT `FK_RecensioneSerieAdmin` FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`),
-  KEY `idUtente` (`idUtente`),
-  KEY `idAdmin` (`idAdmin`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`),
+  FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
+  FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`)
+);
 
 --
 -- Struttura della tabella `recensionivideo`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `recensionivideo` (
@@ -329,17 +278,14 @@ CREATE TABLE IF NOT EXISTS `recensionivideo` (
   `testo` varchar(255) DEFAULT NULL,
   `idAdmin` int(11) DEFAULT NULL,
   PRIMARY KEY (`idVideo`,`idUtente`),
-  CONSTRAINT `FK_RecensioneVideoVideo` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
-  CONSTRAINT `FK_RecensioneVideoUtente` FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
-  CONSTRAINT `FK_RecensioneVideoAdmin` FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`),
-  KEY `idUtente` (`idUtente`),
-  KEY `idAdmin` (`idAdmin`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+  FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
+  FOREIGN KEY (`idUtente`) REFERENCES `utenti` (`id`),
+  FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`)
+);
 
 --
 -- Struttura della tabella `registivideo`
 --
--- Creazione: Giu 04, 2020 alle 16:58
 --
 
 CREATE TABLE IF NOT EXISTS `registivideo` (
@@ -347,9 +293,8 @@ CREATE TABLE IF NOT EXISTS `registivideo` (
   `idPersona` int(11) NOT NULL,
   PRIMARY KEY (`idVideo`,`idPersona`),
   FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
-  CONSTRAINT `FK_RegistiVideoVideo` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
-  KEY `idRegista` (`idPersona`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf16;
+  FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`)
+);
 
 -- **********************************
 -- ***** FINE CREAZIONE TABELLE *****
@@ -986,8 +931,3 @@ INSERT INTO `registivideo` (`idVideo`, `idPersona`) VALUES
 -- ***** FINE POPOLAMENTO TABELLE *****
 -- ************************************
 
-COMMIT;
-
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
