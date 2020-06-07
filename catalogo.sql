@@ -131,7 +131,7 @@ CREATE TABLE IF NOT EXISTS `video` (
   CONSTRAINT `FK_VideoSerie` FOREIGN KEY (`idSerie`) REFERENCES `serie` (`id`),  
   KEY `idSaga` (`idSaga`),
   KEY `idSerie` (`idSerie`)
-)
+);
 
 --
 -- Struttura della tabella `attorivideo`
@@ -146,7 +146,7 @@ CREATE TABLE IF NOT EXISTS `attorivideo` (
   CONSTRAINT `FK_PersonaAttoreVideo` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
   CONSTRAINT `FK_VideoAttoreVideo` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
   KEY `idPersona` (`idPersona`)
-)
+);
 
 --
 -- Struttura della tabella `personaggi`
@@ -159,7 +159,7 @@ CREATE TABLE IF NOT EXISTS `personaggi` (
   `nome` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `nome` (`nome`)
-)
+);
 
 --
 -- Struttura della tabella `comparizioni`
@@ -174,7 +174,7 @@ CREATE TABLE IF NOT EXISTS `comparizioni` (
   CONSTRAINT `FK_PersonaggioComparizione` FOREIGN KEY (`idPersonaggio`) REFERENCES `personaggi` (`id`),
   CONSTRAINT `FK_VideoComparizione` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
   KEY `idVideo` (`idVideo`)
-) 
+); 
 
 --
 -- Struttura della tabella `curiositaserie`
@@ -195,7 +195,7 @@ CREATE TABLE IF NOT EXISTS `curiositaserie` (
   KEY `idSerie` (`idSerie`),
   KEY `idUtente` (`idUtente`),
   KEY `idAdmin` (`idAdmin`)
-) 
+); 
 
 --
 -- Struttura della tabella `curiositavideo`
@@ -216,7 +216,7 @@ CREATE TABLE IF NOT EXISTS `curiositavideo` (
   KEY `idVideo` (`idVideo`),
   KEY `idUtente` (`idUtente`),
   KEY `idAdmin` (`idAdmin`)
-)
+);
 
 --
 -- Struttura della tabella `generi`
@@ -229,7 +229,7 @@ CREATE TABLE IF NOT EXISTS `generi` (
   `tipo` varchar(50) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `Tipo` (`tipo`)
-)
+);
 
 --
 -- Struttura della tabella `generivideo`
@@ -247,7 +247,7 @@ CREATE TABLE IF NOT EXISTS `generivideo` (
   CONSTRAINT `FK_GenereVideoGenere` FOREIGN KEY (`idGenere`) REFERENCES `generi` (`id`),
   KEY `idVideo` (`idVideo`),
   KEY `idCategoria` (`idGenere`)
-)
+);
 
 --
 -- Struttura della tabella `interpretazioni`
@@ -262,7 +262,7 @@ CREATE TABLE IF NOT EXISTS `interpretazioni` (
   CONSTRAINT `FK_InterpretazionePersona` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
   CONSTRAINT `FK_InterpretazionePersonaggio` FOREIGN KEY (`idPersonaggio`) REFERENCES `personaggi` (`id`),
   KEY `idPersonaggio` (`idPersonaggio`)
-) 
+); 
 
 --
 -- Struttura della tabella `produttorivideo`
@@ -277,7 +277,7 @@ CREATE TABLE IF NOT EXISTS `produttorivideo` (
   CONSTRAINT `FK_ProduttoreVideoPersona` FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
   CONSTRAINT `FK_ProduttoreVideoVideo` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
   KEY `idProduttore` (`idPersona`)
-)
+);
 
 --
 -- Struttura della tabella `recensioniserie`
@@ -297,7 +297,7 @@ CREATE TABLE IF NOT EXISTS `recensioniserie` (
   CONSTRAINT `FK_RecensioneSerieAdmin` FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`),
   KEY `idUtente` (`idUtente`),
   KEY `idAdmin` (`idAdmin`)
-) 
+); 
 
 --
 -- Struttura della tabella `recensionivideo`
@@ -317,7 +317,7 @@ CREATE TABLE IF NOT EXISTS `recensionivideo` (
   CONSTRAINT `FK_RecensioneVideoAdmin` FOREIGN KEY (`idAdmin`) REFERENCES `utenti` (`id`),
   KEY `idUtente` (`idUtente`),
   KEY `idAdmin` (`idAdmin`)
-)
+);
 
 --
 -- Struttura della tabella `registivideo`
@@ -332,7 +332,7 @@ CREATE TABLE IF NOT EXISTS `registivideo` (
   FOREIGN KEY (`idPersona`) REFERENCES `persone` (`id`),
   CONSTRAINT `FK_RegistiVideoVideo` FOREIGN KEY (`idVideo`) REFERENCES `video` (`id`),
   KEY `idRegista` (`idPersona`)
-) 
+); 
 
 -- **********************************
 -- ***** FINE CREAZIONE TABELLE *****
