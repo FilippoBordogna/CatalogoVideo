@@ -65,7 +65,6 @@
 				$redirect.="&pagina2=$_GET[pagina2]";
 			if(isset($_GET["ordinamento2"]))
 				$redirect.="&ordinamento2=$_GET[ordinamento2]";
-			
 		}
 		header($redirect);
 		exit();
@@ -1756,7 +1755,7 @@
 											}
 										}
 										
-										$query="SELECT V.id,V.nome,V.durata,V.idSaga,V.idSerie,V.numero,V.stagione,V.sinossi,Se.nome nomeSe,Sa.nome nomeSa 
+										$query="SELECT V.id,V.nome,V.durata,V.idSaga,V.idSerie,V.numero,V.stagione,V.sinossi, V.annoUscita, V.nazionalita, Se.nome nomeSe,Sa.nome nomeSa 
 										FROM video V LEFT JOIN serie Se ON V.idSerie=Se.id LEFT JOIN saghe Sa ON Sa.id=V.idSaga 
 										WHERE V.id=$id;"; /* Preparazione Query: Dettagli video */
 										$risultati=$conn->query($query);
@@ -1770,14 +1769,43 @@
 													<img src="images/video/'.$id.'.jpg" style="max-width: 50%; class="img-fluid mt-4 mb-4" onerror="this.onerror=null;this.src=\'images/video/default.jpg\';" alt="Locandina di '.$video["nome"].'">
 													<div class="container-sm col-md-6 py2">
 														<p class="card-text" style="text-align:center !important">'.$video["sinossi"].'</p>
-													</div>
-												</div>
 												</div>
 												<div class="d-flex justify-content-end bd-highlight mb-3">
 													<small class="text-muted">Durata: '.$video["durata"].' minuti</small>
 												</div>
-												<div class="row">
+												<div class="d-flex justify-content-end bd-highlight mb-3">
+													<small class="text-muted">Anno d\'uscita: '.$video["annoUscita"].' minuti</small>
+												</div>
+												<div class="d-flex justify-content-end bd-highlight mb-3">
+													<small class="text-muted">Nazionalità: '.$video["nazionalita"].' minuti</small>
+												</div>												
 											');
+										
+											$query="SELECT G.tipo
+											FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
+											WHERE GV.idVideo=".$video["id"]."
+											ORDER BY G.tipo"; // Preparazione query: Categorie film
+											if($generi=$conn->query($query)) { // Query effettuata con successo
+												if ($generi->num_rows>0) { // Almeno un risultato
+													echo ('
+														<div class="d-flex flex-row-reverse align-items-center">
+															<small class="text-muted">Categorie:
+														');
+													$i=0;
+													while ($genere = $generi->fetch_assoc()) {
+														echo $genere["tipo"];
+														if($i<($generi->num_rows-1))
+															echo ', ';
+														$i++;
+													}
+													echo ('
+															</small>
+														</div>
+														<div class="row">
+													'); // Costruisco un riquadro per ogni film (pt.2)
+												}
+												$generi->free(); // Dealloco l'oggetto
+											}	
 
 										if($video["idSerie"]!=null)
 											echo ('
@@ -1796,7 +1824,7 @@
 										FROM attorivideo AV JOIN video V ON AV.idVideo=V.id JOIN persone Per ON Per.id=AV.idPersona 
 										LEFT JOIN interpretazioni I ON I.idPersona=Per.id LEFT JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
 										LEFT JOIN comparizioni C ON C.idVideo=V.id AND Pggi.id=C.idPersonaggio
-										WHERE V.id=$id AND (Pggi.id IN (SELECT idPersonaggio FROM comparizioni WHERE idVideo = $id) OR Pggi.nome is null)"; /* Preparazione Query: Attori Film */
+										WHERE V.id=$id AND (Pggi.id IN (SELECT idPersonaggio FROM comparizioni WHERE idVideo = $id) OR Pggi.id IS NULL)"; /* Preparazione Query: Attori Film */
 
 										if ($attori=$conn->query($query)) { /* Risultati della query */
 											echo ('
@@ -3425,17 +3453,19 @@
 
 										$query="SELECT V.nome,V.durata,V.sinossi,V.id
 										FROM video V JOIN attorivideo AV ON AV.idVideo=V.id JOIN persone P ON AV.idPersona=P.id 
-										WHERE P.id=$id"; /* Preparazione Query: Video da Attore */
+										WHERE P.id=$id AND V.selettore!=2"; /* Preparazione Query: Video da Attore */
 
 										if ($video=$conn->query($query)) { /* Risultati della query */
-											if ($video->num_rows>0) {
+											$n=$video->num_rows;
+											if ($n>0) {
 												echo ('	
 													<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Attore in</h2>
 													</div>
 													');
+											}		
 
-												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+												while ($elemento = $video->fetch_assoc())  { /* Costruisco un riquadro per ogni video */
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -3444,23 +3474,56 @@
 																		<p class="card-text">'.$elemento["nome"].'</p>
 																		<p class="card-text-description">'.$elemento["sinossi"].'</p>			
 																		<div class="d-flex justify-content-between align-items-center">
+																		</div>
 																	</div>
 																</div>
-															</div>
-														</div>		
+															</div>		
+													');
+												}
+										}
+										
+										$video->free(); // Dealloco l'oggetto	
+										
+										$query="SELECT S.* 
+										FROM serie S JOIN video V ON V.idSerie=S.id JOIN attorivideo AV ON AV.idVideo=V.id 
+										WHERE AV.idPersona=$id 
+										GROUP BY S.id"; /* Preparazione Query: Serie da Attore */
+
+										if ($serie=$conn->query($query)) { /* Risultati della query */
+											if ($serie->num_rows>0) {
+												if ($n==0) {
+													echo ('	
+														<div class="container text-center"> 
+															<h2 class="mt-4 mb-4" >Attore in</h2>
+														</div>
+														');
+												}
+												while ($elemento = $serie->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+													echo ('
+															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',6,null,null,null,null);" >
+																<div class="card h-100 mb-4 shadow-sm">
+																	<div class="card-body">
+																		<img src="images/serie/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/serie/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
+																		<p class="card-text">'.$elemento["nome"].'</p>
+																		<p class="card-text-description">'.$elemento["sinossi"].'</p>			
+																		<div class="d-flex justify-content-between align-items-center">
+																		</div>
+																	</div>
+																</div>
+															</div>		
 													');
 												}
 											}
-											
-											$video->free(); // Dealloco l'oggetto
+											$serie->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT V.nome,V.durata,V.sinossi,V.id
 										FROM video V JOIN registivideo RV ON RV.idVideo=V.id JOIN persone P ON RV.idPersona=P.id 
-										WHERE P.id=$id"; /* Preparazione Query: Video da Regista */
-
+										WHERE P.id=$id AND V.selettore!=2"; /* Preparazione Query: Video da Regista */
+										
 										if ($video=$conn->query($query)) { /* Risultati della query */
-											if($video->num_rows>0) {
+											$n=$video->num_rows;
+											if($n>0) {
 												echo ('
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Regista in</h2>
@@ -3485,13 +3548,47 @@
 											}																				
 											$video->free(); // Dealloco l'oggetto
 										}
+										
+										$query="SELECT S.* 
+										FROM serie S JOIN video V ON V.idSerie=S.id JOIN registivideo RV ON RV.idVideo=V.id 
+										WHERE RV.idPersona=$id 
+										GROUP BY S.id"; /* Preparazione Query: Serie da Regista */
+
+										if ($serie=$conn->query($query)) { /* Risultati della query */
+											if ($serie->num_rows>0) {
+												if ($n==0) {
+													echo ('	
+														<div class="container text-center"> 
+															<h2 class="mt-4 mb-4" >Regista in</h2>
+														</div>
+														');
+												}
+												while ($elemento = $serie->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+													echo ('
+															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',6,null,null,null,null);" >
+																<div class="card h-100 mb-4 shadow-sm">
+																	<div class="card-body">
+																		<img src="images/serie/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/serie/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
+																		<p class="card-text">'.$elemento["nome"].'</p>
+																		<p class="card-text-description">'.$elemento["sinossi"].'</p>			
+																		<div class="d-flex justify-content-between align-items-center">
+																		</div>
+																	</div>
+																</div>
+															</div>		
+													');
+												}
+											}
+											$serie->free(); // Dealloco l'oggetto
+										}
 
 										$query="SELECT V.nome,V.durata,V.sinossi,V.id
 										FROM video V JOIN produttorivideo PV ON PV.idVideo=V.id JOIN persone P ON PV.idPersona=P.id 
-										WHERE P.id=$id"; /* Preparazione Query: Video da Produttore */
+										WHERE P.id=$id AND V.selettore!=2"; /* Preparazione Query: Video da Produttore */
 
 										if ($video=$conn->query($query)) { /* Risultati della query */
-											if($video->num_rows>0) {
+											$n=$video->num_rows;
+											if($n>0) {
 												echo ('
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Produttore in</h2>
@@ -3517,6 +3614,39 @@
 											$video->free(); // Dealloco l'oggetto
 										}
 										
+										$query="SELECT S.* 
+										FROM serie S JOIN video V ON V.idSerie=S.id JOIN produttorivideo PV ON PV.idVideo=V.id 
+										WHERE PV.idPersona=$id 
+										GROUP BY S.id"; /* Preparazione Query: Serie da Produttore */
+
+										if ($serie=$conn->query($query)) { /* Risultati della query */
+											if ($serie->num_rows>0) {
+												if ($n==0) {
+													echo ('	
+														<div class="container text-center"> 
+															<h2 class="mt-4 mb-4" >Produttore in</h2>
+														</div>
+														');
+												}
+												while ($elemento = $serie->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+													echo ('
+															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',6,null,null,null,null);" >
+																<div class="card h-100 mb-4 shadow-sm">
+																	<div class="card-body">
+																		<img src="images/serie/'.$elemento["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/serie/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
+																		<p class="card-text">'.$elemento["nome"].'</p>
+																		<p class="card-text-description">'.$elemento["sinossi"].'</p>			
+																		<div class="d-flex justify-content-between align-items-center">
+																		</div>
+																	</div>
+																</div>
+															</div>		
+													');
+												}
+											}
+											$serie->free(); // Dealloco l'oggetto
+										}
+
 										$query="SELECT Pggi.* 
 										FROM interpretazioni I JOIN persone Pers ON Pers.id=I.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
 										WHERE Pers.id=$id"; /* Preparazione Query: Personaggi interpretati */
