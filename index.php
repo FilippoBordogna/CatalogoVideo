@@ -76,9 +76,9 @@
 		$user = "root"; // User Server MySQL XAMPP
 		//$user = ""; // User Server MySQL Altervista
 		$pwd = ""; // Password Server MySQL 
-		//$dbname = "catalogo"; // Nome DB MySQL XAMPP
+		$dbname = "catalogo"; // Nome DB MySQL XAMPP
 		//$dbname = "my_gabrielebarcella"; // Nome DB MySQL Altervista Barcella 
-		$dbname = "my_bordognafilippo"; // Nome DB MySQL ALtervista Bordogna
+		//$dbname = "my_bordognafilippo"; // Nome DB MySQL ALtervista Bordogna
 		$conn = new mysqli ( $host , $user , $pwd , $dbname ); // Inizializzazione Connesione DB 
 		if ($conn->connect_errno) { //
 			printf("Errore nella connessione al DB:</br>", $conn->connect_error); // Stampa eventuali errori 
