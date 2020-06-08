@@ -37,13 +37,13 @@
 		if(isset($_SESSION['idUser'])){
 			$conn=dbConn();
 			
-			$query="SELECT current_timestamp()-dataOra durata FROM accessi WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra DESC LIMIT 1";
+			$query="SELECT current_timestamp()-dataOra durata FROM accessi WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra DESC LIMIT 1"; // Preparazione Query: Durata ultimo accesso
 			$risultato=$conn->query($query);
 			$tempo=$risultato->fetch_assoc();
 			//echo $tempo['durata'];
-			if($tempo['durata']>1440)
+			if($tempo['durata']>1440) // La sessione dura da più di 1 giorno: pongo durata al limite massimo
 				$query="UPDATE accessi SET durata=1440 WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra DESC LIMIT 1";
-			else
+			else // La sessione dura da meno di 1 giorno: pongo durata al valore effettivo
 				$query="UPDATE accessi SET durata=current_timestamp()-dataOra WHERE idUtente=$_SESSION[idUser] ORDER BY dataOra DESC LIMIT 1";
 			$risultato=$conn->query($query);
 		}
@@ -76,10 +76,9 @@
 		//$user = ""; // User Server MySQL Altervista
 		$pwd = ""; // Password Server MySQL 
 		$dbname = "catalogo"; // Nome DB MySQL XAMPP
-		//$dbname = "my_gabrielebarcella"; // Nome DB MySQL Altervista Barcella 
 		//$dbname = "my_bordognafilippo"; // Nome DB MySQL ALtervista Bordogna
 		$conn = new mysqli ( $host , $user , $pwd , $dbname ); // Inizializzazione Connesione DB 
-		if ($conn->connect_errno) { //
+		if ($conn->connect_errno) { // Si sono verificati errori
 			printf("Errore nella connessione al DB:</br>", $conn->connect_error); // Stampa eventuali errori 
 			exit();
 		}
@@ -178,14 +177,14 @@
 			text-align: center; 
 			cursor: pointer;
 			color: blue;
-		}
+		} /* Stile della tendina delle categorie */
 
 		.container-cat :hover {
 			cursor: pointer;
 			background-color: black;
 			color: white;	  
 			transition: all 0.7s; 
-		}
+		} /* Stile della tendina delle categorie: col cursore sopra */
 
 		</style>
 		<!-- -->
@@ -196,7 +195,7 @@
 				f.submit();
 			}
 			
-			function passa_a(id,stato,pagina,ordinamento,pagina2,ordinamento2) { // Modifica lo stato (e quindi la pagina), l'identificativo e il numero di pagina
+			function passa_a(id,stato,pagina,ordinamento,pagina2,ordinamento2) { // Modifica l'dentificativo, lo stato, i numeri di pagina e gli ordinamenti
 				f.id.value=id;
 				f.stato.value=stato;
 				f.pagina.value=pagina;
@@ -222,12 +221,12 @@
 					curiosita.submit();
 				}
 			}
-			function elimina(id,idUtente) { // Elimina una recensione 
+			function elimina(id,idUtente) { // Eliminazione di una una recensione 
 				recensione.rate.value="ELIMINA";
 				recensione.idUtente.value=idUtente;
 				recensione.submit();
 			}
-			function eliminaC(id,comando="ELIMINA") { // Elimina una recensione 
+			function eliminaC(id,comando="ELIMINA") { // Eliminazione una recensione 
 				curiosita.check.value=comando;
 				curiosita.idCur.value=id;
 				curiosita.submit();
@@ -244,7 +243,7 @@
 				curiosita.submit();
 			}
 			function controllo() { // Controlli sulla registrazione utente
-				if(registrazione.pass1.value!=registrazione.pass2.value) { // Le 2 nuove password non coincidono
+				if(registrazione.pass1.value!=registrazione.pass2.value) { // Le 2 password non coincidono
 					document.getElementById('avviso1').style.visibility="visible";
 					return false;
 				}
@@ -777,7 +776,7 @@
                                         JOIN video V ON V.idSaga=Medie.idSaga
 										GROUP BY Medie.idSaga
 										ORDER BY Medie.mediaVoti DESC
-										LIMIT 8"; // Preparazione Query: Migliori saghe (base voto)
+										LIMIT 8"; // Preparazione Query: Migliori saghe ( in base al voto)
 										
 										echo ('	
 											<div class="container text-center"> 
@@ -1667,38 +1666,38 @@
 										*** DETTAGLI VIDEO ***
 										**********************
 										*/
-										$id=$_GET["id"]; /* idVideo */
+										$id=$_GET["id"]; // idVideo
 										$conn=dbConn(); // Connessione al DB
 										
-										if(isset($_POST["rate"])&&isset($_SESSION["idUser"])) { /* E' stato dato un voto */
+										if(isset($_POST["rate"])&&isset($_SESSION["idUser"])) { // E' stato dato un voto 
 											$voto=$_POST["rate"];
-											if(isset($_POST["rec"])&&$_POST["rec"]!="") /* E' stata data una recensione */
+											if(isset($_POST["rec"])&&$_POST["rec"]!="") // E' stata data una recensione 
 												$rec="'".filter_var($_POST["rec"], FILTER_SANITIZE_STRING)."'";
 											else
 												$rec="null";
-											$query="SELECT * FROM recensionivideo WHERE idVideo=$id AND idUtente=$_SESSION[idUser]"; /* Controllo che non abbia già fatto una recensione */
+											$query="SELECT * FROM recensionivideo WHERE idVideo=$id AND idUtente=$_SESSION[idUser]"; // Controllo che non abbia già fatto una recensione 
 											$controllo=$conn->query($query);
-											if($voto!="ELIMINA"&&$voto!="VERIFICA") { /* Pubblico o modifico la recensione */
-												if($controllo->num_rows==0){ /* Non ha già recensito:  */
+											if($voto!="ELIMINA"&&$voto!="VERIFICA") { // Pubblico o modifico la recensione 
+												if($controllo->num_rows==0){ // Non ha già recensito:  
 													$recens="INSERT INTO recensionivideo VALUES ($id,$_SESSION[idUser],'$voto',$rec,null)";
 													
-													if($conn->query($recens)) /* Inserimento nel DB riuscito */
+													if($conn->query($recens)) // Inserimento nel DB riuscito 
 														echo "<script type='text/javascript'>alert('La tua recensione è stata inserita!');</script>";
-													else /* Inserimento nel DB NON riuscito */
+													else // Inserimento nel DB NON riuscito 
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";	
 												}
 												else{
 													$recens="UPDATE recensionivideo SET voto='$voto', testo=$rec, idAdmin=null 
 													WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
 													
-													if($conn->query($recens)) /* Modifica del DB riuscita */
+													if($conn->query($recens)) // Modifica del DB riuscita 
 														echo "<script type='text/javascript'>alert('La tua recensione è stata aggiornata!');</script>";
-													else /* Modifica del DB NON riuscita */
+													else // Modifica del DB NON riuscita 
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
 												}
 											}
 											else{
-												if($voto=="ELIMINA") { /* Eliminazione del DB riuscita */
+												if($voto=="ELIMINA") { // Eliminazione dal DB riuscita 
 													$recens="DELETE FROM recensionivideo WHERE idVideo=$id AND idUtente=$_POST[idUtente]";
 													//echo $recens;
 													if($conn->query($recens))
@@ -1707,7 +1706,7 @@
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
 													
 												}
-												else
+												else // Modifica del DB riuscita
 												{
 													$recens="UPDATE recensionivideo SET idAdmin=$_SESSION[idUser] WHERE idVideo=$id AND idUtente=$_POST[idUtente]";
 													//echo $recens;
@@ -1719,21 +1718,21 @@
 											}
 										}
 										
-										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { /* E' stata iserita una curiosita */
+										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { // E' stata iserita una curiosita 
 											if(isset($_POST["check"]))
 												$check=$_POST["check"];
 											$cur="'".filter_var($_POST["cur"], FILTER_SANITIZE_STRING)."'";
-											if($check!="ELIMINA"&&$check!="VERIFICA") { /* Pubblico o modifico la recensione */
+											if($check!="ELIMINA"&&$check!="VERIFICA") { // Pubblico o modifico la curiosita 
 												
 												$query="INSERT INTO curiositavideo (idVideo,idUtente,testo,idAdmin) VALUES ($id,$_SESSION[idUser],$cur,null)";
-												if($conn->query($query)) /* Inserimento nel DB riuscito */
+												if($conn->query($query)) // Inserimento nel DB riuscito 
 													echo "<script type='text/javascript'>alert('La tua curiosita è stata inserita!');</script>";
-												else /* Inserimento nel DB NON riuscito */
+												else // Inserimento nel DB NON riuscito 
 													echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";	
 											
 											}
 											else{
-												if($check=="ELIMINA") { /* Eliminazione del DB riuscita */
+												if($check=="ELIMINA") { // Eliminazione del DB riuscita 
 													$query="DELETE FROM curiositavideo WHERE id=$_POST[idCur]";
 													//echo $query;
 													if($conn->query($query))
@@ -1744,8 +1743,7 @@
 												}
 												else
 												{
-													$query="UPDATE 
-													curiositavideo SET idAdmin=$_SESSION[idUser] WHERE id=$_POST[idCur]";
+													$query="UPDATE curiositavideo SET idAdmin=$_SESSION[idUser] WHERE id=$_POST[idCur]";
 													//echo $query;
 													if($conn->query($query))
 														echo "<script type='text/javascript'>alert('La curiosita è stata verificata!');</script>";
@@ -1757,7 +1755,7 @@
 										
 										$query="SELECT V.id,V.nome,V.durata,V.idSaga,V.idSerie,V.numero,V.stagione,V.sinossi, V.annoUscita, V.nazionalita, Se.nome nomeSe,Sa.nome nomeSa 
 										FROM video V LEFT JOIN serie Se ON V.idSerie=Se.id LEFT JOIN saghe Sa ON Sa.id=V.idSaga 
-										WHERE V.id=$id;"; /* Preparazione Query: Dettagli video */
+										WHERE V.id=$id;"; // Preparazione Query: Dettagli video 
 										$risultati=$conn->query($query);
 										$video = $risultati->fetch_assoc();
 										$risultati->free(); // Dealloco l'oggetto
@@ -1779,7 +1777,7 @@
 												<div class="d-flex justify-content-end bd-highlight mb-3">
 													<small class="text-muted">Nazionalità: '.$video["nazionalita"].' minuti</small>
 												</div>												
-											');
+											'); // Riquadro Dettagli Video
 										
 											$query="SELECT G.tipo
 											FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
@@ -1802,7 +1800,7 @@
 															</small>
 														</div>
 														<div class="row">
-													'); // Costruisco un riquadro per ogni film (pt.2)
+													'); // Costruisco un riquadro per ogni categoria
 												}
 												$generi->free(); // Dealloco l'oggetto
 											}	
@@ -1812,37 +1810,37 @@
 												<div class="container text-left">
 													<p class="card-text" onclick="passa_a('.$video["idSerie"].',6,null,null,null,null);"><strong>Serie: </strong><a href="#"> '.$video["nomeSe"].' ('.$video["stagione"].'X'.$video["numero"].')</a></p>
 												</div>
-											');
+											'); // Costruisco  riquadro Serie
 										else if($video["idSaga"]!=null)
 											echo ('
 													<div class="container text-left">
 														<p class="card-text" onclick="passa_a('.$video["idSaga"].',7,null,null,null,null);"><strong>Saga: </strong><a href="#"> '.$video["nomeSa"].' ('.$video["numero"].'° film)</a></p>
 													</div>
-												');
+												'); // Costruisco  riquadro Saga
 										
 										$query="SELECT AV.idPersona, Per.nome, Per.cognome, Pggi.nome nomeP 
 										FROM attorivideo AV JOIN video V ON AV.idVideo=V.id JOIN persone Per ON Per.id=AV.idPersona 
 										LEFT JOIN interpretazioni I ON I.idPersona=Per.id LEFT JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
 										LEFT JOIN comparizioni C ON C.idVideo=V.id AND Pggi.id=C.idPersonaggio
-										WHERE V.id=$id AND (Pggi.id IN (SELECT idPersonaggio FROM comparizioni WHERE idVideo = $id) OR Pggi.id IS NULL)"; /* Preparazione Query: Attori Film */
+										WHERE V.id=$id AND (Pggi.id IN (SELECT idPersonaggio FROM comparizioni WHERE idVideo = $id) OR Pggi.id IS NULL)"; // Preparazione Query: Attori Film 
 
-										if ($attori=$conn->query($query)) { /* Risultati della query */
+										if ($attori=$conn->query($query)) { // Risultati della query 
 											echo ('
 												<div class="container text-center"> 
 													<h2 class="mt-4 mb-4" >Attori</h2>
 												</div>
 												');
-											if ($attori->num_rows>0) {
-												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
+											if ($attori->num_rows>0) { // Almeno 1 risultato
+												while ($attore = $attori->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$attore["idPersona"].',8,null,null,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/persone/'.$attore["idPersona"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$attore["nome"].' '.$attore["cognome"].'">
 																	<p class="card-text">'.$attore["nome"].' '.$attore["cognome"].'</p>
-														');
+														'); // Costruisco un riquadro per ogni attore 
 													if ($attore["nomeP"]!=null)
-														echo ('		<p class="card-text">'.$attore["nomeP"].'</p>');
+														echo ('		<p class="card-text">'.$attore["nomeP"].'</p>'); // Riquadro personaggio
 																		
 													echo ('
 																</div>
@@ -1851,7 +1849,7 @@
 													');
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -1860,7 +1858,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi 
 											}
 											
 											$attori->free(); // Dealloco l'oggetto
@@ -1868,16 +1866,16 @@
 
 										$query="SELECT RV.idPersona, Per.nome, Per.cognome
 										FROM registivideo RV JOIN video V ON RV.idVideo=V.id JOIN persone Per ON Per.id=RV.idPersona 
-										WHERE V.id=$id"; /* Preparazione Query: Registi Film */
+										WHERE V.id=$id"; // Preparazione Query: Registi Film 
 
-										if ($registi=$conn->query($query)) { /* Risultati della query */
+										if ($registi=$conn->query($query)) { // Risultati della query 
 											echo ('	
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Registi</h2>
 														</div>
 												');
-											if ($registi->num_rows>0) {
-												while ($regista = $registi->fetch_assoc()) { /* Costruisco un riquadro per ogni regista */
+											if ($registi->num_rows>0) { // Almeno 1 risultato
+												while ($regista = $registi->fetch_assoc()) { 
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$regista["idPersona"].',8,null,null,null,null)" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -1888,9 +1886,9 @@
 																</div>
 															</div>		
 													');
-												}
+												} // Costruisco un riquadro per ogni regista 
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -1899,7 +1897,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi 
 											}
 											
 											$registi->free(); // Dealloco l'oggetto
@@ -1907,16 +1905,16 @@
 																				
 										$query="SELECT PV.idPersona, Per.nome, Per.cognome
 										FROM produttorivideo PV JOIN video V ON PV.idVideo=V.id JOIN persone Per ON Per.id=PV.idPersona 
-										WHERE V.id=$id"; /* Preparazione Query: Produttori Film */
+										WHERE V.id=$id"; // Preparazione Query: Produttori Film 
 
-										if ($produttori=$conn->query($query)) { /* Risultati della query */
+										if ($produttori=$conn->query($query)) { // Risultati della query 
 											echo ('	
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Produttori</h2>
 														</div>
 												');
-											if ($produttori->num_rows>0) {
-												while ($produttore = $produttori->fetch_assoc()) { /* Costruisco un riquadro per ogni produttore */
+											if ($produttori->num_rows>0) { // Almeno 1 elemento
+												while ($produttore = $produttori->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$produttore["idPersona"].',8,null,null,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -1926,10 +1924,10 @@
 																</div>
 															</div>
 														</div>		
-													');
+													'); // Costruisco un riquadro per ogni produttore 
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -1938,7 +1936,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi 
 											}
 											
 											$produttori->free(); // Dealloco l'oggetto
@@ -1946,16 +1944,16 @@
 
 										$query="SELECT P.* 
 										FROM video V JOIN comparizioni C ON V.id=C.idVideo JOIN personaggi P ON P.id=C.idPersonaggio 
-										WHERE V.id=$id"; /* Preparazione Query: Personaggi Film */
+										WHERE V.id=$id"; // Preparazione Query: Personaggi Film 
 
-										if ($personaggi=$conn->query($query)) { /* Risultati della query */
+										if ($personaggi=$conn->query($query)) { // Risultati della query 
 											echo ('
 													<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Personaggi</h2>
 													</div>
 												');
-											if ($personaggi->num_rows>0) {
-												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
+											if ($personaggi->num_rows>0) { // Alemno 1 elemento
+												while ($personaggio = $personaggi->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 mb-4 py2" onclick="passa_a('.$personaggio["id"].',9,null,null,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -1966,9 +1964,9 @@
 															</div>
 														</div>		
 													');
-												}
+												} // Costruisco un riquadro per ogni personaggio 
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else { 
 												echo ('
 														<div class="col-md-3 mb-4">
 															<div class="card mb-4 shadow-sm">
@@ -1977,16 +1975,16 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi 
 											}
 										$personaggi->free(); // Dealloco l'oggetto
 										}
 										
 										
-										if($_SESSION["login"]==1){
-											$query="SELECT voto, testo, username FROM recensionivideo LEFT JOIN utenti ON idAdmin=id WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
+										if($_SESSION["login"]==1) { // Utente loggato
+											$query="SELECT voto, testo, username FROM recensionivideo LEFT JOIN utenti ON idAdmin=id WHERE idVideo=$id AND idUtente=$_SESSION[idUser]"; // Preparazione Query: Recensione video da parte dell'utente
 											$recensione=$conn->query($query);
-											if($recensione->num_rows==0){
+											if($recensione->num_rows==0) { // Non ha ancora recensito il film
 												echo('
 													<div class="container text-center"> 
 														<!-- Button trigger modal -->
@@ -2041,9 +2039,9 @@
 															</div>
 														  </div>
 														</div>
-													</div>');
+													</div>'); // Finestra modale per lasciare la recensione
 											}
-											else{
+											else { // Ha già lasciato una recensione
 												$rec=$recensione->fetch_assoc();
 												echo('
 													<div class="container text-center"> 
@@ -2156,7 +2154,7 @@
 														  </div>
 														</div>
 													  </div>
-													</div>');
+													</div>'); // Finestra modale per la modifica della recensione
 											}
 										}
 										echo ('
@@ -2170,9 +2168,9 @@
 										LEFT JOIN utenti A ON A.id=R.idAdmin
 										WHERE idVideo=$id
 										ORDER BY R.idAdmin DESC,R.idUtente
-										LIMIT 4;";
+										LIMIT 4;"; // Preparazione query: Recensioni video (MAX 4)
 										$recensioni=$conn->query($query);
-										if($recensioni->num_rows==0){
+										if($recensioni->num_rows==0) { 
 											echo 	
 												'<div class="col-md-3 py2">
 													<div class="card h-100 mb-4 shadow-sm">
@@ -2180,10 +2178,10 @@
 															<p class="card-text" style="text-align:center !important">Non è presente ancora nessuna recensione</p>
 														</div>
 													</div>
-												</div>';
+												</div>'; // COmunicazione di mancanza di elementi
 										}		
-										else{
-											while($riga = $recensioni->fetch_assoc()){
+										else { // Almeno 1 elemento
+											while($riga = $recensioni->fetch_assoc()) {
 												echo 	
 													'<div class="col-md-3 py2">
 														<div class="card h-100 mb-4 shadow-sm">
@@ -2205,16 +2203,17 @@
 																			</div>';
 																echo '
 														</div>
-													</div>';
+													</div>'; // Riquadro recensione
 											}
+
 											$query="SELECT R.voto, R.testo,U.username, U.id, A.username admin
 											FROM recensionivideo R 
 											INNER JOIN utenti U ON U.id=R.idUtente
 											LEFT JOIN utenti A ON A.id=R.idAdmin
 											WHERE R.testo IS NOT NULL AND idVideo=$id
 											ORDER BY R.idAdmin DESC,R.idUtente;";
-											$recensioni=$conn->query($query);
-											if($recensioni->num_rows>4){
+											$recensioni=$conn->query($query); // Preparazione query: Recensioni video (TUTTE)
+											if($recensioni->num_rows>4) { // Più di 4 elementi
 												echo '
 												<div class="container text-center">
 													<button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#exampleModalScrollable">
@@ -2251,8 +2250,8 @@
 																				<button type="button" class="btn btn-primary" onclick="verifica('.$riga["id"].')" data-dismiss="modal">Verifica</button>
 																			</div>';
 																echo '
-																	</div>';
-														  }
+																	</div>'; // FInestra modale dove mostro ogni recensione
+														  } 
 														  echo '
 														</div>
 													  </div>
@@ -2271,7 +2270,7 @@
 										**************************
 										*/
 										
-										if($_SESSION["login"]==1){
+										if($_SESSION["login"]==1) { // Utente loggato
 											echo('
 												<div class="container text-center"> 
 													<!-- Button trigger modal -->
@@ -2304,7 +2303,7 @@
 														</div>
 													  </div>
 													</div>
-												</div>');
+												</div>'); // Finestra modale per lasciare una curiosità
 										}
 											
 										
@@ -2312,16 +2311,18 @@
 													<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Curiosità degli utenti</h2>
 													</div>
-												');
+												'); // Titolo
+
 										$query="SELECT C.id idCur, C.testo,U.username, U.id, A.username admin
 										FROM curiositavideo C 
 										INNER JOIN utenti U ON U.id=C.idUtente
 										LEFT JOIN utenti A ON A.id=C.idAdmin
 										WHERE idVideo=$id
 										ORDER BY C.idAdmin DESC,C.idUtente
-										LIMIT 4;";
+										LIMIT 4;"; // Preparazione query: Curiosità video (MAX 4)
+
 										$curiosita=$conn->query($query);
-										if($curiosita->num_rows==0){
+										if($curiosita->num_rows==0) { 
 											echo 	
 												'<div class="col-md-3 py2">
 													<div class="card h-100 mb-4 shadow-sm">
@@ -2329,10 +2330,10 @@
 															<p class="card-text" style="text-align:center !important">Non è presente ancora nessuna curiosita</p>
 														</div>
 													</div>
-												</div>';
+												</div>'; // Comunicazione ancanza di elementi
 										}		
-										else{
-												while($riga = $curiosita->fetch_assoc()){
+										else { // Almeno 1 elemento
+												while($riga = $curiosita->fetch_assoc()) {
 													echo 	
 														'<div class="col-md-3 py2">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -2363,7 +2364,7 @@
 																			echo '</div>';
 																	echo '
 															</div>
-														</div>';
+														</div>'; // Riquadro curiosità video
 												}
 												$query="SELECT C.id idCur, C.testo,U.username, U.id, A.username admin
 												FROM curiositavideo C 
@@ -2371,8 +2372,9 @@
 												LEFT JOIN utenti A ON A.id=C.idAdmin
 												WHERE C.testo IS NOT NULL AND idVideo=$id
 												ORDER BY C.idAdmin DESC,C.idUtente;";
-												$curiosita=$conn->query($query);
-												if($curiosita->num_rows>4){
+												$curiosita=$conn->query($query); // Preparazione query: Curiosità video (TUTTE)
+
+												if($curiosita->num_rows>4) { // Più di 4 elementi
 													echo '
 													<div class="container text-center">
 														<button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#curiositaScroll">
@@ -2418,7 +2420,7 @@
 																					if($_SESSION["idUser"]==$riga["id"]||(isset($_SESSION["admin"])&&$_SESSION["admin"]==1))
 																						echo '</div>';
 																				echo '
-																		</div>';
+																		</div>'; // Finestra modale per la visualizzazione di tutte le curiosità
 															  }
 															  echo '
 															</div>
@@ -2448,38 +2450,38 @@
 										**********************
 										*/
 
-										$id=$_GET["id"]; /* idSerie */
+										$id=$_GET["id"]; // idSerie  
 										$conn=dbConn(); // Connessione al DB				
 
-										if(isset($_POST["rate"])&&isset($_SESSION["idUser"])) { /* E' stato dato un voto */
+										if(isset($_POST["rate"])&&isset($_SESSION["idUser"])) { // E' stato dato un voto  
 											$voto=$_POST["rate"];
-											if(isset($_POST["rec"])&&$_POST["rec"]!="") /* E' stata data una recensione */
+											if(isset($_POST["rec"])&&$_POST["rec"]!="") // E' stata data una recensione  
 												$rec="'".filter_var($_POST["rec"], FILTER_SANITIZE_STRING)."'";
 											else
 												$rec="null";
-											$query="SELECT * FROM recensioniserie WHERE idSerie=$id AND idUtente=$_SESSION[idUser]"; /* Controllo che non abbia già fatto una recensione */
+											$query="SELECT * FROM recensioniserie WHERE idSerie=$id AND idUtente=$_SESSION[idUser]"; // Controllo che non abbia già fatto una recensione  
 											$controllo=$conn->query($query);
-											if($voto!="ELIMINA"&&$voto!="VERIFICA") { /* Pubblico o modifico la recensione */
-												if($controllo->num_rows==0){ /* Non ha già recensito:  */
+											if($voto!="ELIMINA"&&$voto!="VERIFICA") { // Pubblico o modifico la recensione  
+												if($controllo->num_rows==0){ // Non ha già recensito:   
 													$recens="INSERT INTO recensioniserie VALUES ($id,$_SESSION[idUser],'$voto',$rec,null)";
 													
-													if($conn->query($recens)) /* Inserimento nel DB riuscito */
+													if($conn->query($recens)) // Inserimento nel DB riuscito  
 														echo "<script type='text/javascript'>alert('La tua recensione è stata inserita!');</script>";
-													else /* Inserimento nel DB NON riuscito */
+													else // Inserimento nel DB NON riuscito  
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";	
 												}
 												else{
 													$recens="UPDATE recensioniserie SET voto='$voto', testo=$rec, idAdmin=null 
 													WHERE idSerie=$id AND idUtente=$_SESSION[idUser]";
 													
-													if($conn->query($recens)) /* Modifica del DB riuscita */
+													if($conn->query($recens)) // Modifica del DB riuscita  
 														echo "<script type='text/javascript'>alert('La tua recensione è stata aggiornata!');</script>";
-													else /* Modifica del DB NON riuscita */
+													else // Modifica del DB NON riuscita  
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
 												}
 											}
 											else{
-												if($voto=="ELIMINA") { /* Eliminazione del DB riuscita */
+												if($voto=="ELIMINA") { // Eliminazione dal DB riuscita  
 													$recens="DELETE FROM recensioniserie WHERE idSerie=$id AND idUtente=$_POST[idUtente]";
 													//echo $recens;
 													if($conn->query($recens))
@@ -2500,21 +2502,21 @@
 											}
 										}
 										
-										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { /* E' stata iserita una curiosita */
+										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { // E' stata iserita una curiosita  
 											if(isset($_POST["check"]))
 												$check=$_POST["check"];
 											$cur="'".filter_var($_POST["cur"], FILTER_SANITIZE_STRING)."'";
-											if($check!="ELIMINA"&&$check!="VERIFICA") { /* Pubblico o modifico la recensione */
+											if($check!="ELIMINA"&&$check!="VERIFICA") { // Pubblico o modifico la recensione  
 												
 												$query="INSERT INTO curiositaserie (idSerie,idUtente,testo,idAdmin) VALUES ($id,$_SESSION[idUser],$cur,null)";
-												if($conn->query($query)) /* Inserimento nel DB riuscito */
+												if($conn->query($query)) // Inserimento nel DB riuscito  
 													echo "<script type='text/javascript'>alert('La tua curiosita è stata inserita!');</script>";
-												else /* Inserimento nel DB NON riuscito */
+												else // Inserimento nel DB NON riuscito  
 													echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";	
 											
 											}
 											else{
-												if($check=="ELIMINA") { /* Eliminazione del DB riuscita */
+												if($check=="ELIMINA") { // Eliminazione dal DB riuscita  
 													$query="DELETE FROM curiositaserie WHERE id=$_POST[idCur]";
 													//echo $recens;
 													if($conn->query($query))
@@ -2535,7 +2537,7 @@
 											}
 										}
 										
-										$query="SELECT * FROM serie WHERE id=$id"; /* Preparazione Query: Dettagli Serie */
+										$query="SELECT * FROM serie WHERE id=$id"; // Preparazione Query: Dettagli Serie  
 										$risultati=$conn->query($query);
 										$serie = $risultati->fetch_assoc();
 										$risultati->free(); // Dealloco l'oggetto
@@ -2554,32 +2556,32 @@
 												</div>
 												</div>
 												<div class="row">
-											');
+											'); // Riquadro Dettagli Video
 										
 										$query="SELECT Pers.*,Pggi.nome nomeP 
 										FROM attorivideo AV JOIN interpretazioni I ON I.idPersona=AV.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
 										JOIN persone Pers ON Pers.id=AV.idPersona 
 										WHERE AV.idVideo IN 
 														(SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id)  
-										GROUP BY AV.idPersona"; /* Preparazione Query: Attori Serie  */
+										GROUP BY AV.idPersona"; // Preparazione Query: Attori Serie   
 
-										if ($attori=$conn->query($query)) { /* Risultati della query */
+										if ($attori=$conn->query($query)) { // Risultati della query  
 											echo ('
 												<div class="container text-center"> 
 													<h2 class="mt-4 mb-4" >Attori</h2>
 												</div>
 												');
 											if ($attori->num_rows>0) {
-												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
+												while ($attore = $attori->fetch_assoc()) {  
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null,null,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/persone/'.$attore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$attore["nome"].' '.$attore["cognome"].'">
 																	<p class="card-text">'.$attore["nome"].' '.$attore["cognome"].'</p>
-														');
+														'); // Costruisco un riquadro per ogni attore (pt.1)
 													if ($attore["nomeP"]!=null)
-														echo ('		<p class="card-text">'.$attore["nomeP"].'</p>');
+														echo ('		<p class="card-text">'.$attore["nomeP"].'</p>'); // Costruisco un riquadro per ogni attore (pt.2)
 																		
 													echo ('
 																</div>
@@ -2588,7 +2590,7 @@
 													');
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else {  
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -2598,7 +2600,7 @@
 															</div>
 														</div>
 													');
-											}
+											} // Comunicazione mancanza di elementi 
 											
 											$attori->free(); // Dealloco l'oggetto
 										}
@@ -2607,16 +2609,17 @@
 										FROM registivideo RV JOIN video V ON V.id=RV.idVideo JOIN persone Pers ON Pers.id=RV.idPersona 
 										WHERE RV.idVideo IN ( 
 															SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
-										GROUP BY RV.idPersona"; /* Preparazione Query: Registi Serie */
+										GROUP BY RV.idPersona"; // Preparazione Query: Registi Serie  
 
-										if ($registi=$conn->query($query)) { /* Risultati della query */
+										if ($registi=$conn->query($query)) { // Risultati della query  
 											echo ('	
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Registi</h2>
 														</div>
-												');
-											if ($registi->num_rows>0) {
-												while ($regista = $registi->fetch_assoc()) { /* Costruisco un riquadro per ogni regista */
+												'); // Titolo
+
+											if ($registi->num_rows>0) { // Almeno 1 elemento
+												while ($regista = $registi->fetch_assoc()) { 
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$regista["id"].',8,null,null,null,null)" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -2626,10 +2629,10 @@
 																	</div>
 																</div>
 															</div>		
-													');
+													'); // Costruisco un riquadro per ogni regista  
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else {   
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -2638,7 +2641,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi
 											}
 											
 											$registi->free(); // Dealloco l'oggetto
@@ -2648,16 +2651,17 @@
 										FROM produttorivideo PV JOIN video V ON V.id=PV.idVideo JOIN persone Pers ON Pers.id=PV.idPersona 
 										WHERE PV.idVideo IN ( 
 															SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
-										GROUP BY PV.idPersona"; /* Preparazione Query: Produttori Serie */
+										GROUP BY PV.idPersona"; // Preparazione Query: Produttori Serie  
 
-										if ($produttori=$conn->query($query)) { /* Risultati della query */
+										if ($produttori=$conn->query($query)) { // Risultati della query  
 											echo ('	
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Produttori</h2>
 														</div>
-												');
-											if ($produttori->num_rows>0) {
-												while ($produttore = $produttori->fetch_assoc()) { /* Costruisco un riquadro per ogni produttore */
+												'); // Titolo
+
+											if ($produttori->num_rows>0) { // Almeno 1 elemento
+												while ($produttore = $produttori->fetch_assoc()) {   
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$produttore["id"].',8,null,null,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -2667,10 +2671,10 @@
 																</div>
 															</div>
 														</div>		
-													');
+													'); // Costruisco un riquadro per ogni produttore
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else {  
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -2679,7 +2683,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi 
 											}
 											
 											$produttori->free(); // Dealloco l'oggetto
@@ -2689,16 +2693,17 @@
 										FROM comparizioni C JOIN personaggi Pggi ON Pggi.id=C.idPersonaggio 
 										WHERE C.idVideo IN ( 
 															SELECT V.id FROM video V JOIN serie S ON V.idSerie=S.id WHERE S.id=$id) 
-										GROUP BY C.idPersonaggio"; /* Preparazione Query: Personaggi Serie */
+										GROUP BY C.idPersonaggio"; // Preparazione Query: Personaggi Serie  
 
-										if ($personaggi=$conn->query($query)) { /* Risultati della query */
+										if ($personaggi=$conn->query($query)) { // Risultati della query  
 											echo ('
 													<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Personaggi</h2>
 													</div>
-												');
-											if ($personaggi->num_rows>0) {
-												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
+												'); // Titolo
+
+											if ($personaggi->num_rows>0) { // Almeno 1 elemento
+												while ($personaggio = $personaggi->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 mb-4 py2" onclick="passa_a('.$personaggio["id"].',9,null,null,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -2708,10 +2713,10 @@
 																</div>
 															</div>
 														</div>		
-													');
+													'); // Costruisco un riquadro per ogni personaggio  
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else { 
 												echo ('
 														<div class="col-md-3 mb-4">
 															<div class="card mb-4 shadow-sm">
@@ -2721,7 +2726,7 @@
 															</div>
 														</div>
 													');
-											}
+											} // Comunicazione mancanza di elementi  
 											$personaggi->free(); // Dealloco l'oggetto
 										}
 										
@@ -2732,10 +2737,10 @@
 										**************************
 										*/
 										
-										if($_SESSION["login"]==1){
-											$query="SELECT voto, testo, username FROM recensioniserie LEFT JOIN utenti ON idAdmin=id WHERE idSerie=$id AND idUtente=$_SESSION[idUser]";
+										if($_SESSION["login"]==1) { // Utente loggato
+											$query="SELECT voto, testo, username FROM recensioniserie LEFT JOIN utenti ON idAdmin=id WHERE idSerie=$id AND idUtente=$_SESSION[idUser]"; // Preparazione query: Recensione dell'utente sulla serie
 											$recensione=$conn->query($query);
-											if($recensione->num_rows==0){
+											if($recensione->num_rows==0) { // Non ha lasciato già recensioni
 												echo('
 													<div class="container text-center"> 
 														<!-- Button trigger modal -->
@@ -2790,9 +2795,9 @@
 															</div>
 														  </div>
 														</div>
-													</div>');
+													</div>'); // Finestra modale per lasciare una recensione
 											}
-											else{
+											else { // Ha già lasciato 1 recensione
 												$rec=$recensione->fetch_assoc();
 												echo('
 													<div class="container text-center"> 
@@ -2905,23 +2910,24 @@
 														  </div>
 														</div>
 													  </div>
-													</div>');
+													</div>'); // Finestra modale per la modifica della recensione
 											}
 										}
 										echo ('
 													<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Recensioni degli utenti</h2>
 													</div>
-												');
+												'); // Titolo
+
 										$query="SELECT R.voto, R.testo,U.username, U.id, A.username admin
 										FROM recensioniserie R 
 										INNER JOIN utenti U ON U.id=R.idUtente
 										LEFT JOIN utenti A ON A.id=R.idAdmin
 										WHERE idSerie=$id
 										ORDER BY R.idAdmin DESC,R.idUtente
-										LIMIT 4;";
+										LIMIT 4;"; // Preparazione query: Recensioni Serie (MAX 4)
 										$recensioni=$conn->query($query);
-										if($recensioni->num_rows==0){
+										if($recensioni->num_rows==0) { // Nessuna recensione
 											echo 	
 												'<div class="col-md-3 py2">
 													<div class="card h-100 mb-4 shadow-sm">
@@ -2929,10 +2935,10 @@
 															<p class="card-text" style="text-align:center !important">Non è presente ancora nessuna recensione</p>
 														</div>
 													</div>
-												</div>';
+												</div>'; // Comunico la mancanza di elementi
 										}		
-										else{
-												while($riga = $recensioni->fetch_assoc()){
+										else { // Almeno 1 elemento
+												while($riga = $recensioni->fetch_assoc()) {
 													echo 	
 														'<div class="col-md-3 py2">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -2956,15 +2962,17 @@
 																	echo '
 															</div>
 														</div>';
-												}
+												} // Riquadro recensione
+
 												$query="SELECT R.voto, R.testo,U.username, U.id, A.username admin
 												FROM recensioniserie R 
 												INNER JOIN utenti U ON U.id=R.idUtente
 												LEFT JOIN utenti A ON A.id=R.idAdmin
 												WHERE R.testo IS NOT NULL AND idSerie=$id
 												ORDER BY R.idAdmin DESC,R.idUtente;";
-												$recensioni=$conn->query($query);
-												if($recensioni->num_rows>4){
+												$recensioni=$conn->query($query); // Preparazione query: Recensioni Serie (Tutte)
+												
+												if($recensioni->num_rows>4) { // Almeno 4 recensioni
 													echo '
 													<div class="container text-center">
 														<button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#exampleModalScrollable">
@@ -3008,8 +3016,7 @@
 														  </div>
 														</div>
 													</div>
-												</div>';
-												
+												</div>'; // Finestra modale per visualizzare tutte le recensioni
 												}
 										}
 										
@@ -3019,7 +3026,7 @@
 										**************************
 										*/
 										
-										if($_SESSION["login"]==1){
+										if($_SESSION["login"]==1) { // Utente loggato
 											echo('
 												<div class="container text-center"> 
 													<!-- Button trigger modal -->
@@ -3052,24 +3059,24 @@
 														</div>
 													  </div>
 													</div>
-												</div>');
-										}
+												</div>'); // Finestra modale per l'inserimento di una curiosità
+										} 
 											
-										
 										echo ('
 													<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Curiosità degli utenti</h2>
 													</div>
-												');
+												'); // Titolo
+
 										$query="SELECT C.id idCur, C.testo,U.username, U.id, A.username admin
 										FROM curiositaserie C 
 										INNER JOIN utenti U ON U.id=C.idUtente
 										LEFT JOIN utenti A ON A.id=C.idAdmin
 										WHERE idSerie=$id
 										ORDER BY C.idAdmin DESC,C.idUtente
-										LIMIT 4;";
+										LIMIT 4;"; // Preparazione query: Curiosità Serie (MAX 4)
 										$curiosita=$conn->query($query);
-										if($curiosita->num_rows==0){
+										if($curiosita->num_rows==0) { // Non ci sono curiosità
 											echo 	
 												'<div class="col-md-3 py2">
 													<div class="card h-100 mb-4 shadow-sm">
@@ -3079,8 +3086,8 @@
 													</div>
 												</div>';
 										}		
-										else{
-												while($riga = $curiosita->fetch_assoc()){
+										else { // Almeno 1 elemento
+												while($riga = $curiosita->fetch_assoc()) {
 													echo 	
 														'<div class="col-md-3 py2">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -3111,16 +3118,17 @@
 																			echo '</div>';
 																	echo '
 															</div>
-														</div>';
+														</div>'; // Riquadro curiosità
 												}
+
 												$query="SELECT C.id idCur, C.testo,U.username, U.id, A.username admin
 												FROM curiositaserie C 
 												INNER JOIN utenti U ON U.id=C.idUtente
 												LEFT JOIN utenti A ON A.id=C.idAdmin
 												WHERE C.testo IS NOT NULL AND idSerie=$id
-												ORDER BY C.idAdmin DESC,C.idUtente;";
+												ORDER BY C.idAdmin DESC,C.idUtente;"; // Preparazione query: Curiosità Serie (Tutte)
 												$curiosita=$conn->query($query);
-												if($curiosita->num_rows>4){
+												if($curiosita->num_rows>4) { // Almeno 4 elementi
 													echo '
 													<div class="container text-center">
 														<button type="button" class="btn btn-primary mt-4" data-toggle="modal" data-target="#curiositaScroll">
@@ -3166,7 +3174,7 @@
 																					if($_SESSION["idUser"]==$riga["id"]||(isset($_SESSION["admin"])&&$_SESSION["admin"]==1))
 																						echo '</div>';
 																				echo '
-																		</div>';
+																		</div>'; // Finestra modale per visualzizare tutte le curiosità
 															  }
 															  echo '
 															</div>
@@ -3202,13 +3210,14 @@
 										*** DETTAGLI SAGHE ***
 										**********************
 										*/
-										$id=$_GET["id"]; /* idPersona */
+
+										$id=$_GET["id"];  // idPersona 
 										$conn=dbConn(); // Connessione al DB
 										
 										$query="SELECT S.id,S.nome,COUNT(*) nFilm FROM saghe S 
 										JOIN video V ON V.idSaga=S.id
                                         WHERE S.id=$id
-										GROUP BY S.id"; /* Preparazione Query: Dettagli Serie */
+										GROUP BY S.id";  // Preparazione Query: Dettagli Serie 
 										$risultati=$conn->query($query);
 										$saga = $risultati->fetch_assoc();
 										$risultati->free(); // Dealloco l'oggetto
@@ -3225,23 +3234,23 @@
 												</div>
 												</div>
 												<div class="row">
-											');
+											'); // Riquadro Dettagli Saghe
 										
 										$query="SELECT V.*
 										FROM video V
 										JOIN saghe S ON V.idSaga=S.id
 										WHERE S.id=$id
-										ORDER BY v.numero";
+										ORDER BY v.numero"; // Preparazione query: Tutti i video della saga
 										
-										if ($video=$conn->query($query)) { /* Risultati della query */
-											if ($video->num_rows>0) {
+										if ($video=$conn->query($query)) {  // Risultati della query 
+											if ($video->num_rows>0) { // Almeno 1 elemento
 												echo ('	
 													<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Film della saga</h2>
 													</div>
-													');
+													'); // Titolo
 
-												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+												while ($elemento = $video->fetch_assoc()) {  
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -3254,7 +3263,7 @@
 																</div>
 															</div>
 														</div>		
-													');
+													'); // Costruisco un riquadro per ogni video 
 												}
 											}
 											
@@ -3266,24 +3275,26 @@
 										JOIN persone Pers ON Pers.id=AV.idPersona 
 										WHERE AV.idVideo IN 
 														(SELECT V.id FROM video V JOIN saghe S ON V.idSaga=S.id WHERE S.id=$id)  
-										GROUP BY AV.idPersona"; /* Preparazione Query: Attori Saga  */
-										if ($attori=$conn->query($query)) { /* Risultati della query */
+										GROUP BY AV.idPersona";  // Preparazione Query: Attori Saga 
+
+										if ($attori=$conn->query($query)) {  // Risultati della query 
 											echo ('
 												<div class="container text-center"> 
 													<h2 class="mt-4 mb-4" >Attori</h2>
 												</div>
-												');
-											if ($attori->num_rows>0) {
-												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
+												'); // Titolo
+
+											if ($attori->num_rows>0) { // Almeno 1 elemento
+												while ($attore = $attori->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null,null,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/persone/'.$attore["id"].'.jpg" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto di '.$attore["nome"].' '.$attore["cognome"].'">
 																	<p class="card-text">'.$attore["nome"].' '.$attore["cognome"].'</p>
-														');
+														');  // Costruisco un riquadro per ogni attore (pt.1)
 													if ($attore["nomeP"]!=null)
-														echo ('		<p class="card-text">'.$attore["nomeP"].'</p>');
+														echo ('		<p class="card-text">'.$attore["nomeP"].'</p>'); // Costruisco un riquadro per ogni attore (pt.2)
 																		
 													echo ('
 																</div>
@@ -3292,7 +3303,7 @@
 													');
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else {  
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -3301,7 +3312,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi 
 											}
 											
 											$attori->free(); // Dealloco l'oggetto
@@ -3311,16 +3322,17 @@
 										FROM registivideo RV JOIN video V ON V.id=RV.idVideo JOIN persone Pers ON Pers.id=RV.idPersona 
 										WHERE RV.idVideo IN ( 
 															SELECT V.id FROM video V JOIN saghe S ON V.idSaga=S.id WHERE S.id=$id) 
-										GROUP BY RV.idPersona"; /* Preparazione Query: Registi Saga */
+										GROUP BY RV.idPersona";  // Preparazione Query: Registi Saga 
 
-										if ($registi=$conn->query($query)) { /* Risultati della query */
+										if ($registi=$conn->query($query)) {  // Risultati della query 
 											echo ('	
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Registi</h2>
 														</div>
-												');
-											if ($registi->num_rows>0) {
-												while ($regista = $registi->fetch_assoc()) { /* Costruisco un riquadro per ogni regista */
+												'); // Titolo
+
+											if ($registi->num_rows>0) { // Almeno 1 elemento
+												while ($regista = $registi->fetch_assoc()) { 
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$regista["id"].',8,null,null,null,null)" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -3330,10 +3342,10 @@
 																	</div>
 																</div>
 															</div>		
-													');
+													');  // Costruisco un riquadro per ogni regista 
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else {  
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -3343,7 +3355,7 @@
 															</div>
 														</div>
 													');
-											}
+											} // Comunicazione mancanza di elementi 
 											
 											$registi->free(); // Dealloco l'oggetto
 										}
@@ -3352,16 +3364,17 @@
 										FROM produttorivideo PV JOIN video V ON V.id=PV.idVideo JOIN persone Pers ON Pers.id=PV.idPersona 
 										WHERE PV.idVideo IN ( 
 															SELECT V.id FROM video V JOIN saghe S ON V.idSaga=S.id WHERE S.id=$id) 
-										GROUP BY PV.idPersona"; /* Preparazione Query: Produttori Saga */
+										GROUP BY PV.idPersona";  // Preparazione Query: Produttori Saga 
 
-										if ($produttori=$conn->query($query)) { /* Risultati della query */
+										if ($produttori=$conn->query($query)) {  // Risultati della query 
 											echo ('	
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Produttori</h2>
 														</div>
-												');
-											if ($produttori->num_rows>0) {
-												while ($produttore = $produttori->fetch_assoc()) { /* Costruisco un riquadro per ogni produttore */
+												'); // Titolo
+
+											if ($produttori->num_rows>0) { // Almeno 1 elemento
+												while ($produttore = $produttori->fetch_assoc()) {  
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$produttore["id"].',8,null,null,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -3371,10 +3384,10 @@
 																</div>
 															</div>
 														</div>		
-													');
+													'); // Costruisco un riquadro per ogni produttore 
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else {  
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -3383,7 +3396,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi 
 											}
 											
 											$produttori->free(); // Dealloco l'oggetto
@@ -3393,16 +3406,17 @@
 										FROM comparizioni C JOIN personaggi Pggi ON Pggi.id=C.idPersonaggio 
 										WHERE C.idVideo IN ( 
 															SELECT V.id FROM video V JOIN saghe S ON V.idSaga=S.id WHERE S.id=$id) 
-										GROUP BY C.idPersonaggio"; /* Preparazione Query: Personaggi Serie */
+										GROUP BY C.idPersonaggio";  // Preparazione Query: Personaggi Serie 
 
-										if ($personaggi=$conn->query($query)) { /* Risultati della query */
+										if ($personaggi=$conn->query($query)) {  // Risultati della query 
 											echo ('
 													<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Personaggi</h2>
 													</div>
-												');
-											if ($personaggi->num_rows>0) {
-												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
+												'); // Titolo
+
+											if ($personaggi->num_rows>0) { // Almeno 1 elemento
+												while ($personaggio = $personaggi->fetch_assoc()) {  
 													echo ('
 														<div class="col-md-3 mb-4 py2" onclick="passa_a('.$personaggio["id"].',9,null,null,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -3412,10 +3426,10 @@
 																</div>
 															</div>
 														</div>		
-													');
+													'); // Costruisco un riquadro per ogni personaggio 
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else {  
 												echo ('
 														<div class="col-md-3 mb-4">
 															<div class="card mb-4 shadow-sm">
@@ -3424,7 +3438,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi 
 											}
 											$personaggi->free(); // Dealloco l'oggetto
 										}
@@ -3436,9 +3450,10 @@
 										*** DETTAGLI PERSONE ***
 										************************
 										*/
-										$id=$_GET["id"]; /* idPersona */
+
+										$id=$_GET["id"]; // idPersona 
 										$conn=dbConn(); // Connessione al DB
-										$query="SELECT nome,cognome FROM persone WHERE id=$id;"; /* Preparazione Query: Dettagli Persona */
+										$query="SELECT nome,cognome FROM persone WHERE id=$id;"; // Preparazione Query: Dettagli Persona 
 										$risultati=$conn->query($query);
 										$persona = $risultati->fetch_assoc();
 										$risultati->free(); // Dealloco l'oggetto
@@ -3449,23 +3464,22 @@
 													<h1 class="mt-4 mb-4">'.$persona["nome"].' '.$persona["cognome"].'</h1>
 													<img src="images/persone/'.$id.'.jpg" style="max-width: 50%; height: auto;" class="mt-4 mb-4" onerror="this.onerror=null;this.src=\'images/persone/default.jpg\';" alt="Foto di '.$persona["nome"].' '.$persona["cognome"].'">
 												</div>
-											');
+											'); // Riquadro dettaglio persona
 
 										$query="SELECT V.nome,V.durata,V.sinossi,V.id
 										FROM video V JOIN attorivideo AV ON AV.idVideo=V.id JOIN persone P ON AV.idPersona=P.id 
-										WHERE P.id=$id AND V.selettore!=2"; /* Preparazione Query: Video da Attore */
+										WHERE P.id=$id AND V.selettore!=2"; // Preparazione Query: Video da Attore 
 
-										if ($video=$conn->query($query)) { /* Risultati della query */
+										if ($video=$conn->query($query)) { // Risultati della query 
 											$n=$video->num_rows;
-											if ($n>0) {
+											if ($n>0) { // Almeno 1 elemento
 												echo ('	
 													<div class="container text-center"> 
 														<h2 class="mt-4 mb-4" >Attore in</h2>
 													</div>
-													');
-											}		
-
-												while ($elemento = $video->fetch_assoc())  { /* Costruisco un riquadro per ogni video */
+													'); // Titolo
+											
+												while ($elemento = $video->fetch_assoc())  { 
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -3478,8 +3492,9 @@
 																	</div>
 																</div>
 															</div>		
-													');
+													'); // Costruisco un riquadro per ogni video 
 												}
+											}
 										}
 										
 										$video->free(); // Dealloco l'oggetto	
@@ -3487,18 +3502,19 @@
 										$query="SELECT S.* 
 										FROM serie S JOIN video V ON V.idSerie=S.id JOIN attorivideo AV ON AV.idVideo=V.id 
 										WHERE AV.idPersona=$id 
-										GROUP BY S.id"; /* Preparazione Query: Serie da Attore */
+										GROUP BY S.id"; // Preparazione Query: Serie da Attore 
 
-										if ($serie=$conn->query($query)) { /* Risultati della query */
-											if ($serie->num_rows>0) {
-												if ($n==0) {
+										if ($serie=$conn->query($query)) { // Risultati della query 
+											if ($serie->num_rows>0) { // Almeno 1 elemento 
+												if ($n==0) { // Intestazione non ancora scritta
 													echo ('	
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Attore in</h2>
 														</div>
 														');
-												}
-												while ($elemento = $serie->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+												} // Titolo
+
+												while ($elemento = $serie->fetch_assoc()) {  
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',6,null,null,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -3512,25 +3528,25 @@
 																</div>
 															</div>		
 													');
-												}
+												} // Costruisco un riquadro per ogni video
 											}
 											$serie->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT V.nome,V.durata,V.sinossi,V.id
 										FROM video V JOIN registivideo RV ON RV.idVideo=V.id JOIN persone P ON RV.idPersona=P.id 
-										WHERE P.id=$id AND V.selettore!=2"; /* Preparazione Query: Video da Regista */
+										WHERE P.id=$id AND V.selettore!=2"; // Preparazione Query: Video da Regista 
 										
-										if ($video=$conn->query($query)) { /* Risultati della query */
+										if ($video=$conn->query($query)) { // Risultati della query 
 											$n=$video->num_rows;
-											if($n>0) {
+											if($n>0) { // Almeno 1 elemento
 												echo ('
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Regista in</h2>
 														</div>
-													');
+													'); // Titolo
 												
-												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+												while ($elemento = $video->fetch_assoc()) { 
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -3543,7 +3559,7 @@
 																</div>
 															</div>
 														</div>		
-													');
+													'); // Costruisco un riquadro per ogni video 
 												}
 											}																				
 											$video->free(); // Dealloco l'oggetto
@@ -3552,18 +3568,19 @@
 										$query="SELECT S.* 
 										FROM serie S JOIN video V ON V.idSerie=S.id JOIN registivideo RV ON RV.idVideo=V.id 
 										WHERE RV.idPersona=$id 
-										GROUP BY S.id"; /* Preparazione Query: Serie da Regista */
+										GROUP BY S.id"; // Preparazione Query: Serie da Regista 
 
-										if ($serie=$conn->query($query)) { /* Risultati della query */
-											if ($serie->num_rows>0) {
-												if ($n==0) {
+										if ($serie=$conn->query($query)) { // Risultati della query 
+											if ($serie->num_rows>0) { // Almeno 1 elemento
+												if ($n==0) { // Intestazione non ancora scritta
 													echo ('	
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Regista in</h2>
 														</div>
-														');
+														'); // Titolo
 												}
-												while ($elemento = $serie->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+
+												while ($elemento = $serie->fetch_assoc()) { 
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',6,null,null,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -3576,7 +3593,7 @@
 																	</div>
 																</div>
 															</div>		
-													');
+													'); // Costruisco un riquadro per ogni video 
 												}
 											}
 											$serie->free(); // Dealloco l'oggetto
@@ -3584,18 +3601,18 @@
 
 										$query="SELECT V.nome,V.durata,V.sinossi,V.id
 										FROM video V JOIN produttorivideo PV ON PV.idVideo=V.id JOIN persone P ON PV.idPersona=P.id 
-										WHERE P.id=$id AND V.selettore!=2"; /* Preparazione Query: Video da Produttore */
+										WHERE P.id=$id AND V.selettore!=2"; // Preparazione Query: Video da Produttore 
 
-										if ($video=$conn->query($query)) { /* Risultati della query */
+										if ($video=$conn->query($query)) { // Risultati della query 
 											$n=$video->num_rows;
-											if($n>0) {
+											if($n>0) { // Almeno 1 elemento
 												echo ('
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Produttore in</h2>
 														</div>
-													');
+													'); // Titolo
 												
-												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+												while ($elemento = $video->fetch_assoc()) {  
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -3609,7 +3626,7 @@
 															</div>
 														</div>		
 													');
-												}
+												} // Costruisco un riquadro per ogni video
 											}																				
 											$video->free(); // Dealloco l'oggetto
 										}
@@ -3617,18 +3634,18 @@
 										$query="SELECT S.* 
 										FROM serie S JOIN video V ON V.idSerie=S.id JOIN produttorivideo PV ON PV.idVideo=V.id 
 										WHERE PV.idPersona=$id 
-										GROUP BY S.id"; /* Preparazione Query: Serie da Produttore */
+										GROUP BY S.id"; // Preparazione Query: Serie da Produttore 
 
-										if ($serie=$conn->query($query)) { /* Risultati della query */
-											if ($serie->num_rows>0) {
-												if ($n==0) {
+										if ($serie=$conn->query($query)) { // Risultati della query 
+											if ($serie->num_rows>0) { // Almeno 1 elemento
+												if ($n==0) { // Intestazione non ancora scritta
 													echo ('	
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Produttore in</h2>
 														</div>
-														');
+														'); // Titolo
 												}
-												while ($elemento = $serie->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+												while ($elemento = $serie->fetch_assoc()) {  
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',6,null,null,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -3642,24 +3659,24 @@
 																</div>
 															</div>		
 													');
-												}
+												} // Costruisco un riquadro per ogni video
 											}
 											$serie->free(); // Dealloco l'oggetto
 										}
 
 										$query="SELECT Pggi.* 
 										FROM interpretazioni I JOIN persone Pers ON Pers.id=I.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio 
-										WHERE Pers.id=$id"; /* Preparazione Query: Personaggi interpretati */
+										WHERE Pers.id=$id"; // Preparazione Query: Personaggi interpretati 
 
-										if ($personaggi=$conn->query($query)) { /* Risultati della query */
-											if($personaggi->num_rows>0) {
+										if ($personaggi=$conn->query($query)) { // Risultati della query 
+											if($personaggi->num_rows>0) { // Almeno 1 elemento
 												echo ('
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Interpreta</h2>
 														</div>
 													');
 												
-												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
+												while ($personaggio = $personaggi->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$personaggio["id"].',9,null,null,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -3669,7 +3686,7 @@
 																</div>
 															</div>
 														</div>		
-														');
+														'); // Costruisco un riquadro per ogni personaggio 
 												}
 											}																				
 											$personaggi->free(); // Dealloco l'oggetto
@@ -3689,9 +3706,9 @@
 											*** DETTAGLI PERSONAGGIO ***
 											****************************
 											*/
-										$id=$_GET["id"]; /* idPersonaggio */
+										$id=$_GET["id"]; // idPersonaggio 
 										$conn=dbConn(); // Connessione al DB
-										$query="SELECT nome FROM personaggi WHERE id=$id"; /* Preparazione Query: Dettagli personaggio */
+										$query="SELECT nome FROM personaggi WHERE id=$id"; // Preparazione Query: Dettagli personaggio 
 										$risultati=$conn->query($query);
 										$personaggio = $risultati->fetch_assoc();
 										$risultati->free(); // Dealloco l'oggetto
@@ -3702,20 +3719,21 @@
 													<h1 class="mt-4 mb-4">'.$personaggio["nome"].'</h1>
 													<img src="images/personaggi/'.$id.'.jpg" style="max-width: 50%; class="img-fluid mt-4 mb-4" onerror="this.onerror=null;this.src=\'images/personaggi/default.jpg\';" alt="Foto del personaggio '.$personaggio["nome"].'">
 												</div>
-											');
+											'); // Riquadro Dettagli Personaggio
 										
 										$query="SELECT Pers.* 
 										FROM interpretazioni I JOIN persone Pers ON Pers.id=I.idPersona JOIN personaggi Pggi ON Pggi.id=I.idPersonaggio
-										WHERE Pggi.id=$id"; /* Preparazione Query: Attori che hanno interpretato il personaggio */
+										WHERE Pggi.id=$id"; // Preparazione Query: Attori che hanno interpretato il personaggio 
 
-										if ($attori=$conn->query($query)) { /* Risultati della query */
+										if ($attori=$conn->query($query)) { // Risultati della query 
 											echo ('
 												<div class="container text-center"> 
 													<h2 class="mt-4 mb-4" >Attori che lo hanno interpretato</h2>
 												</div>
-												');
-											if ($attori->num_rows>0) {
-												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
+												'); // Titolo
+
+											if ($attori->num_rows>0) { // Almeno 1 elemento
+												while ($attore = $attori->fetch_assoc()) {  
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null,null,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -3725,10 +3743,10 @@
 																</div>
 															</div>
 														</div>		
-													');
+													'); // Costruisco un riquadro per ogni attore
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -3737,7 +3755,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi 
 											}
 											
 											$attori->free(); // Dealloco l'oggetto
@@ -3745,15 +3763,17 @@
 
 										$query="SELECT V.id, V.nome, V.durata, V.sinossi
 										FROM comparizioni C JOIN video V ON V.id=C.idVideo
-										WHERE C.idPersonaggio=$id"; /* Preparazione Query: Video in cui compare il personaggio */
-										if ($video=$conn->query($query)) { /* Query effettuata con successo */
+										WHERE C.idPersonaggio=$id"; // Preparazione Query: Video in cui compare il personaggio 
+
+										if ($video=$conn->query($query)) { // Query effettuata con successo 
 											echo ('	
 												<div class="container text-center"> 
 													<h2 class="mt-4 mb-4" >Video in cui e\' apparso</h2>
 												</div>
-												');
-											if ($video->num_rows>0) { /* Almeno un risultato */
-												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+												'); // Titolo
+
+											if ($video->num_rows>0) { // Almeno un risultato 
+												while ($elemento = $video->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,,null,null,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -3767,10 +3787,10 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Costruisco un riquadro per ogni video 
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -3779,7 +3799,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi 
 											}
 											$video->free(); // Dealloco l'oggetto
 											$conn->close(); // Chiudo la connessione al DB
@@ -3796,18 +3816,19 @@
 										$conn=dbConn(); // Connessione al DB
 										echo ('
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
-										');
+										'); // bottone indietro
 										
-										$query="SELECT id,nome,Sinossi,durata FROM video WHERE selettore=1 AND nome LIKE '%$ricerca%'"; 
+										$query="SELECT id,nome,Sinossi,durata FROM video WHERE selettore=1 AND nome LIKE '%$ricerca%'"; // Preparazione query: Video coerenti con la ricerca
 										
-										if ($risultati=$conn->query($query)) { /* Risultati della query */
+										if ($risultati=$conn->query($query)) { // Risultati della query 
 											echo ('	
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Film</h2>
 														</div>
-												');
-											if ($risultati->num_rows>0) {
-												while ($elemento = $risultati->fetch_assoc()) { /* Costruisco un riquadro per ogni film */
+												'); // Titolo
+
+											if ($risultati->num_rows>0) { // Almeno 1 elemento
+												while ($elemento = $risultati->fetch_assoc()) { 
 													echo ('
 															<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null,null,null);" >
 																<div class="card h-100 mb-4 shadow-sm">
@@ -3823,10 +3844,10 @@
 																	</div>
 																</div>
 															</div>		
-													');
+													'); // Costruisco un riquadro per ogni film 
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -3835,7 +3856,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi
 											}
 											
 											$risultati->free(); // Dealloco l'oggetto
@@ -3846,15 +3867,17 @@
 										FROM serie S 
 										JOIN video V on V.idSerie=S.id 
 										WHERE S.nome LIKE '%$ricerca%' 
-										GROUP BY S.id"; 
+										GROUP BY S.id"; // Preparazione query: Serie coerenti con la ricerca
+
 										echo ('	
 											<div class="container text-center"> 
 												<h2 class="mt-4 mb-4" >Serie</h2>
 											</div>
-											');
-										if ($serie=$conn->query($query)) { /* Query effettuata con successo */
-											if ($serie->num_rows>0) { /* Almeno un risultato */
-												while ($elemento = $serie->fetch_assoc()) { /* Costruisco un riquadro per ogni serie */
+											'); // Titolo
+
+										if ($serie=$conn->query($query)) { // Query effettuata con successo 
+											if ($serie->num_rows>0) { // Almeno un risultato 
+												while ($elemento = $serie->fetch_assoc()) {  
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',6,null,null,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -3862,12 +3885,14 @@
 																	<img src="images/serie/'.$elemento["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/serie/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
 																	<p class="card-text">'.$elemento["nome"].'</p>
 																	<p class="card-text-description">'.$elemento["sinossi"].'</p>
-														');
+														'); // Costruisco un riquadro per ogni serie (pt.1)
+
 														$query="SELECT COUNT(S.id) nEpisodi
 														FROM serie S JOIN video V ON S.id=V.idSerie 
-														WHERE V.idSerie=1"; /* Preparazione Query: Numero episodi della serie */
-														if ($risultato=$conn->query($query)) { /* Query effettuata con successo */
-															if ($risultato->num_rows==1) { /* Almeno un risultato */
+														WHERE V.idSerie=1"; // Preparazione Query: Numero episodi della serie 
+
+														if ($risultato=$conn->query($query)) { // Query effettuata con successo 
+															if ($risultato->num_rows==1) { // 1 risultato 
 																$nepisodi = $risultato->fetch_assoc();
 													echo ('			
 																	<div class="d-flex flex-row-reverse align-items-center">
@@ -3876,13 +3901,13 @@
 																</div>
 															</div>
 														</div>
-														');
+														'); // Costruisco un riquadro per ogni serie (pt.2)
 															}
 														}
 														$risultato->free(); // Dealloco l'oggetto
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -3891,7 +3916,7 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di elementi 
 											}
 											$serie->free();	// Dealloco l'oggetto
 										}
@@ -3900,15 +3925,17 @@
 										FROM saghe S
 										JOIN video V ON S.id=V.idSaga
 										WHERE S.nome LIKE '%$ricerca%'
-										GROUP BY S.id"; /* Preparazione Query: Tutte le saghe */
+										GROUP BY S.id"; // Preparazione Query: Saghe coerenti con la ricerca
+
 										echo ('	
 											<div class="container text-center"> 
 												<h2 class="mt-4 mb-4" >Saghe</h2>
 											</div>
-											');
-										if ($saghe=$conn->query($query)) { /* Query effettuata con successo */
-											if ($saghe->num_rows>0) { /* Almeno un risultato */
-												while ($saga = $saghe->fetch_assoc()) { /* Costruisco un riquadro per ogni saga TV */
+											'); // Titolo 
+
+										if ($saghe=$conn->query($query)) { // Query effettuata con successo 
+											if ($saghe->num_rows>0) { // Almeno un risultato 
+												while ($saga = $saghe->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$saga["id"].',6,null,null,null,null)">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -3921,10 +3948,10 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Costruisco un riquadro per ogni saga TV 
 												}
 											}
-											else { /* Comunicazione mancanza di saghe */
+											else { 
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -3933,20 +3960,22 @@
 																</div>
 															</div>
 														</div>
-													');
+													'); // Comunicazione mancanza di saghe 
 											}
 											$saghe->free(); // Dealloco l'oggetto
 										}
 										
-										$query="SELECT id,nome,cognome FROM persone WHERE nome LIKE '%$ricerca%' OR cognome LIKE '%$ricerca%'"; 
-										if ($attori=$conn->query($query)) { /* Risultati della query */
+										$query="SELECT id,nome,cognome FROM persone WHERE nome LIKE '%$ricerca%' OR cognome LIKE '%$ricerca%'"; // Preparazione query: Persone coerenti con la ricerca
+										
+										if ($attori=$conn->query($query)) { // Risultati della query 
 											echo ('
 												<div class="container text-center"> 
 													<h2 class="mt-4 mb-4" >Persone</h2>
 												</div>
-												');
-											if ($attori->num_rows>0) {
-												while ($attore = $attori->fetch_assoc()) { /* Costruisco un riquadro per ogni attore */
+												'); // Titolo
+
+											if ($attori->num_rows>0) { // Almeno 1 elemento
+												while ($attore = $attori->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$attore["id"].',8,null,null,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -3956,10 +3985,10 @@
 																</div>
 															</div>
 														</div>		
-													');
+													'); // Costruisco un riquadro per ogni attore 
 												}
 											}
-											else { /* Comunicazione mancanza di elementi */
+											else {
 												echo ('
 														<div class="col-md-3 ">
 															<div class="card mb-4 shadow-sm">
@@ -3968,24 +3997,22 @@
 																</div>
 															</div>
 														</div>
-													');
+													');  // Comunicazione mancanza di elementi 
 											}	
 											$attori->free(); // Dealloco l'oggetto
 										}
 										
+										$query="SELECT id,nome FROM personaggi WHERE nome LIKE '%$ricerca%'"; // Preparazione query: Personaggi coerenti con la ricerca
 										
-										
-										$query="SELECT id,nome FROM personaggi WHERE nome LIKE '%$ricerca%'"; 
-										
-										if ($personaggi=$conn->query($query)) { /* Risultati della query */
-											if($personaggi->num_rows>0) {
+										if ($personaggi=$conn->query($query)) { // Risultati della query 
+											if($personaggi->num_rows>0) { // Almeno 1 elemento
 												echo ('
 														<div class="container text-center"> 
 															<h2 class="mt-4 mb-4" >Personaggi</h2>
 														</div>
-													');
+													'); // Titolo
 												
-												while ($personaggio = $personaggi->fetch_assoc()) { /* Costruisco un riquadro per ogni personaggio */
+												while ($personaggio = $personaggi->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$personaggio["id"].',9,null,null,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -3995,7 +4022,7 @@
 																</div>
 															</div>
 														</div>		
-														');
+														'); // Costruisco un riquadro per ogni personaggio 
 												}
 											}																				
 											$personaggi->free(); // Dealloco l'oggetto
@@ -4004,7 +4031,7 @@
 											<div class="container">
 												<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 											</div>
-										');
+										'); // Bottone indietro
 										
 										$conn->close(); // Chiudo la connessione al DB
 										
@@ -4015,22 +4042,23 @@
 										*** DETTAGLI STAGIONI ***
 										*************************
 										*/
-										$pagina=$_GET["pagina"]; /* Stagione da mostare */
-										$id=$_GET["id"]; /* idSerie */
+										
+										$pagina=$_GET["pagina"]; // Stagione da mostare 
+										$id=$_GET["id"]; // idSerie 
 										$conn=dbConn(); // Connessione al DB
 										$query="SELECT *
 										FROM video V
 										JOIN serie S ON V.idSerie=S.id
-										WHERE S.id=$id"; /* Preparazione Query: Nome della serie */	
-										$nStag=$conn->query("SELECT COUNT( DISTINCT stagione) nStag FROM video WHERE idSerie=$id")->fetch_assoc()["nStag"]; /* Numero di stagioni */
+										WHERE S.id=$id"; // Preparazione Query: Nome della serie 	
+										$nStag=$conn->query("SELECT COUNT( DISTINCT stagione) nStag FROM video WHERE idSerie=$id")->fetch_assoc()["nStag"]; // Numero di stagioni 
 
 										echo ('
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
-										');
+										'); // Bottone indietro
 										
-										if ($stagioni=$conn->query($query)) { /* Risultati della query */
-											if ($stagioni->num_rows>0) {
-												$elemento = $stagioni->fetch_assoc();  /* Costruisco un riquadro per ogni video */
+										if ($stagioni=$conn->query($query)) { // Risultati della query 
+											if ($stagioni->num_rows>0) { // Almeno 1 elemento
+												$elemento = $stagioni->fetch_assoc();   
 												echo ('
 														<div class="container text-center">
 															<h1 class="mt-4 mb-4" >'.$elemento['nome'].'</h1>
@@ -4039,11 +4067,11 @@
 															$elemento['sinossi'].'
 														</div>
 													');												
-											}
+											} // Costruisco un riquadro per ogni video
 											$stagioni->free(); // Dealloco l'oggetto
 										}
 
-										echo '<div class="container"> <select id="sel" onchange="passa_a('.$id.',11,sel.value,null,null,null)">';
+										echo '<div class="container"> <select id="sel" onchange="passa_a('.$id.',11,sel.value,null,null,null)">'; // Scelta ordinamento
 										for($i=1;$i<=$nStag;$i++) {
 											echo '<option value="'.$i.'"';
 											if($i==$pagina)
@@ -4056,10 +4084,11 @@
 										FROM video V
 										JOIN serie S ON V.idSerie=S.id
 										WHERE S.id=$id AND V.stagione=$pagina
-										ORDER BY V.numero";
-										if ($video=$conn->query($query)) { /* Risultati della query */
-											if ($video->num_rows>0) {
-												while ($elemento = $video->fetch_assoc()) { /* Costruisco un riquadro per ogni video */
+										ORDER BY V.numero"; // Preparazione query: Video della serie appartenenti alla stagione specificata
+
+										if ($video=$conn->query($query)) { // Risultati della query 
+											if ($video->num_rows>0) { // Almeno 1 elemento
+												while ($elemento = $video->fetch_assoc()) { 
 													echo ('
 														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null,null,null);" >
 															<div class="card h-100 mb-4 shadow-sm">
@@ -4075,12 +4104,10 @@
 																</div>
 															</div>
 														</div>		
-													');
+													'); // Costruisco un riquadro per ogni video 
 												}
 											}
-											
 											$video->free(); // Dealloco l'oggetto
-										
 										}
 																
 										break;
@@ -4091,12 +4118,12 @@
 										*** RECENSIONI UTENTE ***
 										*************************
 										*/
-										$conn=dbConn();
+										$conn=dbConn(); // Connessione al DB
 										if(isset($_POST['idCur']))
 											$id=$_POST['idCur'];
-										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { /* E' stato dato un voto */
+										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { // E' stato dato un voto 
 											$voto=$_POST["check"];
-												if($voto=="VIDEO") { /* Eliminazione del DB riuscita */
+												if($voto=="VIDEO") { // Eliminazione del DB riuscita 
 													$query="DELETE FROM recensionivideo WHERE idVideo=$id AND idUtente=$_SESSION[idUser]";
 													//echo $query;
 													if($conn->query($query))
@@ -4105,7 +4132,7 @@
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
 													
 												}
-												else{
+												else {
 													$query="DELETE FROM recensioniserie WHERE idSerie=$id AND idUtente=$_SESSION[idUser]";
 													//echo $query;
 													if($conn->query($query))
@@ -4116,15 +4143,14 @@
 												}
 										}
 					
-										if(isset($_SESSION)){
-											
-											
+										if(isset($_SESSION)) { // Sessione settata
 											echo ('	
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 											<div class="container text-center"> 
 												<h1 class="mt-4 mb-4" >Tutte le recensioni di '.$_SESSION['user'].'</h1>
 											</div>
 											'); // Titolo
+
 											$id=$_SESSION["idUser"];
 											$query="SELECT R.voto, R.testo, S.nome as serie, V.nome, U.id, R.idVideo ,U.username, A.username admin
 											FROM recensionivideo R 
@@ -4133,14 +4159,14 @@
 											LEFT JOIN utenti A ON A.id=R.idAdmin
 											LEFT JOIN serie S ON S.id=V.idSerie
 											WHERE U.id=$id
-											ORDER BY R.idAdmin DESC,R.idVideo;";
+											ORDER BY R.idAdmin DESC,R.idVideo;"; // Preparazione query: Tutte le recensioni dei video dell'Utente
 											$recensioni=$conn->query($query);
 											$vuoto=0;
-											if($recensioni->num_rows==0){
+											if($recensioni->num_rows==0) { // Nessun elemento
 												$vuoto++;
 											}		
-											else{
-												while($riga = $recensioni->fetch_assoc()){
+											else { // Almeno 1 elemento
+												while($riga = $recensioni->fetch_assoc()) {
 													echo 	
 														'<div class="col-md-3 py2 mb-2">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -4163,7 +4189,7 @@
 																	</div>';
 																	echo '
 															</div>
-														</div>';
+														</div>'; // Riquadro recensione
 												}
 											}
 											
@@ -4173,13 +4199,14 @@
 											JOIN serie S ON S.id=R.idSerie
 											LEFT JOIN utenti A ON A.id=R.idAdmin
 											WHERE U.id=$id
-											ORDER BY R.idAdmin DESC,R.idSerie;";
+											ORDER BY R.idAdmin DESC,R.idSerie;"; // Preparazione query: Tutte le recensioni delle serie dell'utente
 											$recensioni=$conn->query($query);
-											if($recensioni->num_rows==0){
+
+											if($recensioni->num_rows==0) { // Nessun elemento
 												$vuoto++;
 											}		
-											else{
-												while($riga = $recensioni->fetch_assoc()){
+											else { // Almeno 1 elemento
+												while($riga = $recensioni->fetch_assoc()) {
 													echo 	
 														'<div class="col-md-3 py2 mb-2">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -4200,9 +4227,9 @@
 																	echo '
 															</div>
 														</div>';
-												}
+												} // Riquadro Recensione
 											}
-											if($vuoto==2){
+											if($vuoto==2) { // Non ci sono recensioni (video e serie)
 												echo 	
 													'<div class="col-md-3 py2">
 														<div class="card h-100 mb-4 shadow-sm">
@@ -4211,24 +4238,25 @@
 															</div>
 														</div>
 													</div>';
-											}
+											} // Avviso mancanza di recensioni
 										}
-										
 										
 										$conn->close();
 										break;
+
 									case 13:
 										/*
 										************************
 										*** CURIOSITÀ UTENTE ***
 										************************
 										*/
+
 										$conn=dbConn();
 										if(isset($_POST['idCur']))
 											$id=$_POST['idCur'];
-										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { /* E' stato dato un voto */
+										if(isset($_POST["cur"])&&isset($_SESSION["idUser"])) { // E' stato dato un voto 
 											$voto=$_POST["check"];
-												if($voto=="VIDEO") { /* Eliminazione del DB riuscita */
+												if($voto=="VIDEO") { // Eliminazione del DB riuscita 
 													$query="DELETE FROM curiositavideo WHERE id=$id";
 													//echo $query;
 													if($conn->query($query))
@@ -4246,15 +4274,14 @@
 												}
 										}
 					
-										if(isset($_SESSION)){
-											
-											
+										if(isset($_SESSION)) { // Sessione settata
 											echo ('	
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 											<div class="container text-center"> 
 												<h1 class="mt-4 mb-4" >Tutte le curiosità di '.$_SESSION['user'].'</h1>
 											</div>
 											'); // Titolo
+
 											$id=$_SESSION["idUser"];
 											$query="SELECT C.id as idCur, C.testo, S.nome serie, V.nome, U.id, C.idVideo ,U.username, A.username admin
 											FROM curiositavideo C 
@@ -4263,13 +4290,14 @@
 											LEFT JOIN utenti A ON A.id=C.idAdmin
 											LEFT JOIN serie S ON S.id=V.idSerie
 											WHERE U.id=$id
-											ORDER BY C.idVideo, C.idAdmin DESC;";
+											ORDER BY C.idVideo, C.idAdmin DESC;"; // Preparazione query: Tutte le curiosità dei video dell'utente
 											$recensioni=$conn->query($query);
 											$vuoto=0;
-											if($recensioni->num_rows==0){
+
+											if($recensioni->num_rows==0) { // Mancanza di recensioni
 												$vuoto++;
 											}		
-											else{
+											else { // Almeno 1 elemento
 												while($riga = $recensioni->fetch_assoc()){
 													echo 	
 														'<div class="col-md-3 py2 mb-2">
@@ -4292,25 +4320,23 @@
 																		echo '</div>';
 																	echo '
 															</div>
-														</div>';
+														</div>'; // Riquadro recensione
 												}
 											}
 											
-											
-											$id=$_SESSION["idUser"];
 											$query="SELECT C.id as idCur, C.testo, S.nome, U.id, C.idSerie ,U.username, A.username admin
 											FROM curiositaserie C 
 											INNER JOIN utenti U ON U.id=C.idUtente
 											JOIN serie S ON S.id=C.idSerie
 											LEFT JOIN utenti A ON A.id=C.idAdmin
 											WHERE U.id=$id
-											ORDER BY C.idSerie, C.idAdmin DESC;";
+											ORDER BY C.idSerie, C.idAdmin DESC;"; // Preparazione query: tutte le curiosità delle serie dell'utente
 											$recensioni=$conn->query($query);
-											if($recensioni->num_rows==0){
+											if($recensioni->num_rows==0) { // Mancanza di recensioni
 												$vuoto++;
 											}		
-											else{
-												while($riga = $recensioni->fetch_assoc()){
+											else { // Almeno 1 elemento
+												while($riga = $recensioni->fetch_assoc()) {
 													echo 	
 														'<div class="col-md-3 py2 mb-2">
 															<div class="card h-100 mb-4 shadow-sm">
@@ -4330,10 +4356,11 @@
 																		echo '</div>';
 																	echo '
 															</div>
-														</div>';
+														</div>'; // Riquadro recensione
 												}
 											}
-											if($vuoto==2){
+
+											if($vuoto==2) { // Non ci sono relazioni (video e serie)
 												echo 	
 													'<div class="col-md-3 py2">
 														<div class="card h-100 mb-4 shadow-sm">
@@ -4341,46 +4368,44 @@
 																<p class="card-text" style="text-align:center !important">Non è presente ancora nessuna recensione</p>
 															</div>
 														</div>
-													</div>';
+													</div>'; // COmunicazione di mancanza di elementi
 											}
-												
-											
 										}
-										
-										
 										$conn->close();
-										
 										break;
+
 									case 14:
 										/*
 										**********************
 										*** PROFILO UTENTE ***
 										**********************
 										*/
+
 										echo "</form>";
 										
 										$conn=dbConn();
 										
-										if(isset($_POST["newpw"])){
+										if(isset($_POST["newpw"])) { // Nuova password
 											$id=$_SESSION["idUser"];
-											$query="SELECT password FROM utenti WHERE id=$id AND password='".md5($_POST["oldpw"])."'";
+											$query="SELECT password FROM utenti WHERE id=$id AND password='".md5($_POST["oldpw"])."'"; // Preparazione query: Vecchia password utente
 											if($result=$conn->query($query))
-												if($result->num_rows>0){
+												if($result->num_rows==1) { // 1 password
 													$query="UPDATE utenti SET password='".md5($_POST["newpw"])."'
-													WHERE id=$id";
-													if($conn->query($query)) /* Inserimento nel DB riuscito */
+													WHERE id=$id"; // Preparazione query: Inserimento nel DB della nuova password
+													if($conn->query($query)) // Inserimento nel DB riuscito 
 														echo "<script type='text/javascript'>alert('La password è stata modificata con successo!');</script>";
-													else /* Inserimento nel DB NON riuscito */
+													else // Inserimento nel DB NON riuscito 
 														echo "<script type='text/javascript'>alert('Siamo spiacenti. Qualcosa è andato storto');</script>";
-													
 												}
 										}
+
 										echo ('	
 											<input type="button" class="btn btn-secondary dropdown-toggle" value="Indietro" onclick="history.back(-1)" />
 											<div class="container text-center"> 
 												<h1 class="mt-4 mb-4" >Profilo utente</h1>
 											'); // Titolo
-										if(isset($_SESSION["idUser"])){
+
+										if(isset($_SESSION["idUser"])) { // Utente loggato
 											$id=$_SESSION["idUser"];
 											$query="SELECT indirizzoIP, dataOra, durata FROM accessi WHERE idUtente=$id ORDER BY dataOra";
 											if($result=$conn->query($query))
@@ -4392,9 +4417,9 @@
 																<th>Indirizzo IP</th>
 																<th>Data e ora accesso</th>
 																<th>durata sessione</th>
-															  </tr>";
+															  </tr>"; // Intestazione tabella ultimi accessi (MAX 10)
 															  $i=1;
-													while($accesso=$result->fetch_assoc()){
+													while($accesso=$result->fetch_assoc()) {
 														echo"
 																  <tr>
 																	<td>$accesso[indirizzoIP]</td>
@@ -4403,21 +4428,23 @@
 															echo"   <td>$accesso[durata]</td>";
 														else
 															echo"   <td>In corso</td>";
-														echo"		  </tr>";
+														echo"		  </tr>"; // Costruzione riga tabella
 														$i++;
-																
 													}
-													$query="SELECT username, email, admin FROM utenti WHERE id=$id";
+
+													$query="SELECT username, email, admin FROM utenti WHERE id=$id"; // Preparazione query: Username ed email Utente
+													
 													if($result=$conn->query($query))
-														if($result->num_rows>0){
+														if($result->num_rows==1) { // 1 Risultato
 														$utente=$result->fetch_assoc();
 														
 														echo '	</table>
 																<h3><strong>Username: </strong>'.$utente["username"].'</h3>
 																<h3><strong>Email: </strong>'.$utente["email"].'</h3>
-														';
+														'; // Intestazione (pt.1)
+
 														if($utente["admin"]==1)
-															echo '<h3>Sei un <strong>AMMINISTRATORE</strong></h3>';
+															echo '<h3>Sei un <strong>AMMINISTRATORE</strong></h3>'; // Intestazione (pt.2)
 														echo'
 																<form name="changepw" id="changepw" method="post" onsubmit="return check()" action="index.php?stato='.$_GET['stato'].'">
 																	<div class="form-group row">
@@ -4441,14 +4468,12 @@
 																	<p style="color:red; visibility:hidden" id="avviso" name="avviso" class="ml-2">Le due password devono coincidere</p>
 
 																	<button type="submit" class="btn btn-primary ml-2 mt-2">Cambia password</button>
-			
-														';
+														'; // Riquadro ulteriori informazioni e modifica password
 													}
 														$result->free(); // Dealloco l'oggetto
 												}
 										}	
 										echo '</div>';
-										
 										$conn->close();
 										
 										break;
@@ -4661,7 +4686,7 @@
 										$nSerie=$conn->query("SELECT COUNT(DISTINCT id) nSerie FROM serie S")->fetch_assoc(); // Numero totale delle serie
 										echo ('	
 											<div class="container text-center"> 
-												<h2 class="mt-4 mb-4" >Tutte le Serie </h2>
+												<h2 class="mt-4 mb-4" >Serie('.$nTot["tipo"].')</h2>
 											</div>
 											'); // Titolo
 
@@ -4703,7 +4728,7 @@
 																		<small class="text-muted">Episodi: '.$elemento["nEpisodi"].'</small>
 																	</div>
 																	<div class="d-flex flex-row-reverse align-items-center">
-													');
+													'); // Costruisco un riquadro per ogni serie (pt.1)
 																	if($elemento["annoUscita"]!=$elemento["annoFine"])
 																	echo '	<small class="text-muted">Anni di produzione: '.$elemento["annoUscita"].'-'.$elemento["annoFine"].'</small>';
 																	else
@@ -4714,12 +4739,12 @@
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Voto Medio: '.round($elemento["mediaVoti"],2).'</small>
 																	</div>
-																	');
+																	'); // Costruisco un riquadro per ogni serie (pt.2)
 														echo ('
 																	<div class="d-flex flex-row-reverse align-items-center">
 																		<small class="text-muted">Nazionalità: '.$elemento["nazionalita"].'</small>
 																	</div>
-															');
+															'); // Costruisco un riquadro per ogni serie (pt.3)
 
 															$query="SELECT DISTINCT G.tipo
 															FROM generivideo GV JOIN generi G ON G.id=GV.idGenere
