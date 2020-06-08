@@ -14,14 +14,14 @@
 --
 -- Database: `my_bordognafilippo` (ALTERVISTA)
 --
-CREATE DATABASE IF NOT EXISTS `my_bordognafilippo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `my_bordognafilippo`;
+/*CREATE DATABASE IF NOT EXISTS `my_bordognafilippo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `my_bordognafilippo`;*/
 
 --
 -- Database: `catalogo` (XAMPP)
 --
-/*CREATE DATABASE IF NOT EXISTS `catalogo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `catalogo`;*/
+CREATE DATABASE IF NOT EXISTS `catalogo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `catalogo`;
 
 
 -- ***************************************	
@@ -361,31 +361,39 @@ INSERT INTO `utenti` (`id`, `username`, `email`, `password`, `admin`) VALUES
 --
 
 INSERT INTO `accessi` (`id`, `indirizzoIP`, `dataOra`, `durata`, `idUtente`) VALUES
-(1, '::1', '2020-05-26 20:20:11', 83, 3),
-(2, '::1', '2020-05-26 20:29:23', 906, 4),
-(3, '::1', '2020-05-26 20:31:15', 107, 3),
-(4, '::1', '2020-05-26 20:32:50', 24, 1),
-(5, '::1', '2020-05-26 20:34:27', 14, 5),
-(6, '::1', '2020-05-26 20:35:09', 63, 6),
-(7, '::1', '2020-05-26 20:36:04', 82, 7),
-(8, '::1', '2020-05-26 20:37:16', 99, 7),
-(9, '::1', '2020-05-26 20:37:49', 28, 4),
-(10, '::1', '2020-05-27 04:48:38', 1440, 3),
-(11, '::1', '2020-05-26 20:41:50', 293, 1),
-(12, '::1', '2020-05-26 20:41:51', 1440, 1),
-(13, '::1', '2020-05-27 04:48:45', 1440, 3),
-(14, '::1', '2020-05-27 05:07:57', 1440, 7),
-(15, '::1', '2020-05-27 05:32:26', 1440, 3),
-(16, '::1', '2020-06-02 13:26:57', 3, 8),
-(19, '172.68.198.45', '2020-06-04 15:04:25', 1440, 4),
-(20, '172.68.198.81', '2020-06-04 15:05:17', 65, 4),
-(21, '172.68.198.45', '2020-06-04 15:06:48', 115, 1),
-(22, '172.68.198.45', '2020-06-04 15:07:57', 104, 3),
-(23, '188.114.103.242', '2020-06-04 15:08:18', 13, 1),
-(24, '188.114.102.27', '2020-06-04 15:08:23', 1440, 3),
-(25, '172.68.198.45', '2020-06-04 19:16:36', 1440, 1),
-(26, '172.68.198.127', '2020-06-06 12:45:52', 1440, 3),
-(27, '172.68.198.127', '2020-06-06 12:47:39', 1440, 3);
+(2, '::1', '2020-05-26 18:29:23', 906, 4),
+(3, '::1', '2020-05-26 18:31:15', 107, 3),
+(4, '::1', '2020-05-26 18:32:50', 24, 1),
+(5, '::1', '2020-05-26 18:34:27', 14, 5),
+(6, '::1', '2020-05-26 18:35:09', 63, 6),
+(7, '::1', '2020-05-26 18:36:04', 82, 7),
+(8, '::1', '2020-05-26 18:37:16', 99, 7),
+(9, '::1', '2020-05-26 18:37:49', 28, 4),
+(10, '::1', '2020-05-27 02:48:38', 1440, 3),
+(11, '::1', '2020-05-26 18:41:50', 293, 1),
+(12, '::1', '2020-05-26 18:41:51', 1440, 1),
+(13, '::1', '2020-05-27 02:48:45', 1440, 3),
+(14, '::1', '2020-05-27 03:07:57', 1440, 7),
+(15, '::1', '2020-05-27 03:32:26', 1440, 3),
+(16, '::1', '2020-06-02 11:26:57', 3, 8),
+(19, '172.68.198.45', '2020-06-04 13:04:25', 1440, 4),
+(20, '172.68.198.81', '2020-06-04 13:05:17', 65, 4),
+(21, '172.68.198.45', '2020-06-04 13:06:48', 115, 1),
+(22, '172.68.198.45', '2020-06-04 13:07:57', 104, 3),
+(23, '188.114.103.242', '2020-06-04 13:08:18', 13, 1),
+(24, '188.114.102.27', '2020-06-04 13:08:23', 1440, 3),
+(25, '172.68.198.45', '2020-06-04 17:16:36', 1440, 1),
+(26, '172.68.198.127', '2020-06-06 10:45:52', 1440, 3),
+(27, '172.68.198.127', '2020-06-06 10:47:39', 1440, 3),
+(28, '172.68.198.127', '2020-06-07 20:46:49', 126, 3),
+(29, '172.68.198.127', '2020-06-07 20:47:19', 60, 7),
+(30, '172.68.198.127', '2020-06-07 20:48:41', 107, 6),
+(31, '172.68.198.127', '2020-06-07 20:49:17', 1440, 5),
+(32, '188.114.102.67', '2020-06-07 21:18:34', 133, 6),
+(33, '188.114.103.208', '2020-06-07 23:59:59', 51, 7),
+(34, '188.114.103.208', '2020-06-08 00:01:57', 137, 3),
+(35, '188.114.102.27', '2020-06-08 00:02:39', 23, 1),
+(36, '188.114.102.27', '2020-06-08 00:02:44', 1440, 5);
 
 --
 -- Dump dei dati per la tabella `persone`
@@ -455,7 +463,11 @@ INSERT INTO `persone` (`id`, `nome`, `cognome`) VALUES
 (61, 'Alain', 'Resnais'),
 (62, 'Adam', 'Driver'),
 (63, 'Noah', 'Baumbach'),
-(64, 'Luc', 'Besson');
+(64, 'Luc', 'Besson'),
+(65, 'Adriana', 'Ugarte'),
+(66, 'Oriol', 'Paulo'),
+(67, 'Sandra', 'Hermida');
+
 
 --
 -- Dump dei dati per la tabella `saghe`
@@ -479,27 +491,27 @@ INSERT INTO `serie` (`id`, `nome`, `sinossi`) VALUES
 --
 
 INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `stagione`, `selettore`, `sinossi`, `annoUscita`, `nazionalita`) VALUES
-(1, 'Iron Man', 126, 1, NULL, 1, NULL, 1, 'Dopo essere sopravvissuto ad un attacco inaspettato in territorio nemico, l\'industriale Tony Stark costruisce un\'armatura ad alta tecnologia e giura di proteggere il mondo nei panni di Iron Man.', 2008, 'USA'),
-(2, 'L\'incredibile Hulk', 135, 1, NULL, 2, NULL, 1, 'Bruce Banner era uno scienziato, ma un\'esposizione accidentale ai raggi gamma ha provocato una mutazione genetica e sconvolto la sua esistenza. Ogni qualvolta le emozioni lo assalgono, Bruce si trasforma in Hulk, mostro verde dalla forza smisurata.', 2008, 'USA'),
-(3, 'Iron Man 2', 124, 1, NULL, 3, NULL, 1, 'Ora che tutto il mondo conosce la vera identità di Iron Man, l\'inventore milionario Tony Stark deve affrontare le pressioni alla collaborazione da parte dei militari e stringere nuove alleanze per affrontare un potente nemico.', 2010, 'USA'),
-(4, 'Thor', 115, 1, NULL, 4, NULL, 1, 'Dopo che le sue azioni sconsiderate hanno riacceso un\'antica guerra, il dio nordico Thor viene spogliato dei propri poteri, scacciato dal regno di Asgard, e costretto a vivere tra gli umani.', 2011, 'USA'),
-(5, 'Captain America - Il primo Vendicatore', 124, 1, NULL, 5, NULL, 1, 'Steve è un giovanotto smilzo che vuole ad ogni costo arruolarsi nell\'esercito per combattere i nazisti. Putroppo viene regolarmente scartato, ma un giorno gli si presenta la possibilità di fare da cavia: gli iniettano così il siero del supersoldato', 2011, 'USA'),
-(6, 'The Avengers', 143, 1, NULL, 6, NULL, 1, 'I leggendari supereroi Iron Man, Hulk, Thor, Capitan America, Occhio di Falco e la Vedova Nera vengono reclutati da un\'agenzia governativa segreta per combattere un nemico inatteso che minaccia la sicurezza della Terra.', 2012, 'USA'),
+(1, 'Iron Man', 126, 1, NULL, 1, NULL, 1, 'Dopo essere sopravvissuto ad un attacco inaspettato in territorio nemico, l''industriale Tony Stark costruisce un''armatura ad alta tecnologia e giura di proteggere il mondo nei panni di Iron Man.', 2008, 'USA'),
+(2, 'L''incredibile Hulk', 135, 1, NULL, 2, NULL, 1, 'Bruce Banner era uno scienziato, ma un''esposizione accidentale ai raggi gamma ha provocato una mutazione genetica e sconvolto la sua esistenza. Ogni qualvolta le emozioni lo assalgono, Bruce si trasforma in Hulk, mostro verde dalla forza smisurata.', 2008, 'USA'),
+(3, 'Iron Man 2', 124, 1, NULL, 3, NULL, 1, 'Ora che tutto il mondo conosce la vera identità di Iron Man, l''inventore milionario Tony Stark deve affrontare le pressioni alla collaborazione da parte dei militari e stringere nuove alleanze per affrontare un potente nemico.', 2010, 'USA'),
+(4, 'Thor', 115, 1, NULL, 4, NULL, 1, 'Dopo che le sue azioni sconsiderate hanno riacceso un''antica guerra, il dio nordico Thor viene spogliato dei propri poteri, scacciato dal regno di Asgard, e costretto a vivere tra gli umani.', 2011, 'USA'),
+(5, 'Captain America - Il primo Vendicatore', 124, 1, NULL, 5, NULL, 1, 'Steve è un giovanotto smilzo che vuole ad ogni costo arruolarsi nell''esercito per combattere i nazisti. Putroppo viene regolarmente scartato, ma un giorno gli si presenta la possibilità di fare da cavia: gli iniettano così il siero del supersoldato', 2011, 'USA'),
+(6, 'The Avengers', 143, 1, NULL, 6, NULL, 1, 'I leggendari supereroi Iron Man, Hulk, Thor, Capitan America, Occhio di Falco e la Vedova Nera vengono reclutati da un''agenzia governativa segreta per combattere un nemico inatteso che minaccia la sicurezza della Terra.', 2012, 'USA'),
 (7, 'Iron Man 3', 131, 1, NULL, 7, NULL, 1, 'Dopo aver salvato New York dalla distruzione ed essere rimasto da allora insonne e preoccupato, Tony Stark rimasto senza armatura deve lottare contro le sue paure interiori per sconfiggere il suo nuovo nemico, il Mandarino.', 2013, 'USA'),
-(8, 'Thor: The Dark World', 112, 1, NULL, 8, NULL, 1, 'Dal personaggio della Marvel, Thor si allea con il perfido Loki per salvare la Terra dei Nove Regni da un antico nemico nato prima ancora dell\'universo.', 2013, 'USA'),
+(8, 'Thor: The Dark World', 112, 1, NULL, 8, NULL, 1, 'Dal personaggio della Marvel, Thor si allea con il perfido Loki per salvare la Terra dei Nove Regni da un antico nemico nato prima ancora dell''universo.', 2013, 'USA'),
 (9, 'Captain America: The Winter Soldier', 136, 1, NULL, 9, NULL, 1, 'Capitan America, Vedova Nera e un nuovo alleato, Falcon, affrontano un nemico inaspettato mentre lottano per far emergere alla luce del sole un complotto che mette a rischio il mondo intero.', 2014, 'USA'),
-(10, 'Guardiani della Galassia', 125, 1, NULL, 10, NULL, 1, 'Un avventuriero spaziale, Brash Peter Quill, diventa preda di alcuni cacciatori di taglie dopo aver rubato una sfera ambita dal potente Ronan. Per sfuggire alla morte, l\'uomo si allea con quattro improbabili compagni di avventura.', 2014, 'USA'),
-(11, ' Eseguire ciò che è stato concordato', 47, NULL, 1, 1, 1, 2, 'A ciascun componente della banda viene dato il nome di una città: Tokyo, narratrice della storia, il cui compagno è appena morto dopo uno scontro a fuoco per un furto; Mosca e Denver, padre e figlio; Berlino, eletto dal Professore a capo delle operazioni; Nairobi, l\'altra donna del gruppo; Río, giovane hacker; Helsinki e Oslo, cugini serbi', 2017, 'ESP'),
+(10, 'Guardiani della Galassia', 125, 1, NULL, 10, NULL, 1, 'Un avventuriero spaziale, Brash Peter Quill, diventa preda di alcuni cacciatori di taglie dopo aver rubato una sfera ambita dal potente Ronan. Per sfuggire alla morte, l''uomo si allea con quattro improbabili compagni di avventura.', 2014, 'USA'),
+(11, ' Eseguire ciò che è stato concordato', 47, NULL, 1, 1, 1, 2, 'A ciascun componente della banda viene dato il nome di una città: Tokyo, narratrice della storia, il cui compagno è appena morto dopo uno scontro a fuoco per un furto; Mosca e Denver, padre e figlio; Berlino, eletto dal Professore a capo delle operazioni; Nairobi, l''altra donna del gruppo; Río, giovane hacker; Helsinki e Oslo, cugini serbi', 2017, 'ESP'),
 (12, 'Incoscenza leale', 41, NULL, 1, 2, 1, 2, 'Río è vivo, è solo ferito alla testa. Berlino, al telefono con il Professore, gli rivela che Tokyo e Río hanno una relazione, ma lei smentisce tutto. Río, invece, quando sono soli, conferma a Berlino che ama Tokyo.', 2017, 'ESP'),
-(13, 'Le maschere sono finite', 43, NULL, 1, 1, 2, 2, 'La polizia e la Scientifica stanno passando al setaccio il casale di Toledo in cerca di tracce; il Professore, che ha accompagnato Raquel, è in auto, estremamente nervoso, ma trova un quaderno di Paula, la figlia di Raquel, in cui la maestra scrive alla madre delle sue preoccupazioni per un invito da parte di Alberto, il padre. Dentro all\'edificio vi sono moltissime prove, tattiche, impronte, DNA.', 2019, 'ESP'),
-(14, 'Il capo del piano', 44, NULL, 1, 2, 2, 2, 'Berlino è in ostaggio di Tokyo con l\'aiuto di Río e Denver. Tokyo vuole sapere i dettagli del \"piano Chernobyl\", il piano da attuare solo in caso di emergenza, e per farlo lo tortura rompendo alcune boccette del suo farmaco e giocando alla roulette russa con lui. ', 2019, 'ESP'),
+(13, 'Le maschere sono finite', 43, NULL, 1, 1, 2, 2, 'La polizia e la Scientifica stanno passando al setaccio il casale di Toledo in cerca di tracce; il Professore, che ha accompagnato Raquel, è in auto, estremamente nervoso, ma trova un quaderno di Paula, la figlia di Raquel, in cui la maestra scrive alla madre delle sue preoccupazioni per un invito da parte di Alberto, il padre. Dentro all''edificio vi sono moltissime prove, tattiche, impronte, DNA.', 2019, 'ESP'),
+(14, 'Il capo del piano', 44, NULL, 1, 2, 2, 2, 'Berlino è in ostaggio di Tokyo con l''aiuto di Río e Denver. Tokyo vuole sapere i dettagli del "piano Chernobyl", il piano da attuare solo in caso di emergenza, e per farlo lo tortura rompendo alcune boccette del suo farmaco e giocando alla roulette russa con lui. ', 2019, 'ESP'),
 (15, 'La macchina della conoscenza', 44, NULL, 2, 1, 1, 2, 'La serie inizia con un flashback in cui si vede in un letto John Reese insieme a una donna. Siamo nel 2011, Reese è un barbone di New York.', 2011, 'USA'),
-(16, 'Una voce dal passato', 44, NULL, 2, 2, 1, 2, 'Dopo aver salvato un uomo di nome Bill da alcuni sicari assoldati da sua moglie, Reese pedina Finch per scoprire più informazioni sul suo conto, quando quest\'ultimo chiama l\'ex agente per assegnarli a un\'altra missione.', 2011, 'USA'),
-(17, 'Il piano di emergenza', 42, NULL, 2, 1, 2, 2, 'Reese riceve una serie di parole apparentemente casuali dalla Macchina, che l\'ha contattato tramite un telefono pubblico. Dopo aver assegnato alla Carter il compito di indagare più approfonditamente sulla morte di Alicia Corwin, uccisa da Root durante il rapimento di Finch, egli capisce che le parole identificano tre differenti libri nella biblioteca di Finch.', 2012, 'USA'),
-(18, 'Cattivi geni', 42, NULL, 2, 2, 2, 2, 'Reese e Carter partono per il Texas sulle tracce di Hanna Frey, una ragazzina scomparsa molti anni prima. Nel frattempo, Root tiene prigionieri Finch e Weeks e tortura ed interroga quest’ultimo per sapere la posizione della Macchina, accusandolo di essere un \"codice malevolo\".', 2012, 'USA'),
-(19, 'Hunger Games', 143, 3, NULL, 1, NULL, 1, 'Ogni anno, come punizione per aver scatenato la ribellione anni prima, in ogni distretto vengono scelti un ragazzo e una ragazza di età compresa tra i dodici e i diciotto anni per partecipare agli Hunger Games, un evento nel quale i partecipanti devono combattere in un luogo detto \"arena\", che viene controllata dagli Strateghi per mezzo di computer molto sofisticati, finché uno solo rimane vivo', 2012, 'USA'),
-(20, 'Hunger Games: La ragazza di fuoco', 146, 3, NULL, 2, NULL, 1, 'Katniss Everdeen ritorna a casa in seguito alla vittoria ottenuta nell\'ultima edizione degli Hunger Games insieme al suo compagno Peeta Mellark. Ora i due alloggiano al Villaggio dei Vincitori, presente in ogni distretto, assieme al loro mentore Haymitch Abernathy.\r\n\r\nPer i due giovani è giunto il momento di partire per il Tour della Vittoria, un viaggio attraverso i distretti per ricordare coloro che sono morti nei giochi.', 2013, 'USA'),
-(21, 'Hunger Games: Il canto della rivolta - Parte 1', 123, 3, NULL, 3, NULL, 1, 'Katniss Everdeen si trova nel Distretto 13 in stato confusionale, dopo aver distrutto l\'arena dei settantacinquesimi Hunger Games. Appena la ragazza inizia a riprendersi viene nominata da Plutarch Heavensbee e dalla presidentessa Alma Coin come immagine simbolo della ribellione, ma la ragazza, ormai nota a tutti come la \"ghiandaia imitatrice\", inizialmente rifiuta l\'offerta poiché ancora molto turbata.', 2014, 'USA'),
+(16, 'Una voce dal passato', 44, NULL, 2, 2, 1, 2, 'Dopo aver salvato un uomo di nome Bill da alcuni sicari assoldati da sua moglie, Reese pedina Finch per scoprire più informazioni sul suo conto, quando quest''ultimo chiama l''ex agente per assegnarli a un''altra missione.', 2011, 'USA'),
+(17, 'Il piano di emergenza', 42, NULL, 2, 1, 2, 2, 'Reese riceve una serie di parole apparentemente casuali dalla Macchina, che l''ha contattato tramite un telefono pubblico. Dopo aver assegnato alla Carter il compito di indagare più approfonditamente sulla morte di Alicia Corwin, uccisa da Root durante il rapimento di Finch, egli capisce che le parole identificano tre differenti libri nella biblioteca di Finch.', 2012, 'USA'),
+(18, 'Cattivi geni', 42, NULL, 2, 2, 2, 2, 'Reese e Carter partono per il Texas sulle tracce di Hanna Frey, una ragazzina scomparsa molti anni prima. Nel frattempo, Root tiene prigionieri Finch e Weeks e tortura ed interroga quest’ultimo per sapere la posizione della Macchina, accusandolo di essere un "codice malevolo".', 2012, 'USA'),
+(19, 'Hunger Games', 143, 3, NULL, 1, NULL, 1, 'Ogni anno, come punizione per aver scatenato la ribellione anni prima, in ogni distretto vengono scelti un ragazzo e una ragazza di età compresa tra i dodici e i diciotto anni per partecipare agli Hunger Games, un evento nel quale i partecipanti devono combattere in un luogo detto "arena", che viene controllata dagli Strateghi per mezzo di computer molto sofisticati, finché uno solo rimane vivo', 2012, 'USA'),
+(20, 'Hunger Games: La ragazza di fuoco', 146, 3, NULL, 2, NULL, 1, 'Katniss Everdeen ritorna a casa in seguito alla vittoria ottenuta nell''ultima edizione degli Hunger Games insieme al suo compagno Peeta Mellark. Ora i due alloggiano al Villaggio dei Vincitori, presente in ogni distretto, assieme al loro mentore Haymitch Abernathy.\r\n\r\nPer i due giovani è giunto il momento di partire per il Tour della Vittoria, un viaggio attraverso i distretti per ricordare coloro che sono morti nei giochi.', 2013, 'USA'),
+(21, 'Hunger Games: Il canto della rivolta - Parte 1', 123, 3, NULL, 3, NULL, 1, 'Katniss Everdeen si trova nel Distretto 13 in stato confusionale, dopo aver distrutto l''arena dei settantacinquesimi Hunger Games. Appena la ragazza inizia a riprendersi viene nominata da Plutarch Heavensbee e dalla presidentessa Alma Coin come immagine simbolo della ribellione, ma la ragazza, ormai nota a tutti come la "ghiandaia imitatrice", inizialmente rifiuta l''offerta poiché ancora molto turbata.', 2014, 'USA'),
 (22, 'Hunger Games: Il canto della rivolta parte 2', 137, 3, NULL, 4, NULL, 1, 'La nazione di Panem è in guerra. Tutti i distretti sono ormai uniti nella rivolta contro Capitol City, guidata da Katniss Everdeen, che continua a vestire i panni della ghiandaia imitatrice e quindi a impersonare il simbolo della rivoluzione stessa. Nel frattempo Peeta è ancora sotto shock a causa del depistaggio cerebrale causatogli dal Presidente Snow mentre era prigioniero a Capitol City e i suoi sentimenti di odio verso Katniss sono ancora presenti, benché lentamente comincino a svanire.', 2015, 'USA'),
 (23, 'La marcia dei pinguini', 85, NULL, NULL, NULL, NULL, 3, 'Il documentario francese che ha commosso tutto il mondo parla della lotta per la sopravvivenza del pinguino imperatore.\r\nUn documentario toccante che racconta come l’amore per i propri piccoli non sia un affare solo umano: guardando questo film capirete quanto umano sia il sentimento che i pinguini nutrono per la loro prole.', 2005, 'FRA'),
 (24, 'Fahrenheit 9/11', 122, NULL, NULL, NULL, NULL, 3, 'gioiellino che scardina le falsità e le bugie raccontate da George W. Bush e dalla sua Amministrazione.', 2004, 'USA'),
@@ -512,7 +524,8 @@ INSERT INTO `video` (`id`, `nome`, `durata`, `idSaga`, `idSerie`, `numero`, `sta
 (31, 'Valzer con Bashir', 90, NULL, NULL, NULL, NULL, 3, 'Ripercorre infatti i conflitti che coinvolsero il Libano nei primi anni ottanta, culminando con crudezza e assoluta drammaticità nella rappresentazione del massacro di Sabra e Shatila del 1982.', 2008, 'ISR'),
 (32, 'L’uomo con la macchina da presa', 68, NULL, NULL, NULL, NULL, 3, 'Racconta la giornata di un cineoperatore, dall’alba al tramonto. Questi riprende soprattutto scene di vita quotidiana, girando per le strade di Mosca, mostrando una certa arditezza nella ricerca di inquadrature a sensazione.', 1929, 'URS'),
 (33, 'Lucy', 90, NULL, NULL, NULL, NULL, 1, 'Lucy è una studentessa americana che vive a Taiwan. La sua vita scorre tranquilla, dividendosi fra studio e divertimento notturno. Fino al giorno in cui un ragazzo le chiede di consegnare una valigetta. Lei vorrebbe defilarsi ma viene incastrata in una situazione pericolosa.', 2014, 'FRA'),
-(34, 'Storia di un matrimonio', 137, NULL, NULL, NULL, NULL, 1, 'Un regista teatrale e la moglie attrice, un tempo felicemente sposati, intraprendono un lungo ed estenuante divorzio, che li pone di fronte ai loro limiti e alle necessarie rinunce con cui dovranno fare i conti.', 2019, 'USA');
+(34, 'Storia di un matrimonio', 137, NULL, NULL, NULL, NULL, 1, 'Un regista teatrale e la moglie attrice, un tempo felicemente sposati, intraprendono un lungo ed estenuante divorzio, che li pone di fronte ai loro limiti e alle necessarie rinunce con cui dovranno fare i conti.', 2019, 'USA'),
+(35, 'Durante la tormenta', 129, NULL, NULL, NULL, NULL, 1, 'Un malfunzionamento del continuum spaziotemporale permette a Vera di salvare la vita di un ragazzo venticinque anni fa. Tuttavia, questo inspiegabile evento porta con sé anche orribili conseguenze.', 2018, 'ESP');
 
 --
 -- Dump dei dati per la tabella `attorivideo`
@@ -581,7 +594,9 @@ INSERT INTO `attorivideo` (`idVideo`, `idPersona`) VALUES
 (32, 60),
 (33, 5),
 (34, 5),
-(34, 62);
+(34, 62),
+(35, 22),
+(35, 65);
 
 --
 -- Dump dei dati per la tabella `personaggi`
@@ -591,7 +606,7 @@ INSERT INTO `personaggi` (`id`, `nome`) VALUES
 (10, 'Ant-Man'),
 (17, 'Boaz Rein-Buskila'),
 (2, 'Captain America'),
-(18, 'Carmi Cna\'an'),
+(18, 'Carmi Cna''an'),
 (19, 'Lucy Miller'),
 (9, 'Doctor Strange'),
 (8, 'Happy Hogan'),
@@ -608,7 +623,9 @@ INSERT INTO `personaggi` (`id`, `nome`) VALUES
 (7, 'Star-Lord'),
 (4, 'Thor'),
 (12, 'Tokyo'),
-(5, 'Vedova Nera');
+(5, 'Vedova Nera'),
+(22, 'David Ortiz'),
+(23, 'Vera Roy');
 
 --
 -- Dump dei dati per la tabella `comparizioni`
@@ -664,7 +681,9 @@ INSERT INTO `comparizioni` (`idPersonaggio`, `idVideo`) VALUES
 (18, 31),
 (19, 33),
 (20, 34),
-(21, 34);
+(21, 34),
+(22, 35),
+(23, 35);
 
 --
 -- Dump dei dati per la tabella `curiositavideo`
@@ -675,7 +694,8 @@ INSERT INTO `curiositavideo` (`id`, `idVideo`, `idUtente`, `idAdmin`, `testo`) V
 (6, 1, 3, NULL, 'prova prova'),
 (7, 19, 7, 3, 'Rispetto al libro manca una scena in cui Katniss rischia di morire di sete'),
 (8, 19, 7, 3, 'Jennifer Lawrence e Liam Hemsworth si sono dovuti tingere i capelli castani, Josh Hutcherson se li è dovuti tingere biondi'),
-(9, 20, 7, 3, 'Gli attori hanno dovuto realmente mangiare del pesce crudo per registrare una scena, tutti l&#39;hanno trovato disgustoso e Jennifer Lawrence si è sentita male');
+(9, 20, 7, 3, 'Gli attori hanno dovuto realmente mangiare del pesce crudo per registrare una scena, tutti l&#39;hanno trovato disgustoso e Jennifer Lawrence si è sentita male'),
+(10, 6, 5, NULL, 'Captain America ha dovuto crescere di 10 Kg e seguire una ferrea dieta per rientrare nella forma ideale');
 
 --
 -- Dump dei dati per la tabella `generi`
@@ -841,10 +861,12 @@ INSERT INTO `generivideo` (`id`, `idVideo`, `idGenere`) VALUES
 (146, 32, 8),
 (147, 34, 7),
 (148, 34, 9),
-(149, 33, 27), 
+(149, 33, 27),
 (150, 33, 3),
 (151, 33, 2),
-(152, 33, 11);
+(152, 33, 11),
+(153, 35, 27),
+(154, 35, 9);
 
 --
 -- Dump dei dati per la tabella `interpretazioni`
@@ -865,6 +887,7 @@ INSERT INTO `interpretazioni` (`idPersona`, `idPersonaggio`) VALUES
 (11, 3),
 (12, 10),
 (22, 11),
+(22, 22),
 (23, 12),
 (26, 14),
 (27, 13),
@@ -872,7 +895,8 @@ INSERT INTO `interpretazioni` (`idPersona`, `idPersonaggio`) VALUES
 (31, 16),
 (57, 17),
 (58, 18),
-(62, 20);
+(62, 20),
+(65, 23);
 
 --
 -- Dump dei dati per la tabella `produttorivideo`
@@ -902,7 +926,8 @@ INSERT INTO `produttorivideo` (`idVideo`, `idPersona`) VALUES
 (22, 34),
 (22, 35),
 (33, 64),
-(34, 63);
+(34, 63),
+(35, 67);
 
 --
 -- Dump dei dati per la tabella `recensioniserie`
@@ -924,10 +949,10 @@ INSERT INTO `recensionivideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`
 (1, 3, 10, 'Davvero un gran bel film! Scaricatelo dal corsaronero: https://ilcorsaronero.xyz/tor/95175/Iron_Man_2008_iTA_ENG_AC3_Bluray_1080p_Subs_x264_DSS', 3),
 (1, 5, 9, 'Mi è piaciuto molto, ottimo da vedere mentre si mangia un bel piatto di polenta', 3),
 (1, 6, 6, 'Non ho capito perchè non c&#39;era spider-man', 5),
-(1, 7, 10, 'Tony ❤ Pepper', 5),
+(1, 7, 10, 'Tony ? Pepper', 5),
 (2, 3, 7, 'Non eccezionale', 3),
 (2, 4, 8, 'Non mi sembrava bello ma l&#39;ho rivalutato.', 3),
-(6, 1, 8, 'Gran bel film', NULL),
+(6, 1, 8, 'Gran bel film', 3),
 (11, 7, 9, 'Ottimo inizio per questa serie', 5),
 (12, 4, 5, 'Che brutta serie. Venite a vedere la mia su www.utente-banana.it', NULL),
 (13, 1, 10, 'Troppo emozionante questo episodio. Molti colpi di scena', 6),
@@ -941,7 +966,13 @@ INSERT INTO `recensionivideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`
 (20, 7, 10, 'Film fantastico, anche meglio del sequel', 3),
 (23, 1, 8, 'Forse uno dei migliori documentari che abbia mai visto', 3),
 (23, 4, 8, 'Carino e ben fatto\r\n', 3),
-(23, 7, 7, 'Molto bello peccato per la voce di PIF: orribile. Rovina tutto', 5);
+(23, 7, 7, 'Molto bello peccato per la voce di PIF: orribile. Rovina tutto', 5),
+(6, 3, 9, 'Molto bello, trama interessantissima', 3),
+(6, 7, 8, 'Ho preferito il precedente film', 6),
+(6, 6, 6, 'Alcune scene sono proprio improbabili', 6),
+(6, 5, 10, 'Il mio film preferito!', NULL),
+(24, 7, 8, 'Bel documentario. Interessante capire le contraddizioni delle faccende', 3),
+(31, 1, 8, 'Un po&#39; pesante ma tratta temi importanti ed interessanti', 5);
 
 --
 -- Dump dei dati per la tabella `registivideo`
@@ -990,7 +1021,8 @@ INSERT INTO `registivideo` (`idVideo`, `idPersona`) VALUES
 (31, 56),
 (32, 59),
 (33, 64),
-(34, 63);
+(34, 63),
+(35, 66);
 
 -- ************************************
 -- ***** FINE POPOLAMENTO TABELLE *****
