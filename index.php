@@ -3775,7 +3775,7 @@
 											if ($video->num_rows>0) { // Almeno un risultato 
 												while ($elemento = $video->fetch_assoc()) { 
 													echo ('
-														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,,null,null,null,null)" >
+														<div class="col-md-3 py2" onclick="passa_a('.$elemento["id"].',5,null,null,null,null)" >
 															<div class="card h-100 mb-4 shadow-sm">
 																<div class="card-body">
 																	<img src="images/video/'.$elemento["id"].'.jpg" style="max-height=30%" class="img-fluid bd-placeholder-img card-img-top" width="100%" height="100%"  focusable="false" role="img" aria-label="Placeholder: Thumbnail" onerror="this.onerror=null; this.src=\'images/video/default.jpg\';" alt="Locandina di '.$elemento["nome"].'">
