@@ -349,8 +349,8 @@ CREATE TABLE IF NOT EXISTS `registivideo` (
 
 INSERT INTO `utenti` (`id`, `username`, `email`, `password`, `admin`) VALUES
 (1, 'username', 'email@email.com', '5f4dcc3b5aa765d61d8327deb882cf99', 0),
-(3, 'grande capo', 'admin@admin.it', '21232f297a57a5a743894a0e4a801fc3', 1),
-(4, 'utente banana', 'user@user.it', 'ee11cbb19052e40b07aac0ca060c23ee', 0),
+(3, 'utente amministratore', 'admin@admin.it', '21232f297a57a5a743894a0e4a801fc3', 1),
+(4, 'utente semplice', 'user@user.it', 'ee11cbb19052e40b07aac0ca060c23ee', 0),
 (5, 'barcigabri', 'barcigabri@gmail.com', '0c8d209966c8154c43ef97bb1ba5e5e0', 1),
 (6, 'pippobordo99', 'bordognapippo99@gmail.com', '0c88028bf3aa6a6a143ed846f2be1ea4', 1),
 (7, 'paperino', 'donald@duck.com', 'b54b45b19ca1f1ddc424e6b878a53f2d', 0),
@@ -446,7 +446,7 @@ INSERT INTO `persone` (`id`, `nome`, `cognome`) VALUES
 (44, 'Robert', 'Kenner'),
 (45, 'Claude', 'Lanzmann'),
 (46, 'Szymon', 'Srebrnik'),
-(47, '?Alain', ' Resnais'),
+(47, 'Alain', ' Resnais'),
 (48, 'Miyuki', 'Kuwano'),
 (49, 'Kei', 'Sato'),
 (50, 'D.A.', 'Pennebaker'),
@@ -946,7 +946,7 @@ INSERT INTO `recensioniserie` (`idSerie`, `idUtente`, `voto`, `testo`, `idAdmin`
 
 INSERT INTO `recensionivideo` (`idVideo`, `idUtente`, `voto`, `testo`, `idAdmin`) VALUES
 (1, 1, 10, 'IRON MAN SEI IL MIO EROE! ', 5),
-(1, 3, 10, 'Davvero un gran bel film! Scaricatelo dal corsaronero: https://ilcorsaronero.xyz/tor/95175/Iron_Man_2008_iTA_ENG_AC3_Bluray_1080p_Subs_x264_DSS', 3),
+(1, 3, 10, 'Davvero un gran bel film!', 3),
 (1, 5, 9, 'Mi è piaciuto molto, ottimo da vedere mentre si mangia un bel piatto di polenta', 3),
 (1, 6, 6, 'Non ho capito perchè non c&#39;era spider-man', 5),
 (1, 7, 10, 'Tony ? Pepper', 5),
@@ -1027,4 +1027,3 @@ INSERT INTO `registivideo` (`idVideo`, `idPersona`) VALUES
 -- ************************************
 -- ***** FINE POPOLAMENTO TABELLE *****
 -- ************************************
-
