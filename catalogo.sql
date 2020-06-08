@@ -14,14 +14,14 @@
 --
 -- Database: `my_bordognafilippo` (ALTERVISTA)
 --
-/*CREATE DATABASE IF NOT EXISTS `my_bordognafilippo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `my_bordognafilippo`;*/
+CREATE DATABASE IF NOT EXISTS `my_bordognafilippo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `my_bordognafilippo`;
 
 --
 -- Database: `catalogo` (XAMPP)
 --
-CREATE DATABASE IF NOT EXISTS `catalogo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
-USE `catalogo`;
+/*CREATE DATABASE IF NOT EXISTS `catalogo` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci;
+USE `catalogo`;*/
 
 
 -- ***************************************	
